@@ -34,7 +34,7 @@ android {
 
   defaultConfig {
     applicationId = "com.google.aiedge.gallery"
-    minSdk = 31
+    minSdk = 24
     targetSdk = 35
     versionCode = 23
     versionName = "1.0.11"
@@ -46,6 +46,10 @@ android {
     manifestPlaceholders["applicationName"] = "com.google.ai.edge.gallery.GalleryApplication"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+    ndk {
+      abiFilters += setOf("arm64-v8a")
+    }
   }
 
   buildTypes {
