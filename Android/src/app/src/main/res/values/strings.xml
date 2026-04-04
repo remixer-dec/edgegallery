@@ -302,6 +302,22 @@
   <string name="skill_instructions_input_description" translatable="false">Detailed instructions in Markdown format that LLM must follow to accomplish the task.</string>
   <string name="use_call_js_template" translatable="false">Use Call JS template</string>
 
+  <!-- Strings extracted from hardcoded UI text -->
+  <string name="acknowledge_user_agreement_title" translatable="false">Acknowledge user agreement</string>
+  <string name="acknowledge_user_agreement_content" translatable="false">This is a gated model. Please click the button below to view and agree to the user agreement. After accepting, simply close that tab to proceed with the model download.</string>
+  <string name="open_user_agreement" translatable="false">Open user agreement</string>
+  <string name="network_error_title" translatable="false">Unknown network error</string>
+  <string name="network_error_message" translatable="false">Please check your internet connection.</string>
+  <string name="network_error_retry_message" translatable="false">Please check your internet connection and try again later.</string>
+  <string name="retry" translatable="false">Retry</string>
+  <string name="read_more" translatable="false">Read more</string>
+  <string name="enter_content" translatable="false">Enter content</string>
+  <string name="preview_prompt_label" translatable="false">Preview prompt</string>
+  <string name="try_gemma4_today" translatable="false">Try Gemma 4 today</string>
+  <string name="explore_other_use_cases" translatable="false">Explore other use cases</string>
+  <string name="gemma4_available" translatable="false">Gemma 4: now available</string>
+  <string name="gemma4_description" translatable="false">Built from the same world-class technology as Gemini 3, Gemma 4 brings frontier intelligence to your mobile and edge devices.</string>
+
   <!-- The following entries are for accessibility -->
 
   <!-- Content description spoken when the "add" icon is focused. [CHAR_LIMIT=NONE] -->

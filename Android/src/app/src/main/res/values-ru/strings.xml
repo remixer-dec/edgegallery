@@ -1,0 +1,432 @@
+<!--
+ Copyright 2025 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<resources>
+  <!-- TODO(jingjin): Add translation support when i18n is ready. -->
+  <string name="all" translatable="false">Все</string>
+  <string name="add" translatable="false">Добавить</string>
+  <string name="added" translatable="false">Добавлено</string>
+  <string name="add_audio" translatable="false">+Аудио</string>
+  <string name="aichat_initializing_title" translatable="false">Инициализация модели</string>
+  <string name="aichat_initializing_content" translatable="false">Подождите, это может занять до 1 минуты</string>
+  <string name="app_intro" translatable="false">Откройте для себя мир удивительных локальных моделей от</string>
+  <string name="app_name" translatable="false">Google AI Edge Gallery</string>
+  <string name="app_name_first_part" translatable="false">Google AI</string>
+  <string name="app_name_second_part" translatable="false">Edge Gallery</string>
+  <string name="askimage_emptystate_title" translatable="false">Спросить по изображению</string>
+  <string name="askimage_emptystate_content" translatable="false">Чтобы начать, нажмите + ниже, чтобы добавить изображение (не более 10 изображений на чат), и введите запрос с вопросом по нему!</string>
+  <string name="askaudio_emptystate_title" translatable="false">Спросить по аудио</string>
+  <string name="askaudio_emptystate_content" translatable="false">Чтобы начать, нажмите + ниже, чтобы добавить аудиоклип (только 1 клип длительностью до 30 секунд), и введите запрос, чтобы расшифровать или перевести его!</string>
+  <string name="gallery_news_notification_title" translatable="false">Новости галереи</string>
+  <string name="baseline" translatable="false">Базовый уровень</string>
+  <string name="basic_info" translatable="false">Основная информация</string>
+  <string name="benchmark" translatable="false">Бенчмарк</string>
+  <string name="benchmark_comparison_help_title" translatable="false">Как сравнивать запуски бенчмарка</string>
+  <string name="benchmark_comparison_help_content" translatable="false">Сравнивайте запуски бенчмарка, нажимая на чип **Базовый уровень** на любой карточке результата, чтобы сделать этот запуск базой для сравнения. Мы автоматически вычислим и покажем процентные различия на **всех остальных** карточках результатов.</string>
+  <string name="benchmark_model" translatable="false">Модель для бенчмарка</string>
+  <string name="benchmark_results" translatable="false">Результаты бенчмарка</string>
+  <string name="benchmark_no_results" translatable="false">Нет результатов бенчмарка</string>
+  <string name="benchmark_tokens_limit_message" translatable="false">Убедитесь, что сумма токенов prefill и decode не превышает максимальный лимит токенов модели (%d из %d)</string>
+  <string name="best_overall" translatable="false">Лучший результат</string>
+  <string name="model_list_experimental_label" translatable="false">ЭКСПЕРИМЕНТАЛЬНО</string>
+  <string name="cancel" translatable="false">Отмена</string>
+  <string name="category_unlabeled" translatable="false">Без категории</string>
+  <string name="category_llm" translatable="false">LLM</string>
+  <string name="category_agents" translatable="false">Агенты</string>
+  <string name="category_classical_ml" translatable="false">Классическое МО</string>
+  <string name="category_experimental" translatable="false">Экспериментальные</string>
+  <string name="chat_textinput_placeholder" translatable="false">Введите сообщение…</string>
+  <string name="chat_you" translatable="false">Вы</string>
+  <string name="chat_llm_agent_name" translatable="false">LLM</string>
+  <string name="show_thinking" translatable="false">Показать ход рассуждений</string>
+  <string name="checking_access" translatable="false">Проверка доступа...</string>
+  <string name="close" translatable="false">Закрыть</string>
+  <string name="collapse_all" translatable="false">Свернуть все</string>
+  <string name="discard" translatable="false">Отклонить</string>
+  <string name="discard_changes_dialog_title" translatable="false">Отменить изменения?</string>
+  <string name="discard_changes_dialog_content" translatable="false">У вас есть несохраненные изменения. Вы уверены, что хотите их отменить?</string>
+  <string name="delete_benchmark_result_dialog_title" translatable="false">Удалить результат бенчмарка</string>
+  <string name="delete_benchmark_result_dialog_content" translatable="false">Вы уверены, что хотите удалить результат бенчмарка?</string>
+  <string name="error" translatable="false">Ошибка</string>
+  <string name="confirm_delete_model_dialog_title" translatable="false">Удалить загрузку</string>
+  <string name="confirm_delete_model_dialog_content" translatable="false">Вы уверены, что хотите удалить загруженную модель \"%s\"?</string>
+  <string name="conversation_reset_message" translatable="false">Беседа была сброшена</string>
+  <string name="engin_reset_message" translatable="false">Движок был сброшен</string>
+  <string name="chat_agent_agent_name" translatable="false">Агент</string>
+  <string name="chat_generic_agent_name" translatable="false">Модель</string>
+  <string name="chat_generic_result_name" translatable="false">Результат</string>
+  <string name="clear" translatable="false">Очистить</string>
+  <string name="collect" translatable="false">Собрать</string>
+  <string name="color" translatable="false">Цвет</string>
+  <string name="config_dialog_tab_model_configs" translatable="false">Конфигурации модели</string>
+  <string name="config_dialog_tab_system_prompt" translatable="false">Системный промпт</string>
+  <string name="continue_button_label" translatable="false">Продолжить</string>
+  <string name="conversation_history" translatable="false">История беседы</string>
+  <string name="copy" translatable="false">Копировать</string>
+  <string name="create" translatable="false">Создать</string>
+  <string name="delete" translatable="false">Удалить</string>
+  <string name="description_required" translatable="false">Описание*</string>
+  <string name="disabled" translatable="false">Отключено</string>
+  <string name="dismiss" translatable="false">Закрыть</string>
+  <string name="done" translatable="false">Готово</string>
+  <string name="download" translatable="false">Загрузить</string>
+  <string name="downloaded_size" translatable="false">Загружено: %1$s</string>
+  <string name="drawer_settings_label" translatable="false">Настройки</string>
+  <string name="drawer_settings_description" translatable="false">Управление настройками приложения</string>
+  <string name="drawer_models_label" translatable="false">Модели</string>
+  <string name="drawer_models_description" translatable="false">Просматривайте, тестируйте и сравнивайте модели</string>
+  <string name="edit" translatable="false">Редактировать</string>
+  <string name="edit_secret" translatable="false">Редактировать секрет</string>
+  <string name="enter_instruction" translatable="false">Введите инструкцию</string>
+  <string name="expand_all" translatable="false">Развернуть все</string>
+  <string name="failed_to_save" translatable="false">Не удалось сохранить</string>
+  <string name="flashlight_off_message" translatable="false">Я выключил фонарик.</string>
+  <string name="flashlight_on_message" translatable="false">Я включил фонарик.</string>
+  <string name="function_name" translatable="false">Имя функции</string>
+  <string name="generate_and_copy" translatable="false">Сгенерировать и скопировать</string>
+  <string name="grant_permissions" translatable="false">Предоставить разрешения</string>
+  <string name="grant_record_audio_permission" translatable="false">Предоставить разрешение на запись аудио</string>
+  <string name="hold_down_to_talk" translatable="false">Удерживайте, чтобы говорить</string>
+  <string name="input_history" translatable="false">История ввода</string>
+  <string name="instructions" translatable="false">Инструкции</string>
+  <string name="introducing" translatable="false">Представляем</string>
+  <string name="invalid_response" translatable="false">Некорректный ответ</string>
+  <string name="learn_more" translatable="false">Подробнее и посмотреть лицензию модели</string>
+  <string name="listening" translatable="false">Слушаю...</string>
+  <string name="litert_community_label" translatable="false">Сообщество LiteRT</string>
+  <string name="loading_model_list" translatable="false">Загрузка списка моделей...</string>
+  <string name="logs_viewer_filter_text_input_placeholder" translatable="false">Фильтр логов</string>
+  <string name="logs_viewer_title" translatable="false">Просмотр логов</string>
+  <string name="logs_viewer_no_matching_logs" translatable="false">Нет логов, соответствующих фильтру</string>
+  <string name="memory_warning_content" translatable="false">Выбранная модель может превысить доступную память вашего устройства, из-за чего приложение может завершиться. Для лучшего результата рекомендуем попробовать модель поменьше.</string>
+  <string name="memory_warning_proceed_anyway" translatable="false">Все равно продолжить</string>
+  <string name="memory_warning_title" translatable="false">Предупреждение о памяти</string>
+  <string name="max_tokens_warning_message" translatable="false">Установка max tokens выше 10000 может сделать приложение нестабильным.</string>
+  <string name="model_is_initializing_msg" translatable="false">Инициализация модели…</string>
+  <string name="model_list_imported_models_title" translatable="false">Импортированные модели</string>
+  <plurals name="model_list_number_of_models_available" translatable="false">
+    <item quantity="one">%d модель доступна</item>
+    <item quantity="few">%d модели доступны</item>
+    <item quantity="many">%d моделей доступно</item>
+    <item quantity="other">%d моделей доступно</item>
+  </plurals>
+  <string name="model_list_recommended_models_title" translatable="false">Рекомендуемые модели</string>
+  <string name="model_manager" translatable="false">Менеджер моделей</string>
+  <string name="model_manager_select_task_title" translatable="false">Выберите сценарий использования, чтобы попробовать</string>
+  <string name="model_not_downloaded_msg" translatable="false">Модель еще не загружена</string>
+  <string name="name" translatable="false">Имя</string>
+  <string name="no_cutouts_collected" translatable="false">Фрагменты не собраны</string>
+  <string name="notification_content_fail" translatable="false">Не удалось загрузить модель \"%s\"</string>
+  <string name="notification_content_success" translatable="false">Модель \"%s\" загружена</string>
+  <string name="notification_title_fail" translatable="false">Не удалось загрузить модель</string>
+  <string name="notification_title_success" translatable="false">Загрузка модели выполнена</string>
+  <string name="ok" translatable="false">ОК</string>
+  <string name="paste_from_clipboard" translatable="false">Вставить из буфера обмена</string>
+  <string name="pick_from_album" translatable="false">Выбрать из альбома</string>
+  <string name="preview" translatable="false">Предпросмотр</string>
+  <string name="release_to_send" translatable="false">Отпустите, чтобы отправить</string>
+  <string name="replace" translatable="false">Заменить</string>
+  <string name="results" translatable="false">Результаты</string>
+  <string name="reset" translatable="false">Сбросить</string>
+  <string name="reset_note" translatable="false">Нажатие \"Сбросить\" сбросит только движок LiteRT-LM. Прогресс не будет затронут.</string>
+  <string name="resetting_engine" translatable="false">Сброс движка...</string>
+  <string name="restore_default" translatable="false">Восстановить по умолчанию</string>
+  <string name="reinitializing_description" translatable="false">Прогресс не будет затронут</string>
+  <string name="run" translatable="false">Запустить</string>
+  <string name="running" translatable="false">Выполняется...</string>
+  <plurals name="runs" translatable="false">
+    <item quantity="one">%d запуск</item>
+    <item quantity="few">%d запуска</item>
+    <item quantity="many">%d запусков</item>
+    <item quantity="other">%d запусков</item>
+  </plurals>
+  <string name="run_again" translatable="false">Запустить снова</string>
+  <string name="run_benchmark" translatable="false">Запустить бенчмарк</string>
+  <string name="run_benchmark_confirmation_msg" translatable="false">Обычно этот процесс занимает несколько минут и его нельзя прервать после запуска. Продолжить?</string>
+  <string name="running_benchmark_msg" translatable="false">Выполняется бенчмарк модели...</string>
+  <string name="save" translatable="false">Сохранить</string>
+  <string name="secret" translatable="false">Секрет</string>
+  <string name="select_downloaded_model" translatable="false">Выберите загруженную модель</string>
+  <string name="select_model" translatable="false">Выберите модель</string>
+  <string name="selected_count" translatable="false">%d выбрано</string>
+  <string name="settings_dialog_tos_title" translatable="false">Условия использования</string>
+  <string name="settings_dialog_view_app_terms_of_service" translatable="false">Посмотреть условия использования приложения</string>
+  <string name="settings_dialog_gemma_prohibited_use_policy" translatable="false">Политика запрещенного использования Gemma</string>
+  <string name="share" translatable="false">Поделиться</string>
+  <string name="slide_up_to_cancel" translatable="false">Проведите вверх, чтобы отменить</string>
+  <string name="system_prompt_updated" translatable="false">Системный промпт обновлен</string>
+  <string name="take_a_picture" translatable="false">Сделать снимок</string>
+  <string name="tap_to_change_color" translatable="false">Нажмите, чтобы изменить цвет</string>
+  <string name="tap_to_see_value" translatable="false">Нажмите на график, чтобы увидеть значение</string>
+  <string name="test" translatable="false">Тест</string>
+  <string name="text_image_generation_text_field_placeholder" translatable="false">Введите запрос…</string>
+  <string name="text_input_placeholder_llm_chat" translatable="false">Введите запрос…</string>
+  <string name="tos_dialog_title_app" translatable="false">Добро пожаловать в Google AI Edge Gallery</string>
+  <string name="tos_dialog_title_gemma" translatable="false">Условия использования Gemma</string>
+  <string name="tos_dialog_accept_and_continue_button_label" translatable="false">Принять и продолжить</string>
+  <string name="tos_dialog_agree_and_continue_button_label" translatable="false">Согласиться и продолжить</string>
+  <string name="try_it" translatable="false">Попробовать</string>
+  <string name="turn_on_all" translatable="false">Включить все</string>
+  <string name="turn_off_all" translatable="false">Выключить все</string>
+  <string name="undo" translatable="false">Отменить</string>
+  <string name="unsupported_action" translatable="false">Неподдерживаемое действие</string>
+  <string name="set_screen_brightness_message" translatable="false">Я установил яркость экрана на %1$d%%.</string>
+  <string name="set_timer_message" translatable="false">Устанавливаю таймер на %1$d секунд.</string>
+  <string name="add_calendar_event_message" translatable="false">Добавляю в календарь \"Встреча команды (10:00–11:00)\".</string>
+  <string name="take_picture_message" translatable="false">Открываю приложение камеры.</string>
+  <string name="mobile_actions_title" translatable="false">Mobile Actions</string>
+  <string name="mobile_actions_description" translatable="false">Управляйте устройством с помощью простых команд</string>
+  <string name="mobile_actions_supported_actions" translatable="false">Поддерживаемые примеры действий:</string>
+  <string name="mobile_actions_tab_model_response" translatable="false">Ответ модели</string>
+  <string name="mobile_actions_tab_function_called" translatable="false">Вызванные функции</string>
+  <string name="view_results" translatable="false">Посмотреть результаты</string>
+  <string name="view_console_logs" translatable="false">Посмотреть логи консоли</string>
+  <string name="warming_up" translatable="false">Прогрев…</string>
+  <string name="warning_no_function_call" translatable="false">Функция не распознана</string>
+  <string name="snackbar_no_function_call" translatable="false">Функция не распознана</string>
+  <string name="unknown_error" translatable="false">Неизвестная ошибка</string>
+  <string name="view" translatable="false">Просмотр</string>
+  <string name="view_in_full_screen" translatable="false">Открыть на весь экран</string>
+
+  <plurals name="parameter" translatable="false">
+    <item quantity="one">Параметр</item>
+    <item quantity="few">Параметра</item>
+    <item quantity="many">Параметров</item>
+    <item quantity="other">Параметров</item>
+  </plurals>
+  <string name="prompt_template_label_flash_on_off" translatable="false">Включить/выключить фонарик</string>
+  <string name="prompt_template_label_flash_on" translatable="false">Фонарик включен</string>
+  <string name="prompt_template_label_flash_off" translatable="false">Фонарик выключен</string>
+  <string name="prompt_template_label_create_contact" translatable="false">Создать контакт</string>
+  <string name="prompt_template_label_send_email" translatable="false">Отправить письмо</string>
+  <string name="prompt_template_label_create_calendar_event" translatable="false">Создать событие календаря</string>
+  <string name="prompt_template_label_show_location_on_map" translatable="false">Показать местоположение на карте</string>
+  <string name="prompt_template_label_open_wifi_settings" translatable="false">Открыть настройки Wi-Fi</string>
+
+  <!-- Strings for MobileActionsChallengeDialog -->
+  <string name="mobile_actions_challenge_title" translatable="false">Задание по дообучению Mobile Actions</string>
+  <string name="mobile_actions_challenge_subtitle" translatable="false">Соберите сами, чтобы запустить!</string>
+  <string name="mobile_actions_challenge_description" translatable="false">Эта демонстрация заблокирована. Чтобы разблокировать агента Mobile Actions, нужно самостоятельно собрать модель по нашей инструкции с открытым исходным кодом.</string>
+  <string name="mobile_actions_challenge_instructions_title" translatable="false">Инструкции:</string>
+  <string name="mobile_actions_challenge_instruction_1" translatable="false">1. <![CDATA[<b>На компьютере</b>]]> откройте <![CDATA[<a href="https://ai.google.dev/gemma/docs/mobile-actions">это руководство</a>]]></string>
+  <string name="mobile_actions_challenge_instruction_2" translatable="false">2. Следуйте инструкции, чтобы дообучить модель и преобразовать ее в формат .litertlm.</string>
+  <string name="mobile_actions_challenge_instruction_3" translatable="false">3. Передайте файл на этот телефон.</string>
+  <string name="mobile_actions_challenge_instruction_4" translatable="false">4. Нажмите <![CDATA[<b>Загрузить модель</b>]]> ниже, чтобы разблокировать демонстрацию.</string>
+  <string name="mobile_actions_challenge_email_colab" translatable="false">Отправить руководство себе по email</string>
+  <string name="mobile_actions_challenge_load_model" translatable="false">Загрузить модель</string>
+
+  <!-- Strings for skills -->
+  <string name="aichat_emptystate_title" translatable="false">Чат с ИИ</string>
+  <string name="aichat_emptystate_content" translatable="false">Общайтесь с большими языковыми моделями прямо на устройстве.</string>
+  <string name="add_script" translatable="false">Добавить скрипт</string>
+  <string name="add_default_script" translatable="false">Добавить скрипт по умолчанию</string>
+  <string name="add_skill" translatable="false">Добавить навык</string>
+  <string name="add_skill_option_featured_list_title" translatable="false">Добавить навык из избранного списка</string>
+  <string name="add_skill_option_featured_list_description" translatable="false">Добавить навык из отобранного списка навыков, созданных сообществом</string>
+  <string name="add_skill_option_url_title" translatable="false">Загрузить навык по URL</string>
+  <string name="add_skill_option_url_description" translatable="false">Введите URL каталога навыка, размещенного в сети</string>
+  <string name="add_skill_option_local_title" translatable="false">Импортировать локальный навык</string>
+  <string name="add_skill_option_local_description" translatable="false">Импортировать каталог навыка с устройства</string>
+  <string name="add_skill_option_skill_creator_title" translatable="false">Конструктор навыков</string>
+  <string name="add_skill_option_skill_creator_description" translatable="false">Создайте навык с нуля прямо в приложении</string>
+  <string name="add_skill_from_url_dialog_title" translatable="false">Добавить навык по URL</string>
+  <string name="add_skill_dialog_title_from_local_import" translatable="false">Импортировать локальный навык</string>
+  <string name="add_skill_dialog_subtitle_from_local_import" translatable="false">Сначала выполните \"adb push\" всего каталога навыка в /sdcard/Download</string>
+  <string name="add_skill_manual_input_sheet_title" translatable="false">Создать навык</string>
+  <string name="agent_skills" translatable="false">Навыки агента</string>
+  <string name="agent_skills_description" translatable="false">Используйте специализированные навыки и более сложное рассуждение, загружая разные навыки или создавая свои.\n\nПопробуйте нажать на пример запроса ниже, чтобы увидеть навыки агента в действии!</string>
+  <string name="disclaimer_dialog_content" translatable="false">Сторонние навыки не созданы и не поддерживаются Google. Google не отвечает за их содержимое, безопасность или практики обработки данных.\n\nБудьте осторожны, когда передаете чувствительную информацию, такую как личные данные, токены или API-ключи.\n\nЛюбое использование навыка агента регулируется применимыми условиями для этого навыка.</string>
+  <string name="disclaimer_dialog_title" translatable="false">Добавить сторонний навык</string>
+  <string name="disclaimer_dialog_agree" translatable="false">Согласиться</string>
+  <string name="delete_script_dialog_title" translatable="false">Удалить скрипт</string>
+  <string name="delete_skill_dialog_title" translatable="false">Удалить навык</string>
+  <string name="delete_skill_dialog_content" translatable="false">Вы уверены, что хотите удалить навык?</string>
+  <string name="delete_selected_skills_title" translatable="false">Удалить выбранные навыки</string>
+  <plurals name="delete_selected_skills_content" translatable="false">
+    <item quantity="one">Вы уверены, что хотите удалить %d навык?</item>
+    <item quantity="few">Вы уверены, что хотите удалить %d навыка?</item>
+    <item quantity="many">Вы уверены, что хотите удалить %d навыков?</item>
+    <item quantity="other">Вы уверены, что хотите удалить %d навыков?</item>
+  </plurals>
+  <plurals name="selected_custom_skills_count" translatable="false">
+    <item quantity="one">%d выбрано</item>
+    <item quantity="few">%d выбрано</item>
+    <item quantity="many">%d выбрано</item>
+    <item quantity="other">%d выбрано</item>
+  </plurals>
+  <string name="built_in_skills_title" translatable="false">Встроенные навыки</string>
+  <string name="custom_skills_title" translatable="false">Пользовательские навыки</string>
+  <string name="describe_requirements" translatable="false">Опишите требования</string>
+  <string name="describe_input_data" translatable="false">Опишите входные данные</string>
+  <string name="describe_input_data_support_text" translatable="false">Имена полей должны совпадать с теми, что указаны в инструкции.</string>
+  <string name="describe_output_data" translatable="false">Опишите выходные данные</string>
+  <string name="duplicated_script_name" translatable="false">Имя скрипта уже используется</string>
+  <string name="enable_skill_dialog_content" translatable="false">Пожалуйста, включите навык, нажав кнопку Skills ниже.</string>
+  <string name="edit_skill" translatable="false">Редактировать навык</string>
+  <string name="enter_skill_url" translatable="false">Введите URL корневого каталога навыка</string>
+  <string name="featured_skills_title" translatable="false">Избранные навыки</string>
+  <string name="featured_skills_description" translatable="false">Отобранный список навыков, созданных сообществом</string>
+  <string name="generate_llm_prompt_title" translatable="false">Сгенерировать запрос для LLM</string>
+  <string name="generate_llm_prompt_button_label" translatable="false">Запрос для LLM</string>
+  <string name="learn_how_to_write_skills" translatable="false">Узнайте, как писать навыки</string>
+  <string name="loading_skills_allowlist" translatable="false">Загрузка избранных навыков...</string>
+  <string name="manage_skills" translatable="false">Управление навыками</string>
+  <string name="manage_skills_description" translatable="false">Просматривайте, создавайте и управляйте своими навыками</string>
+  <string name="skill_limit_warning" translatable="false">Включение более чем %s может повлиять на производительность.</string>
+  <string name="no_directory_selected" translatable="false">Папка не выбрана</string>
+  <string name="pick_skill_dir" translatable="false">Выберите корневой каталог навыка</string>
+  <string name="prompt_copied_message" translatable="false">Промпт скопирован в буфер обмена. Вставьте его в любимое приложение LLM, чтобы сгенерировать код, а затем скопируйте и вставьте код сюда.</string>
+  <string name="prompt_chip_kitchen_adventure" translatable="false">Кухонное приключение</string>
+  <string name="prompt_chip_calculate_hash" translatable="false">Вычислить хэш</string>
+  <string name="prompt_chip_query_wikipedia" translatable="false">Запросить Wikipedia</string>
+  <string name="prompt_chip_plot_chart" translatable="false">Построить график</string>
+  <string name="prompt_chip_interactive_map" translatable="false">Интерактивная карта</string>
+  <string name="prompt_chip_text_spinner" translatable="false">Провернуть подпись на моей голове</string>
+  <string name="prompt_chip_send_email" translatable="false">Отправить письмо</string>
+  <string name="replace_skill_dialog_title" translatable="false">Заменить существующий навык</string>
+  <string name="replace_skill_dialog_content" translatable="false">Навык с таким именем уже существует. Хотите заменить его?</string>
+  <string name="search_skill" translatable="false">Поиск навыка</string>
+  <string name="select_script" translatable="false">Выбрать скрипт</string>
+  <string name="script_name" translatable="false">Имя скрипта</string>
+  <string name="script_content" translatable="false">Содержимое скрипта</string>
+  <string name="skills" translatable="false">Навыки</string>
+  <plurals name="skills_count" translatable="false">
+    <item quantity="one">%d навык</item>
+    <item quantity="few">%d навыка</item>
+    <item quantity="many">%d навыков</item>
+    <item quantity="other">%d навыков</item>
+  </plurals>
+  <string name="skill_name_input_description" translatable="false">ОБЯЗАТЕЛЬНО. В формате my-skill-name</string>
+  <string name="skill_description_input_description" translatable="false">ОБЯЗАТЕЛЬНО. Краткое описание функции навыка и условий или ключевых слов запуска.</string>
+  <string name="skill_instructions_input_description" translatable="false">Подробные инструкции в формате Markdown, которым LLM должен следовать для выполнения задачи.</string>
+  <string name="use_call_js_template" translatable="false">Использовать шаблон Call JS</string>
+
+  <!-- The following entries are for accessibility -->
+
+  <!-- Content description spoken when the "add" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_add_icon">Добавить</string>
+  <!-- Content description spoken when the "import model" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_import_model_button">Импортировать модель</string>
+  <!-- Content description spoken when the task card is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_task_card">Задача %1$s с %2$d моделями</string>
+  <!-- Content description spoken when the error icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_error">Ошибка</string>
+  <!-- Content description spoken when the "import model from local file" button is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_import_model_from_local_file_button">Импортировать модель из локального файла</string>
+  <!-- Content description spoken when the back arrow icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_navigate_back_icon">Назад</string>
+  <!-- Content description spoken when the settings icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_app_settings_icon">Настройки</string>
+  <!-- Content description spoken when the done icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_done_icon">Готово</string>
+  <!-- Content description spoken when the collapse icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_collapse_icon">Свернуть</string>
+  <!-- Content description spoken when the expand icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_expand_icon">Развернуть</string>
+  <!-- Content description spoken when the stop icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_stop_icon">Остановить</string>
+  <!-- Content description spoken when the delete icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_delete_icon">Удалить</string>
+  <!-- Content description spoken when the close icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_close_icon">Закрыть</string>
+  <!-- Content description spoken when the selected icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_selected_icon">Выбрано</string>
+  <!-- Content description spoken when the "model settings" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_model_settings_icon">Настройки модели</string>
+  <!-- Content description spoken when the "reset session" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_reset_session_icon">Сбросить сеанс</string>
+  <!-- Content description spoken when the "model picker chip" is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_change_model">Текущая модель — %1$s. Нажмите, чтобы сменить модель.</string>
+  <!-- Content description spoken when the "close image viewer" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_close_image_viewer_icon">Закрыть просмотр изображений</string>
+  <!-- Content description spoken when the "copy to clipboard" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_copy_to_clipboard_icon">Копировать в буфер обмена</string>
+  <!-- Content description spoken when the "prompt input" text field is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_prompt_input_text_field">Поле ввода запроса</string>
+  <!-- Content description spoken when the "send prompt" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_send_prompt_icon">Отправить запрос</string>
+  <!-- Content description spoken when the "model response" text is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_model_response_text">Текст ответа модели</string>
+  <!-- Content description spoken when the "clear input history" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_clear_input_history_icon">Очистить историю ввода</string>
+  <!-- Content description spoken when the "delete input history entry" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_delete_input_history_entry_icon">Удалить запись из истории ввода</string>
+  <!-- Content description spoken when the "content input field" is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_content_input_field">Поле ввода содержимого</string>
+  <!-- Content description spoken when the "add example prompt" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_add_example_prompt_icon">Добавить пример запроса</string>
+  <!-- Content description spoken when the image thumbnail is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_image_thumbnail">Миниатюра изображения</string>
+  <!-- Content description spoken when an user image is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_user_image">Изображение пользователя %1$d</string>
+  <!-- Content description spoken when an user image in a group is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_user_image_in_group">Изображение пользователя %1$d из %2$d</string>
+  <!-- Content description spoken when the "add content" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_add_content_icon">Добавить содержимое</string>
+  <!-- Content description spoken when the "camera shutter" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_camera_shutter_icon">Спуск затвора камеры</string>
+  <!-- Content description spoken when the "toggle front or back camera" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_toggle_front_back_camera_icon">Переключить фронтальную или основную камеру</string>
+  <!-- Content description spoken when the "pick file" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_pick_file">Выбрать файл</string>
+  <!-- Content description spoken when the "play audio" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_play_audio_icon">Воспроизвести аудио</string>
+  <!-- Content description spoken when the "stop playback" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_stop_playback_icon">Остановить воспроизведение</string>
+  <!-- Content description spoken when the "send audio clip" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_send_audio_clip_icon">Отправить аудиоклип</string>
+  <!-- Content description spoken when the "start recording" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_start_recording">Начать запись</string>
+  <!-- Content description spoken when the "downloaded" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_downloaded_icon">Загружено</string>
+  <!-- Content description spoken when the "not downloaded" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_not_downloaded_icon">Не загружено</string>
+  <!-- Content description spoken when the "downloading" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_downloading_icon">Загрузка</string>
+  <!-- Content description spoken when the "download failed" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_download_failed_icon">Сбой загрузки</string>
+  <!-- Content description spoken when the "download failed" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_chat_panel">Панель чата</string>
+  <!-- Content description spoken when the "switch to keyboard" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_switch_to_keyboard">Переключиться на клавиатуру</string>
+  <!-- Content description spoken when the "switch to voice" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_switch_to_voice">Переключиться на голосовой ввод</string>
+  <!-- Content description spoken when the "show history" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_show_history">Показать историю</string>
+  <!-- Content description spoken when the "more options" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_more_options">Ещё параметры</string>
+  <!-- Content description spoken when the "help" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_help">Справка</string>
+  <!-- Content description spoken when the "menu" icon is focused. [CHAR_LIMIT=NONE] -->
+  <string name="cd_menu">Меню</string>
+
+  <!-- Strings extracted from hardcoded UI text -->
+  <string name="acknowledge_user_agreement_title">Подтверждение пользовательского соглашения</string>
+  <string name="acknowledge_user_agreement_content">Это закрытая модель. Нажмите кнопку ниже, чтобы просмотреть и принять пользовательское соглашение. После принятия просто закройте вкладку, чтобы продолжить загрузку модели.</string>
+  <string name="open_user_agreement">Открыть пользовательское соглашение</string>
+  <string name="network_error_title">Неизвестная ошибка сети</string>
+  <string name="network_error_message">Проверьте подключение к интернету.</string>
+  <string name="network_error_retry_message">Проверьте подключение к интернету и повторите попытку позже.</string>
+  <string name="retry">Повторить</string>
+  <string name="read_more">Подробнее</string>
+  <string name="enter_content">Введите содержимое</string>
+  <string name="preview_prompt_label">Предпросмотр запроса</string>
+  <string name="try_gemma4_today">Попробуйте Gemma 4 сегодня</string>
+  <string name="explore_other_use_cases">Изучите другие варианты использования</string>
+  <string name="gemma4_available">Gemma 4: теперь доступна</string>
+  <string name="gemma4_description">Созданная на базе той же передовой технологии, что и Gemini 3, Gemma 4 привносит интеллект переднего края на ваши мобильные и периферийные устройства.</string>
+
+</resources>

@@ -528,14 +528,14 @@ fun HomeScreen(
         )
       },
       title = { Text(uiState.loadingModelAllowlistError) },
-      text = { Text("Please check your internet connection and try again later.") },
+      text = { Text(stringResource(R.string.network_error_retry_message)) },
       onDismissRequest = { modelManagerViewModel.loadModelAllowlist() },
       confirmButton = {
-        TextButton(onClick = { modelManagerViewModel.loadModelAllowlist() }) { Text("Retry") }
+        TextButton(onClick = { modelManagerViewModel.loadModelAllowlist() }) { Text(stringResource(R.string.retry)) }
       },
       dismissButton = {
         TextButton(onClick = { modelManagerViewModel.clearLoadModelAllowlistError() }) {
-          Text("Cancel")
+          Text(stringResource(R.string.cancel))
         }
       },
     )
@@ -719,7 +719,7 @@ private fun TryGm4IntroText(enableAnimation: Boolean) {
       tint = MaterialTheme.colorScheme.primary,
     )
     Text(
-      text = "Try Gemma 4 today",
+      text = stringResource(R.string.try_gemma4_today),
       style =
         MaterialTheme.typography.headlineSmall.copy(
           fontWeight = FontWeight.Medium,
@@ -882,7 +882,7 @@ private fun TaskList(
       }
 
       Text(
-        text = "Explore other use cases",
+        text = stringResource(R.string.explore_other_use_cases),
         style =
           MaterialTheme.typography.headlineSmall.copy(
             fontWeight = FontWeight.Medium,
