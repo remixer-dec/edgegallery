@@ -42,6 +42,12 @@ import java.io.File
 import java.io.FileInputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.channels.FileChannel
@@ -69,6 +75,21 @@ fun processLlmResponse(response: String): String {
 inline fun <reified T> getJsonResponse(url: String): JsonObjAndTextContent<T>? {
   try {
     val connection = URL(url).openConnection() as HttpURLConnection
+
+    // Android 7 (API 24-25) may not trust the root certificates used by some CDNs
+    // (e.g. GitHub raw content). Skip TLS verification on these older versions.
+    if (connection is HttpsURLConnection && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+      val trustAll = arrayOf<TrustManager>(object : X509TrustManager {
+        override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
+        override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
+        override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+      })
+      val sslContext = SSLContext.getInstance("TLS")
+      sslContext.init(null, trustAll, SecureRandom())
+      connection.sslSocketFactory = sslContext.socketFactory
+      connection.hostnameVerifier = javax.net.ssl.HostnameVerifier { _, _ -> true }
+    }
+
     connection.requestMethod = "GET"
     connection.connect()
 

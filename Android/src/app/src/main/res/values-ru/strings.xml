@@ -429,4 +429,37 @@
   <string name="gemma4_available">Gemma 4: теперь доступна</string>
   <string name="gemma4_description">Созданная на базе той же передовой технологии, что и Gemini 3, Gemma 4 привносит интеллект переднего края на ваши мобильные и периферийные устройства.</string>
 
+  <!-- Settings dialog strings -->
+  <string name="settings_dialog_title">Настройки</string>
+  <string name="settings_dialog_app_version">Версия приложения: %s</string>
+  <string name="settings_dialog_theme_section">Тема</string>
+  <string name="settings_theme_auto">Авто</string>
+  <string name="settings_theme_light">Светлая</string>
+  <string name="settings_theme_dark">Тёмная</string>
+  <string name="settings_theme_unknown">Неизвестно</string>
+  <string name="settings_dialog_hf_token_section">Токен доступа HuggingFace</string>
+  <string name="settings_dialog_token_not_available">Недоступно</string>
+  <string name="settings_dialog_token_auto_retrieve">Токен будет получен автоматически при скачивании закрытой модели</string>
+  <string name="settings_dialog_token_expires_at">Истекает: %s</string>
+  <string name="settings_dialog_clear_token">Очистить</string>
+  <string name="settings_dialog_enter_token_manually">Ввести токен вручную</string>
+  <string name="settings_dialog_third_party_libs_section">Сторонние библиотеки</string>
+  <string name="settings_dialog_view_licenses">Просмотреть лицензии</string>
+
+  <!-- Chat / input strings -->
+  <string name="record_audio_clip">Записать аудиоклип</string>
+  <string name="pick_wav_file">Выбрать wav-файл</string>
+  <string name="clear_history_title">Очистить историю?</string>
+  <string name="clear_history_message">Вы уверены, что хотите очистить историю? Это действие нельзя отменить.</string>
+  <string name="download_and_try_it">Скачать и попробовать</string>
+
+  <!-- Model import / manager strings -->
+  <string name="from_local_model_file">Из локального файла модели</string>
+  <string name="unsupported_file_type_title">Неподдерживаемый тип файла</string>
+  <string name="unsupported_file_type_message">Поддерживаются только файлы \".task\" или \".litertlm\".</string>
+  <string name="unsupported_model_type_title">Неподдерживаемый тип модели</string>
+  <string name="unsupported_model_type_message">Похоже, это веб-модель, которая не поддерживается приложением.</string>
+  <string name="import_model_btn">Импортировать</string>
+  <string name="import_model_title">Импортировать модель</string>
+
 </resources>

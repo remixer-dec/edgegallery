@@ -79,9 +79,9 @@ import com.google.ai.edge.gallery.ui.common.tos.AppTosDialog
 import com.google.ai.edge.gallery.ui.modelmanager.ModelManagerViewModel
 import com.google.ai.edge.gallery.ui.theme.ThemeSettings
 import com.google.ai.edge.gallery.ui.theme.labelSmallNarrow
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import android.os.Build
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import kotlin.math.min
 
@@ -96,11 +96,7 @@ fun SettingsDialog(
 ) {
   var selectedTheme by remember { mutableStateOf(curThemeOverride) }
   var hfToken by remember { mutableStateOf(modelManagerViewModel.getTokenStatusAndData().data) }
-  val dateFormatter = remember {
-    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-      .withZone(ZoneId.systemDefault())
-      .withLocale(Locale.getDefault())
-  }
+  val dateFormatter = remember { SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) }
   var customHfToken by remember { mutableStateOf("") }
   var isFocused by remember { mutableStateOf(false) }
   val focusRequester = remember { FocusRequester() }
@@ -126,13 +122,13 @@ fun SettingsDialog(
         // Dialog title and subtitle.
         Column {
           Text(
-            "Settings",
+            stringResource(R.string.settings_dialog_title),
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(bottom = 8.dp),
           )
           // Subtitle.
           Text(
-            "App version: ${BuildConfig.VERSION_NAME}",
+            stringResource(R.string.settings_dialog_app_version, BuildConfig.VERSION_NAME),
             style = labelSmallNarrow,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.offset(y = (-6).dp),
@@ -147,7 +143,7 @@ fun SettingsDialog(
           // Theme switcher.
           Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
             Text(
-              "Theme",
+              stringResource(R.string.settings_dialog_theme_section),
               style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium),
             )
             MultiChoiceSegmentedButtonRow {
@@ -168,20 +164,22 @@ fun SettingsDialog(
                     // Update ui mode.
                     //
                     // This is necessary to make other Activities launched from MainActivity to have
-                    // the correct theme.
-                    val uiModeManager =
-                      context.applicationContext.getSystemService(Context.UI_MODE_SERVICE)
-                        as UiModeManager
-                    if (theme == Theme.THEME_AUTO) {
-                      uiModeManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_AUTO)
-                    } else if (theme == Theme.THEME_LIGHT) {
-                      uiModeManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_NO)
-                    } else {
-                      uiModeManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_YES)
+                    // the correct theme. setApplicationNightMode requires API 31+.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                      val uiModeManager =
+                        context.applicationContext.getSystemService(Context.UI_MODE_SERVICE)
+                          as UiModeManager
+                      if (theme == Theme.THEME_AUTO) {
+                        uiModeManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_AUTO)
+                      } else if (theme == Theme.THEME_LIGHT) {
+                        uiModeManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_NO)
+                      } else {
+                        uiModeManager.setApplicationNightMode(UiModeManager.MODE_NIGHT_YES)
+                      }
                     }
                   },
                   checked = theme == selectedTheme,
-                  label = { Text(themeLabel(theme)) },
+                  label = { Text(themeLabel(theme, context)) },
                 )
               }
             }
@@ -193,7 +191,7 @@ fun SettingsDialog(
             verticalArrangement = Arrangement.spacedBy(4.dp),
           ) {
             Text(
-              "HuggingFace access token",
+              stringResource(R.string.settings_dialog_hf_token_section),
               style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium),
             )
             // Show the start of the token.
@@ -205,18 +203,18 @@ fun SettingsDialog(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
               )
               Text(
-                "Expires at: ${dateFormatter.format(Instant.ofEpochMilli(curHfToken.expiresAtMs))}",
+                stringResource(R.string.settings_dialog_token_expires_at, dateFormatter.format(Date(curHfToken.expiresAtMs))),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
               )
             } else {
               Text(
-                "Not available",
+                stringResource(R.string.settings_dialog_token_not_available),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
               )
               Text(
-                "The token will be automatically retrieved when a gated model is downloaded",
+                stringResource(R.string.settings_dialog_token_auto_retrieve),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
               )
@@ -229,7 +227,7 @@ fun SettingsDialog(
                 },
                 enabled = curHfToken != null,
               ) {
-                Text("Clear")
+                Text(stringResource(R.string.settings_dialog_clear_token))
               }
               val handleSaveToken = {
                 modelManagerViewModel.saveAccessToken(
@@ -270,7 +268,7 @@ fun SettingsDialog(
                     Box(modifier = Modifier.padding(start = 16.dp).weight(1f)) {
                       if (customHfToken.isEmpty()) {
                         Text(
-                          "Enter token manually",
+                          stringResource(R.string.settings_dialog_enter_token_manually),
                           color = MaterialTheme.colorScheme.onSurfaceVariant,
                           style = MaterialTheme.typography.bodySmall,
                         )
@@ -294,7 +292,7 @@ fun SettingsDialog(
           // Third party licenses.
           Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
             Text(
-              "Third-party libraries",
+              stringResource(R.string.settings_dialog_third_party_libs_section),
               style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium),
             )
             OutlinedButton(
@@ -305,7 +303,7 @@ fun SettingsDialog(
                 context.startActivity(intent)
               }
             ) {
-              Text("View licenses")
+              Text(stringResource(R.string.settings_dialog_view_licenses))
             }
           }
 
@@ -337,7 +335,7 @@ fun SettingsDialog(
           horizontalArrangement = Arrangement.End,
         ) {
           // Close button
-          Button(onClick = { onDismissed() }) { Text("Close") }
+          Button(onClick = { onDismissed() }) { Text(stringResource(R.string.close)) }
         }
       }
     }
@@ -348,11 +346,11 @@ fun SettingsDialog(
   }
 }
 
-private fun themeLabel(theme: Theme): String {
+private fun themeLabel(theme: Theme, context: android.content.Context): String {
   return when (theme) {
-    Theme.THEME_AUTO -> "Auto"
-    Theme.THEME_LIGHT -> "Light"
-    Theme.THEME_DARK -> "Dark"
-    else -> "Unknown"
+    Theme.THEME_AUTO -> context.getString(R.string.settings_theme_auto)
+    Theme.THEME_LIGHT -> context.getString(R.string.settings_theme_light)
+    Theme.THEME_DARK -> context.getString(R.string.settings_theme_dark)
+    else -> context.getString(R.string.settings_theme_unknown)
   }
 }
