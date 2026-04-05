@@ -35,6 +35,7 @@ import com.google.ai.edge.gallery.GalleryTopAppBar
 import com.google.ai.edge.gallery.data.AppBarAction
 import com.google.ai.edge.gallery.data.AppBarActionType
 import com.google.ai.edge.gallery.data.Model
+import androidx.compose.ui.res.stringResource
 import com.google.ai.edge.gallery.data.Task
 
 /** A screen to manage models. */
@@ -49,7 +50,7 @@ fun ModelManager(
   modifier: Modifier = Modifier,
 ) {
   // Set title based on the task.
-  val title = if (task.labelResId != 0) androidx.compose.ui.res.stringResource(task.labelResId) else task.label
+  val title = if (task.labelResId != 0) stringResource(task.labelResId) else task.label
   // Model count.
   val modelCount by remember {
     derivedStateOf {

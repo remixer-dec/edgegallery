@@ -42,8 +42,11 @@ import com.google.ai.edge.gallery.data.Category
 import com.google.ai.edge.gallery.data.Model
 import com.google.ai.edge.gallery.data.Task
 import com.google.ai.edge.gallery.runtime.runtimeHelper
+import com.google.ai.edge.gallery.ui.theme.SystemPromptSettings
 import com.google.ai.edge.gallery.ui.theme.emptyStateContent
 import com.google.ai.edge.gallery.ui.theme.emptyStateTitle
+import com.google.ai.edge.litertlm.Content
+import com.google.ai.edge.litertlm.Contents
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -80,6 +83,9 @@ class LlmChatTask @Inject constructor() : CustomTask {
     model: Model,
     onDone: (String) -> Unit,
   ) {
+    val promptText = SystemPromptSettings.systemPrompt.value
+    val sysInstruction: Contents? =
+      if (promptText.isNotEmpty()) Contents.of(listOf(Content.Text(promptText))) else null
     model.runtimeHelper.initialize(
       context = context,
       model = model,
@@ -87,6 +93,7 @@ class LlmChatTask @Inject constructor() : CustomTask {
       supportAudio = false,
       onDone = onDone,
       coroutineScope = coroutineScope,
+      systemInstruction = sysInstruction,
     )
   }
 

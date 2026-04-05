@@ -37,6 +37,8 @@ import com.google.ai.edge.gallery.ui.modelmanager.ModelManagerViewModel
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.ExperimentalApi
 import com.google.ai.edge.litertlm.ToolProvider
+import com.google.ai.edge.gallery.proto.AcceleratorOverride
+import com.google.ai.edge.gallery.ui.theme.AcceleratorSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +59,12 @@ open class LlmChatViewModelBase() : ChatViewModel() {
     onError: (String) -> Unit,
     allowThinking: Boolean = false,
   ) {
-    val accelerator = model.getStringConfigValue(key = ConfigKeys.ACCELERATOR, defaultValue = "")
+    val modelAccelerator = model.getStringConfigValue(key = ConfigKeys.ACCELERATOR, defaultValue = "")
+    val accelerator = when (AcceleratorSettings.acceleratorOverride.value) {
+      AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU -> "cpu"
+      AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU -> "gpu"
+      else -> modelAccelerator
+    }
     viewModelScope.launch(Dispatchers.Default) {
       setInProgress(true)
       setPreparing(true)

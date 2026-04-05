@@ -17,7 +17,10 @@
 package com.google.ai.edge.gallery
 
 import android.app.Application
+import android.util.Log
 import com.google.ai.edge.gallery.data.DataStoreRepository
+import com.google.ai.edge.gallery.ui.theme.AcceleratorSettings
+import com.google.ai.edge.gallery.ui.theme.SystemPromptSettings
 import com.google.ai.edge.gallery.ui.theme.ThemeSettings
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.HiltAndroidApp
@@ -31,9 +34,26 @@ class GalleryApplication : Application() {
   override fun onCreate() {
     super.onCreate()
 
+    // Pre-load custom LiteRT lib BEFORE any litertlm class is accessed.
+    val overridePath = dataStoreRepository.readLiteRtLibOverridePath()
+    if (overridePath.isNotEmpty() && java.io.File(overridePath).exists()) {
+      try {
+        System.load(overridePath)
+        Log.i(TAG, "Loaded custom LiteRT lib: $overridePath")
+      } catch (e: Exception) {
+        Log.e(TAG, "Failed to load custom LiteRT lib", e)
+      }
+    }
+
     // Load saved theme.
     ThemeSettings.themeOverride.value = dataStoreRepository.readTheme()
+    AcceleratorSettings.acceleratorOverride.value = dataStoreRepository.readAcceleratorOverride()
+    SystemPromptSettings.systemPrompt.value = dataStoreRepository.readSystemPrompt()
 
     FirebaseApp.initializeApp(this)
+  }
+
+  companion object {
+    private const val TAG = "GalleryApplication"
   }
 }

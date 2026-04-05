@@ -27,6 +27,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,11 +50,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -73,6 +79,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -80,6 +87,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
@@ -129,6 +137,7 @@ fun ChatPanel(
   val snackbarHostState = remember { SnackbarHostState() }
   val scope = rememberCoroutineScope()
   val haptic = LocalHapticFeedback.current
+  val clipboardManager = LocalClipboardManager.current
   val imageCountToLastConfigChange =
     remember(messages) {
       var imageCount = 0
@@ -173,6 +182,11 @@ fun ChatPanel(
   var pickedAudioClipsCount by remember { mutableIntStateOf(0) }
 
   var showImageLimitBanner by remember { mutableStateOf(false) }
+
+  // State for the edit dialog.
+  var editDialogMessage by remember { mutableStateOf<ChatMessageText?>(null) }
+  var editDialogMessageIndex by remember { mutableIntStateOf(-1) }
+  var editDialogText by remember { mutableStateOf("") }
 
   LaunchedEffect(showImageLimitBanner) {
     if (showImageLimitBanner) {
@@ -309,6 +323,9 @@ fun ChatPanel(
             }
             val bubbleBorderRadius = dimensionResource(R.dimen.chat_bubble_corner_radius)
 
+            // Per-item popup menu state.
+            var showPopupMenu by remember { mutableStateOf(false) }
+
             Column(
               modifier =
                 Modifier.fillMaxWidth()
@@ -323,7 +340,7 @@ fun ChatPanel(
               // Sender row.
               var agentName = stringResource(task.agentNameRes)
               if (message.accelerator.isNotEmpty()) {
-                agentName = "$agentName on ${message.accelerator}"
+                agentName = "$agentName ${stringResource(R.string.message_on_backend, message.accelerator)}"
               }
               if (!message.hideSenderLabel) {
                 MessageSender(
@@ -384,7 +401,19 @@ fun ChatPanel(
                     }
                     messageBubbleModifier = messageBubbleModifier.background(backgroundColor)
                   }
-                  Box(modifier = messageBubbleModifier) {
+
+                  // Only add click handler for TEXT messages (user or agent).
+                  val isClickableMessage = message is ChatMessageText && !uiState.inProgress
+                  Box(
+                    modifier =
+                      messageBubbleModifier.then(
+                        if (isClickableMessage) {
+                          Modifier.clickable { showPopupMenu = true }
+                        } else {
+                          Modifier
+                        }
+                      )
+                  ) {
                     when (message) {
                       // Text
                       is ChatMessageText ->
@@ -438,6 +467,90 @@ fun ChatPanel(
                         )
 
                       else -> {}
+                    }
+
+                    // Popup menu for text messages.
+                    if (message is ChatMessageText) {
+                      DropdownMenu(
+                        expanded = showPopupMenu,
+                        onDismissRequest = { showPopupMenu = false },
+                      ) {
+                        // Delete
+                        DropdownMenuItem(
+                          text = { Text(stringResource(R.string.message_action_delete)) },
+                          onClick = {
+                            showPopupMenu = false
+                            viewModel.removeMessageAt(model = selectedModel, index = index)
+                          },
+                        )
+                        // Copy text
+                        DropdownMenuItem(
+                          text = { Text(stringResource(R.string.message_action_copy)) },
+                          onClick = {
+                            showPopupMenu = false
+                            clipboardManager.setText(AnnotatedString(message.content))
+                          },
+                        )
+                        // Edit
+                        DropdownMenuItem(
+                          text = { Text(stringResource(R.string.message_action_edit)) },
+                          onClick = {
+                            showPopupMenu = false
+                            editDialogMessage = message
+                            editDialogMessageIndex = index
+                            editDialogText = message.content
+                          },
+                        )
+                        // Regenerate
+                        DropdownMenuItem(
+                          text = { Text(stringResource(R.string.message_action_regenerate)) },
+                          onClick = {
+                            showPopupMenu = false
+                            if (message.side == ChatSide.USER) {
+                              // Truncate history after user message and regenerate.
+                              viewModel.truncateMessagesFrom(
+                                model = selectedModel,
+                                fromIndex = index,
+                              )
+                              onSendMessage(
+                                selectedModel,
+                                listOf(
+                                  ChatMessageText(
+                                    content = message.content,
+                                    side = ChatSide.USER,
+                                  )
+                                ),
+                              )
+                            } else {
+                              // AI message: find the preceding user message and regenerate from there.
+                              viewModel.truncateMessagesFrom(
+                                model = selectedModel,
+                                fromIndex = index,
+                              )
+                              // Find the last user text message before this index.
+                              val currentMessages =
+                                uiState.messagesByModel[selectedModel.name] ?: listOf()
+                              val lastUserMsg =
+                                currentMessages
+                                  .take(index)
+                                  .lastOrNull {
+                                    it is ChatMessageText && it.side == ChatSide.USER
+                                  }
+                              if (lastUserMsg != null && lastUserMsg is ChatMessageText) {
+                                onSendMessage(
+                                  selectedModel,
+                                  listOf(
+                                    ChatMessageText(
+                                      content = lastUserMsg.content,
+                                      side = ChatSide.USER,
+                                    )
+                                  ),
+                                )
+                              }
+                            }
+                          },
+                        )
+                      }
                     }
                   }
 
@@ -595,6 +708,50 @@ fun ChatPanel(
       messageToBenchmark = benchmarkMessage.value,
       onBenchmarkClicked = { message, warmUpIterations, benchmarkIterations ->
         onBenchmarkClicked(selectedModel, message, warmUpIterations, benchmarkIterations)
+      },
+    )
+  }
+
+  // Edit message dialog.
+  val currentEditMessage = editDialogMessage
+  if (currentEditMessage != null) {
+    AlertDialog(
+      onDismissRequest = { editDialogMessage = null },
+      title = { Text(stringResource(R.string.message_action_edit)) },
+      text = {
+        OutlinedTextField(
+          value = editDialogText,
+          onValueChange = { editDialogText = it },
+          modifier = Modifier.fillMaxWidth(),
+          minLines = 3,
+        )
+      },
+      confirmButton = {
+        TextButton(
+          onClick = {
+            val updatedMessage =
+              ChatMessageText(
+                content = editDialogText,
+                side = currentEditMessage.side,
+                latencyMs = currentEditMessage.latencyMs,
+                accelerator = currentEditMessage.accelerator,
+                isMarkdown = currentEditMessage.isMarkdown,
+                hideSenderLabel = currentEditMessage.hideSenderLabel,
+                data = currentEditMessage.data,
+              )
+            viewModel.replaceMessage(
+              model = selectedModel,
+              index = editDialogMessageIndex,
+              message = updatedMessage,
+            )
+            editDialogMessage = null
+          }
+        ) {
+          Text("Save")
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = { editDialogMessage = null }) { Text("Cancel") }
       },
     )
   }
