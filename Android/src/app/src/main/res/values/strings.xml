@@ -417,4 +417,37 @@
   <!-- Content description spoken when the "menu" icon is focused. [CHAR_LIMIT=NONE] -->
   <string name="cd_menu">Menu</string>
 
+  <!-- Settings dialog strings -->
+  <string name="settings_dialog_title">Settings</string>
+  <string name="settings_dialog_app_version">App version: %s</string>
+  <string name="settings_dialog_theme_section">Theme</string>
+  <string name="settings_theme_auto">Auto</string>
+  <string name="settings_theme_light">Light</string>
+  <string name="settings_theme_dark">Dark</string>
+  <string name="settings_theme_unknown">Unknown</string>
+  <string name="settings_dialog_hf_token_section">HuggingFace access token</string>
+  <string name="settings_dialog_token_not_available">Not available</string>
+  <string name="settings_dialog_token_auto_retrieve">The token will be automatically retrieved when a gated model is downloaded</string>
+  <string name="settings_dialog_token_expires_at">Expires at: %s</string>
+  <string name="settings_dialog_clear_token">Clear</string>
+  <string name="settings_dialog_enter_token_manually">Enter token manually</string>
+  <string name="settings_dialog_third_party_libs_section">Third-party libraries</string>
+  <string name="settings_dialog_view_licenses">View licenses</string>
+
+  <!-- Chat / input strings -->
+  <string name="record_audio_clip">Record audio clip</string>
+  <string name="pick_wav_file">Pick wav file</string>
+  <string name="clear_history_title">Clear history?</string>
+  <string name="clear_history_message">Are you sure you want to clear the history? This action cannot be undone.</string>
+  <string name="download_and_try_it">Download &amp; Try it</string>
+
+  <!-- Model import / manager strings -->
+  <string name="from_local_model_file">From local model file</string>
+  <string name="unsupported_file_type_title">Unsupported file type</string>
+  <string name="unsupported_file_type_message">Only \".task\" or \".litertlm\" file type is supported.</string>
+  <string name="unsupported_model_type_title">Unsupported model type</string>
+  <string name="unsupported_model_type_message">Looks like the model is a web-only model and is not supported by the app.</string>
+  <string name="import_model_btn">Import</string>
+  <string name="import_model_title">Import Model</string>
+
 </resources>
