@@ -84,7 +84,7 @@ fun ModelPicker(
         contentDescription = null,
       )
       Text(
-        "${task.label} models",
+        stringResource(R.string.task_models_label, if (task.labelResId != 0) stringResource(task.labelResId) else task.label),
         modifier = Modifier.fillMaxWidth(),
         style = MaterialTheme.typography.titleMedium,
         color = getTaskIconColor(task = task),

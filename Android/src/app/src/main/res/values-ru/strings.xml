@@ -462,4 +462,108 @@
   <string name="import_model_btn">Импортировать</string>
   <string name="import_model_title">Импортировать модель</string>
 
+  <!-- Task labels -->
+  <string name="task_label_ai_chat" translatable="false">ИИ-чат</string>
+  <string name="task_label_ask_image" translatable="false">Спросить по изображению</string>
+  <string name="task_label_audio_scribe" translatable="false">Аудио-транскрипция</string>
+  <string name="task_label_prompt_lab" translatable="false">Лаборатория промптов</string>
+  <string name="task_label_agent_skills" translatable="false">Агентские навыки</string>
+  <string name="task_label_tiny_garden" translatable="false">Маленький сад</string>
+
+  <!-- Task descriptions -->
+  <string name="task_desc_ai_chat" translatable="false">Общайтесь с большими языковыми моделями на устройстве</string>
+  <string name="task_short_desc_ai_chat" translatable="false">Чат с LLM на устройстве</string>
+  <string name="task_desc_ask_image" translatable="false">Задавайте вопросы об изображениях с помощью LLM на устройстве</string>
+  <string name="task_short_desc_ask_image" translatable="false">Вопросы по изображениям</string>
+  <string name="task_desc_audio_scribe" translatable="false">Мгновенно расшифровывайте и/или переводите аудиоклипы с помощью LLM на устройстве</string>
+  <string name="task_short_desc_audio_scribe" translatable="false">Расшифровка и перевод аудио</string>
+  <string name="task_desc_prompt_lab" translatable="false">Однократные сценарии использования с LLM на устройстве</string>
+  <string name="task_short_desc_prompt_lab" translatable="false">Однократные сценарии</string>
+  <string name="task_desc_agent_skills" translatable="false">Общайтесь с LLM на устройстве с помощью навыков и инструментов</string>
+  <string name="task_short_desc_agent_skills" translatable="false">Агентские задачи в чате</string>
+  <string name="task_desc_tiny_garden" translatable="false">Используйте естественный язык для посадки, полива и сбора урожая в этой полностью офлайн мини-игре.\n\nПримечание: работает на экспериментальной модели FunctionGemma, оптимизированной по скорости. Из-за компактного размера (270M) хорошо справляется с простыми инструкциями, но реакция на сложные взаимодействия может варьироваться.</string>
+  <string name="task_short_desc_tiny_garden" translatable="false">Естественный язык для посадки</string>
+
+  <!-- Config key labels -->
+  <string name="config_label_max_tokens" translatable="false">Макс. токенов</string>
+  <string name="config_label_topk" translatable="false">TopK</string>
+  <string name="config_label_topp" translatable="false">TopP</string>
+  <string name="config_label_temperature" translatable="false">Температура</string>
+  <string name="config_label_default_max_tokens" translatable="false">Макс. токенов по умолч.</string>
+  <string name="config_label_default_topk" translatable="false">TopK по умолчанию</string>
+  <string name="config_label_default_topp" translatable="false">TopP по умолчанию</string>
+  <string name="config_label_default_temperature" translatable="false">Температура по умолч.</string>
+  <string name="config_label_support_image" translatable="false">Поддержка изображений</string>
+  <string name="config_label_support_audio" translatable="false">Поддержка аудио</string>
+  <string name="config_label_support_tiny_garden" translatable="false">Поддержка Tiny Garden</string>
+  <string name="config_label_support_mobile_actions" translatable="false">Поддержка Mobile Actions</string>
+  <string name="config_label_support_thinking" translatable="false">Поддержка рассуждений</string>
+  <string name="config_label_enable_thinking" translatable="false">Включить рассуждения</string>
+  <string name="config_label_max_result_count" translatable="false">Макс. кол-во результатов</string>
+  <string name="config_label_use_gpu" translatable="false">Использовать GPU</string>
+  <string name="config_label_accelerator" translatable="false">Ускоритель</string>
+  <string name="config_label_vision_accelerator" translatable="false">Ускоритель зрения</string>
+  <string name="config_label_compatible_accelerators" translatable="false">Совместимые ускорители</string>
+  <string name="config_label_warm_up_iterations" translatable="false">Итерации прогрева</string>
+  <string name="config_label_benchmark_iterations" translatable="false">Итерации бенчмарка</string>
+  <string name="config_label_iterations" translatable="false">Итерации</string>
+  <string name="config_label_theme" translatable="false">Тема</string>
+  <string name="config_label_name" translatable="false">Имя</string>
+  <string name="config_label_model_type" translatable="false">Тип модели</string>
+  <string name="config_label_model" translatable="false">Модель</string>
+  <string name="config_label_reset_conversation_turn_count" translatable="false">Количество ходов до сброса беседы</string>
+  <string name="config_label_prefill_tokens" translatable="false">Токены предзаполнения</string>
+  <string name="config_label_decode_tokens" translatable="false">Токены декодирования</string>
+  <string name="config_label_number_of_runs" translatable="false">Количество запусков</string>
+
+  <!-- UI strings: promo screen -->
+  <string name="promo_introducing" translatable="false">Представляем</string>
+  <string name="promo_gemma4_description" translatable="false">Ощутите возможности самых продвинутых открытых моделей, разработанных для запуска передового интеллекта прямо на вашем устройстве.</string>
+  <string name="promo_dismiss" translatable="false">Закрыть</string>
+
+  <!-- UI strings: home screen promo tiles -->
+  <string name="gemma4_announcement" translatable="false">Gemma 4 E2B и E4B уже здесь! Попробуйте их в ИИ-чате, Агентских навыках или в сценариях ниже.</string>
+  <string name="gemma4_chat_task_description" translatable="false">Общайтесь с последней моделью Gemma 4 уже сегодня</string>
+  <string name="gemma4_agent_task_description" translatable="false">Пусть Gemma 4 выполняет агентские задачи за\u00A0вас</string>
+
+  <!-- UI strings: home screen app intro (gm4 variant) -->
+  <string name="app_intro_gm4_part1" translatable="false">Откройте возможности моделей ИИ на устройстве от </string>
+  <string name="app_intro_gm4_part2" translatable="false">, включая совершенно новую </string>
+
+  <!-- UI strings: task cards -->
+  <string name="badge_new" translatable="false">Новинка</string>
+  <string name="cd_experimental" translatable="false">Экспериментально</string>
+  <plurals name="model_count" translatable="false">
+    <item quantity="one">1 модель</item>
+    <item quantity="few">%d модели</item>
+    <item quantity="many">%d моделей</item>
+    <item quantity="other">%d модели</item>
+  </plurals>
+
+  <!-- UI strings: model list / task screen -->
+  <string name="api_documentation" translatable="false">Документация API</string>
+  <string name="example_code" translatable="false">Пример кода</string>
+
+  <!-- UI strings: logs viewer -->
+  <string name="cd_close_viewer" translatable="false">Закрыть просмотр</string>
+  <string name="cd_clear_filter" translatable="false">Очистить фильтр</string>
+
+  <!-- UI strings: benchmark config dialog -->
+  <string name="benchmark_configs_title" translatable="false">Настройки бенчмарка</string>
+  <string name="start" translatable="false">Запустить</string>
+
+  <!-- UI strings: model page app bar -->
+  <string name="configurations_title" translatable="false">Конфигурации</string>
+
+  <!-- UI strings: collapsable progress panel -->
+  <string name="cd_collapse_panel" translatable="false">Свернуть панель</string>
+  <string name="cd_expand_panel" translatable="false">Развернуть панель</string>
+
+  <!-- UI strings: thinking panel -->
+  <string name="cd_hide_thinking" translatable="false">Скрыть рассуждения</string>
+  <string name="cd_show_thinking" translatable="false">Показать рассуждения</string>
+
+  <!-- UI strings: model picker -->
+  <string name="task_models_label" translatable="false">Модели: %s</string>
+
 </resources>

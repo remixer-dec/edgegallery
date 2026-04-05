@@ -42,6 +42,15 @@ data class Task(
   /** The label of the task, for display purpose. */
   val label: String,
 
+  /** Optional string resource ID for the label (used for localization). Overrides [label] in UI. */
+  @StringRes val labelResId: Int = 0,
+
+  /** Optional string resource ID for the description (used for localization). */
+  @StringRes val descriptionResId: Int = 0,
+
+  /** Optional string resource ID for the short description (used for localization). */
+  @StringRes val shortDescriptionResId: Int = 0,
+
   /**
    * The category of the task.
    *

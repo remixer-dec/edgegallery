@@ -179,14 +179,15 @@ fun ModelList(
           TaskIcon(task = task, width = 64.dp, animationProgress = taskIconProgress)
 
           // Task name.
+          val taskDisplayLabel = if (task.labelResId != 0) stringResource(task.labelResId) else task.label
           Box(
             modifier =
               Modifier.offset(x = (20f * (1f - taskIconProgress)).dp).semantics {
-                contentDescription = task.label
+                contentDescription = taskDisplayLabel
               }
           ) {
             RevealingText(
-              text = task.label,
+              text = taskDisplayLabel,
               style =
                 headlineLargeMedium.copy(
                   brush = Brush.linearGradient(getTaskBgGradientColors(task = task))
@@ -195,7 +196,7 @@ fun ModelList(
               animationProgress = taskIconProgress,
             )
             RevealingText(
-              text = task.label,
+              text = taskDisplayLabel,
               style = headlineLargeMedium,
               textAlign = TextAlign.Center,
               animationProgress = taskLabelProgress,
@@ -225,7 +226,7 @@ fun ModelList(
 
           // Description.
           Text(
-            task.description,
+            if (task.descriptionResId != 0) stringResource(task.descriptionResId) else task.description,
             textAlign = TextAlign.Center,
             style = bodyLargeNarrow,
             modifier =
@@ -251,14 +252,14 @@ fun ModelList(
                 if (task.docUrl.isNotEmpty()) {
                   ClickableLink(
                     url = task.docUrl,
-                    linkText = "API Documentation",
+                    linkText = stringResource(R.string.api_documentation),
                     icon = Icons.Outlined.Description,
                   )
                 }
                 if (task.sourceCodeUrl.isNotEmpty()) {
                   ClickableLink(
                     url = task.sourceCodeUrl,
-                    linkText = "Example code",
+                    linkText = stringResource(R.string.example_code),
                     icon = Icons.Outlined.Code,
                   )
                 }

@@ -49,7 +49,7 @@ fun ModelManager(
   modifier: Modifier = Modifier,
 ) {
   // Set title based on the task.
-  val title = task.label
+  val title = if (task.labelResId != 0) androidx.compose.ui.res.stringResource(task.labelResId) else task.label
   // Model count.
   val modelCount by remember {
     derivedStateOf {

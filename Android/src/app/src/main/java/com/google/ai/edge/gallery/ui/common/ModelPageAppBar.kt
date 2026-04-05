@@ -113,7 +113,7 @@ fun ModelPageAppBar(
             modifier = Modifier.size(24.dp),
             contentDescription = null,
           )
-          Text(task.label, style = MaterialTheme.typography.titleMedium, color = tintColor)
+          Text(if (task.labelResId != 0) stringResource(task.labelResId) else task.label, style = MaterialTheme.typography.titleMedium, color = tintColor)
         }
 
         // Model chips pager.
@@ -216,7 +216,7 @@ fun ModelPageAppBar(
       modelConfigs.removeIf { it.key == ConfigKeys.ENABLE_THINKING }
     }
     ConfigDialog(
-      title = "Configurations",
+      title = stringResource(R.string.configurations_title),
       configs = modelConfigs,
       initialValues = model.configValues,
       onDismissed = { showConfigDialog = false },

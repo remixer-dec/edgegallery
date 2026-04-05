@@ -68,7 +68,7 @@ fun MessageBodyThinking(thinkingText: String, inProgress: Boolean) {
       )
       Icon(
         imageVector = if (isExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
-        contentDescription = if (isExpanded) "Hide thinking" else "Show thinking",
+        contentDescription = if (isExpanded) stringResource(R.string.cd_hide_thinking) else stringResource(R.string.cd_show_thinking),
       )
     }
 
