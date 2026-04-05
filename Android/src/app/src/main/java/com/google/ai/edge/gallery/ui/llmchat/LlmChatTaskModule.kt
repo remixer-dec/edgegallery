@@ -60,11 +60,14 @@ class LlmChatTask @Inject constructor() : CustomTask {
     Task(
       id = BuiltInTaskId.LLM_CHAT,
       label = "AI Chat",
+      labelResId = R.string.task_label_ai_chat,
       category = Category.LLM,
       icon = Icons.Outlined.Forum,
       models = mutableListOf(),
       description = "Chat with on-device large language models",
+      descriptionResId = R.string.task_desc_ai_chat,
       shortDescription = "Chat with an on-device LLM",
+      shortDescriptionResId = R.string.task_short_desc_ai_chat,
       docUrl = "https://github.com/google-ai-edge/LiteRT-LM/blob/main/kotlin/README.md",
       sourceCodeUrl =
         "https://github.com/google-ai-edge/gallery/blob/main/Android/src/app/src/main/java/com/google/ai/edge/gallery/ui/llmchat/LlmChatModelHelper.kt",
@@ -142,11 +145,14 @@ class LlmAskImageTask @Inject constructor() : CustomTask {
     Task(
       id = BuiltInTaskId.LLM_ASK_IMAGE,
       label = "Ask Image",
+      labelResId = R.string.task_label_ask_image,
       category = Category.LLM,
       icon = Icons.Outlined.Mms,
       models = mutableListOf(),
       description = "Ask questions about images with on-device large language models",
+      descriptionResId = R.string.task_desc_ask_image,
       shortDescription = "Ask questions about images",
+      shortDescriptionResId = R.string.task_short_desc_ask_image,
       docUrl = "https://github.com/google-ai-edge/LiteRT-LM/blob/main/kotlin/README.md",
       sourceCodeUrl =
         "https://github.com/google-ai-edge/gallery/blob/main/Android/src/app/src/main/java/com/google/ai/edge/gallery/ui/llmchat/LlmChatModelHelper.kt",
@@ -206,12 +212,15 @@ class LlmAskAudioTask @Inject constructor() : CustomTask {
     Task(
       id = BuiltInTaskId.LLM_ASK_AUDIO,
       label = "Audio Scribe",
+      labelResId = R.string.task_label_audio_scribe,
       category = Category.LLM,
       icon = Icons.Outlined.Mic,
       models = mutableListOf(),
       description =
         "Instantly transcribe and/or translate audio clips using on-device large language models",
+      descriptionResId = R.string.task_desc_audio_scribe,
       shortDescription = "Transcribe and translate audio",
+      shortDescriptionResId = R.string.task_short_desc_audio_scribe,
       docUrl = "https://github.com/google-ai-edge/LiteRT-LM/blob/main/kotlin/README.md",
       sourceCodeUrl =
         "https://github.com/google-ai-edge/gallery/blob/main/Android/src/app/src/main/java/com/google/ai/edge/gallery/ui/llmchat/LlmChatModelHelper.kt",

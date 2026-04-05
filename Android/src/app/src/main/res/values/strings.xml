@@ -450,4 +450,106 @@
   <string name="import_model_btn">Import</string>
   <string name="import_model_title">Import Model</string>
 
+  <!-- Task labels -->
+  <string name="task_label_ai_chat" translatable="false">AI Chat</string>
+  <string name="task_label_ask_image" translatable="false">Ask Image</string>
+  <string name="task_label_audio_scribe" translatable="false">Audio Scribe</string>
+  <string name="task_label_prompt_lab" translatable="false">Prompt Lab</string>
+  <string name="task_label_agent_skills" translatable="false">Agent Skills</string>
+  <string name="task_label_tiny_garden" translatable="false">Tiny Garden</string>
+
+  <!-- Task descriptions -->
+  <string name="task_desc_ai_chat" translatable="false">Chat with on-device large language models</string>
+  <string name="task_short_desc_ai_chat" translatable="false">Chat with an on-device LLM</string>
+  <string name="task_desc_ask_image" translatable="false">Ask questions about images with on-device large language models</string>
+  <string name="task_short_desc_ask_image" translatable="false">Ask questions about images</string>
+  <string name="task_desc_audio_scribe" translatable="false">Instantly transcribe and/or translate audio clips using on-device large language models</string>
+  <string name="task_short_desc_audio_scribe" translatable="false">Transcribe and translate audio</string>
+  <string name="task_desc_prompt_lab" translatable="false">Single turn use cases with on-device large language models</string>
+  <string name="task_short_desc_prompt_lab" translatable="false">Single turn use cases</string>
+  <string name="task_desc_agent_skills" translatable="false">Chat with on-device large language models with skills and tools</string>
+  <string name="task_short_desc_agent_skills" translatable="false">Complete agentic tasks with chat</string>
+  <string name="task_desc_tiny_garden" translatable="false">Use natural language to plant, water, and harvest in this fully offline mini-game.\n\nNote: This is powered by the experimental FunctionGemma model optimized for latency. Due to its compact size (270M), it works well on simple instructions but responses may vary to more complex interactions.</string>
+  <string name="task_short_desc_tiny_garden" translatable="false">Use natural language to plant</string>
+
+  <!-- Config key labels -->
+  <string name="config_label_max_tokens" translatable="false">Max tokens</string>
+  <string name="config_label_topk" translatable="false">TopK</string>
+  <string name="config_label_topp" translatable="false">TopP</string>
+  <string name="config_label_temperature" translatable="false">Temperature</string>
+  <string name="config_label_default_max_tokens" translatable="false">Default max tokens</string>
+  <string name="config_label_default_topk" translatable="false">Default TopK</string>
+  <string name="config_label_default_topp" translatable="false">Default TopP</string>
+  <string name="config_label_default_temperature" translatable="false">Default temperature</string>
+  <string name="config_label_support_image" translatable="false">Support image</string>
+  <string name="config_label_support_audio" translatable="false">Support audio</string>
+  <string name="config_label_support_tiny_garden" translatable="false">Support tiny garden</string>
+  <string name="config_label_support_mobile_actions" translatable="false">Support mobile actions</string>
+  <string name="config_label_support_thinking" translatable="false">Support thinking</string>
+  <string name="config_label_enable_thinking" translatable="false">Enable thinking</string>
+  <string name="config_label_max_result_count" translatable="false">Max result count</string>
+  <string name="config_label_use_gpu" translatable="false">Use GPU</string>
+  <string name="config_label_accelerator" translatable="false">Accelerator</string>
+  <string name="config_label_vision_accelerator" translatable="false">Vision accelerator</string>
+  <string name="config_label_compatible_accelerators" translatable="false">Compatible accelerators</string>
+  <string name="config_label_warm_up_iterations" translatable="false">Warm up iterations</string>
+  <string name="config_label_benchmark_iterations" translatable="false">Benchmark iterations</string>
+  <string name="config_label_iterations" translatable="false">Iterations</string>
+  <string name="config_label_theme" translatable="false">Theme</string>
+  <string name="config_label_name" translatable="false">Name</string>
+  <string name="config_label_model_type" translatable="false">Model type</string>
+  <string name="config_label_model" translatable="false">Model</string>
+  <string name="config_label_reset_conversation_turn_count" translatable="false">Number of turns before the conversation resets</string>
+  <string name="config_label_prefill_tokens" translatable="false">Prefill tokens</string>
+  <string name="config_label_decode_tokens" translatable="false">Decode tokens</string>
+  <string name="config_label_number_of_runs" translatable="false">Number of runs</string>
+
+  <!-- UI strings: promo screen -->
+  <string name="promo_introducing" translatable="false">Introducing</string>
+  <string name="promo_gemma4_description" translatable="false">Experience the world\'s most capable open models, designed to run frontier-level intelligence directly on your hardware.</string>
+  <string name="promo_dismiss" translatable="false">Dismiss</string>
+
+  <!-- UI strings: home screen promo tiles -->
+  <string name="gemma4_announcement" translatable="false">Gemma 4 E2B &amp; E4B are here! Try them in AI Chat, Agent Skills, or the use cases below.</string>
+  <string name="gemma4_chat_task_description" translatable="false">Chat with the latest Gemma 4 model today</string>
+  <string name="gemma4_agent_task_description" translatable="false">Have Gemma 4 complete agentic tasks for\u00A0you</string>
+
+  <!-- UI strings: home screen app intro (gm4 variant) -->
+  <string name="app_intro_gm4_part1" translatable="false">Discover the power of on-device AI models from the </string>
+  <string name="app_intro_gm4_part2" translatable="false">, featuring the all-new </string>
+
+  <!-- UI strings: task cards -->
+  <string name="badge_new" translatable="false">New</string>
+  <string name="cd_experimental" translatable="false">Experimental</string>
+  <plurals name="model_count" translatable="false">
+    <item quantity="one">1 Model</item>
+    <item quantity="other">%d Models</item>
+  </plurals>
+
+  <!-- UI strings: model list / task screen -->
+  <string name="api_documentation" translatable="false">API Documentation</string>
+  <string name="example_code" translatable="false">Example code</string>
+
+  <!-- UI strings: logs viewer -->
+  <string name="cd_close_viewer" translatable="false">Close viewer</string>
+  <string name="cd_clear_filter" translatable="false">Clear filter</string>
+
+  <!-- UI strings: benchmark config dialog -->
+  <string name="benchmark_configs_title" translatable="false">Benchmark configs</string>
+  <string name="start" translatable="false">Start</string>
+
+  <!-- UI strings: model page app bar -->
+  <string name="configurations_title" translatable="false">Configurations</string>
+
+  <!-- UI strings: collapsable progress panel -->
+  <string name="cd_collapse_panel" translatable="false">Collapse panel</string>
+  <string name="cd_expand_panel" translatable="false">Expand panel</string>
+
+  <!-- UI strings: thinking panel -->
+  <string name="cd_hide_thinking" translatable="false">Hide thinking</string>
+  <string name="cd_show_thinking" translatable="false">Show thinking</string>
+
+  <!-- UI strings: model picker -->
+  <string name="task_models_label" translatable="false">%s models</string>
+
 </resources>

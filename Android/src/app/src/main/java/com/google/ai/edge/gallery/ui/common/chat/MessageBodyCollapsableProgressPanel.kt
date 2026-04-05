@@ -121,7 +121,7 @@ fun MessageBodyCollapsableProgressPanel(message: ChatMessageCollapsableProgressP
       Icon(
         imageVector =
           if (isExpanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-        contentDescription = if (isExpanded) "Collapse panel" else "Expand panel",
+        contentDescription = if (isExpanded) stringResource(R.string.cd_collapse_panel) else stringResource(R.string.cd_expand_panel),
       )
     }
 

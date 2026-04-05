@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.google.ai.edge.gallery.R
@@ -89,7 +90,7 @@ fun PromoScreenGm4(onDismiss: () -> Unit) {
       // Center text.
       Image(ImageVector.vectorResource(R.drawable.gemini_star), contentDescription = null)
       Text(
-        "Introducing",
+        stringResource(R.string.promo_introducing),
         style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
         color = Color.White,
       )
@@ -99,7 +100,7 @@ fun PromoScreenGm4(onDismiss: () -> Unit) {
         color = Color.White,
       )
       Text(
-        "Experience the world’s most capable open models, designed to run frontier-level intelligence directly on your hardware.",
+        stringResource(R.string.promo_gemma4_description),
         style = MaterialTheme.typography.headlineSmall.copy(fontSize = 16.sp, lineHeight = 21.sp),
         textAlign = TextAlign.Center,
         color = Color(0xfff2f2f2),
@@ -107,7 +108,7 @@ fun PromoScreenGm4(onDismiss: () -> Unit) {
 
       // Dismiss button.
       TextButton(onClick = onDismiss, modifier = Modifier.padding(top = 24.dp)) {
-        Text("Dismiss", color = Color(0xFFA8C7FA))
+        Text(stringResource(R.string.promo_dismiss), color = Color(0xFFA8C7FA))
       }
     }
   }

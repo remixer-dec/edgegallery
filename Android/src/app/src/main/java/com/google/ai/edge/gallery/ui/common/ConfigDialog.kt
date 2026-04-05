@@ -302,7 +302,7 @@ fun ConfigEditorsPanel(configs: List<Config>, values: SnapshotStateMap<String, A
 fun LabelRow(config: LabelConfig, values: SnapshotStateMap<String, Any>) {
   Column(modifier = Modifier.fillMaxWidth()) {
     // Field label.
-    Text(config.key.label, style = MaterialTheme.typography.titleSmall)
+    Text(if (config.key.labelResId != 0) stringResource(config.key.labelResId) else config.key.label, style = MaterialTheme.typography.titleSmall)
     // Content label.
     val label =
       try {
@@ -347,7 +347,7 @@ fun NumberSliderRow(config: NumberSliderConfig, values: SnapshotStateMap<String,
 
   Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
     // Field label.
-    Text(config.key.label, style = MaterialTheme.typography.titleSmall)
+    Text(if (config.key.labelResId != 0) stringResource(config.key.labelResId) else config.key.label, style = MaterialTheme.typography.titleSmall)
 
     // Controls row.
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -466,7 +466,7 @@ fun BooleanSwitchRow(config: BooleanSwitchConfig, values: SnapshotStateMap<Strin
       false
     }
   Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
-    Text(config.key.label, style = MaterialTheme.typography.titleSmall)
+    Text(if (config.key.labelResId != 0) stringResource(config.key.labelResId) else config.key.label, style = MaterialTheme.typography.titleSmall)
     Switch(checked = switchValue, onCheckedChange = { values[config.key.label] = it })
   }
 }
@@ -487,7 +487,7 @@ fun SegmentedButtonRow(config: SegmentedButtonConfig, values: SnapshotStateMap<S
   }
 
   Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
-    Text(config.key.label, style = MaterialTheme.typography.titleSmall)
+    Text(if (config.key.labelResId != 0) stringResource(config.key.labelResId) else config.key.label, style = MaterialTheme.typography.titleSmall)
     MultiChoiceSegmentedButtonRow {
       config.options.forEachIndexed { index, label ->
         SegmentedButton(
@@ -555,7 +555,7 @@ fun BottomSheetSelectorRow(
     verticalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     if (showLabel) {
-      Text(config.key.label, style = MaterialTheme.typography.titleSmall)
+      Text(if (config.key.labelResId != 0) stringResource(config.key.labelResId) else config.key.label, style = MaterialTheme.typography.titleSmall)
     }
     Row(
       horizontalArrangement = Arrangement.SpaceBetween,
