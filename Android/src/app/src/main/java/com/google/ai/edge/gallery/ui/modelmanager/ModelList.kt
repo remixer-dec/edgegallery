@@ -179,15 +179,15 @@ fun ModelList(
           TaskIcon(task = task, width = 64.dp, animationProgress = taskIconProgress)
 
           // Task name.
-          val taskDisplayLabel = if (task.labelResId != 0) stringResource(task.labelResId) else task.label
+          val taskLabel = if (task.labelResId != 0) stringResource(task.labelResId) else task.label
           Box(
             modifier =
               Modifier.offset(x = (20f * (1f - taskIconProgress)).dp).semantics {
-                contentDescription = taskDisplayLabel
+                contentDescription = taskLabel
               }
           ) {
             RevealingText(
-              text = taskDisplayLabel,
+              text = taskLabel,
               style =
                 headlineLargeMedium.copy(
                   brush = Brush.linearGradient(getTaskBgGradientColors(task = task))
@@ -196,7 +196,7 @@ fun ModelList(
               animationProgress = taskIconProgress,
             )
             RevealingText(
-              text = taskDisplayLabel,
+              text = taskLabel,
               style = headlineLargeMedium,
               textAlign = TextAlign.Center,
               animationProgress = taskLabelProgress,

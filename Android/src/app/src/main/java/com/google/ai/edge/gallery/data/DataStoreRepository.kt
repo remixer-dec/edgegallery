@@ -26,6 +26,7 @@ import com.google.ai.edge.gallery.proto.ImportedModel
 import com.google.ai.edge.gallery.proto.Settings
 import com.google.ai.edge.gallery.proto.Skill
 import com.google.ai.edge.gallery.proto.Skills
+import com.google.ai.edge.gallery.proto.AcceleratorOverride
 import com.google.ai.edge.gallery.proto.Theme
 import com.google.ai.edge.gallery.proto.UserData
 import kotlinx.coroutines.flow.first
@@ -109,6 +110,18 @@ interface DataStoreRepository {
 
   /** Returns whether a promo with the specified ID has been viewed. */
   fun hasViewedPromo(promoId: String): Boolean
+
+  fun saveAcceleratorOverride(override: AcceleratorOverride)
+
+  fun readAcceleratorOverride(): AcceleratorOverride
+
+  fun saveLiteRtLibOverridePath(path: String)
+
+  fun readLiteRtLibOverridePath(): String
+
+  fun saveSystemPrompt(prompt: String)
+
+  fun readSystemPrompt(): String
 }
 
 /** Repository for managing data using Proto DataStore. */
@@ -432,5 +445,41 @@ class DefaultDataStoreRepository(
       val settings = dataStore.data.first()
       settings.viewedPromoIdList.contains(promoId)
     }
+  }
+
+  override fun saveAcceleratorOverride(override: AcceleratorOverride) {
+    runBlocking {
+      dataStore.updateData { settings ->
+        settings.toBuilder().setAcceleratorOverride(override).build()
+      }
+    }
+  }
+
+  override fun readAcceleratorOverride(): AcceleratorOverride {
+    return runBlocking { dataStore.data.first().acceleratorOverride }
+  }
+
+  override fun saveLiteRtLibOverridePath(path: String) {
+    runBlocking {
+      dataStore.updateData { settings ->
+        settings.toBuilder().setLitertLibOverridePath(path).build()
+      }
+    }
+  }
+
+  override fun readLiteRtLibOverridePath(): String {
+    return runBlocking { dataStore.data.first().litertLibOverridePath }
+  }
+
+  override fun saveSystemPrompt(prompt: String) {
+    runBlocking {
+      dataStore.updateData { settings ->
+        settings.toBuilder().setSystemPrompt(prompt).build()
+      }
+    }
+  }
+
+  override fun readSystemPrompt(): String {
+    return runBlocking { dataStore.data.first().systemPrompt }
   }
 }

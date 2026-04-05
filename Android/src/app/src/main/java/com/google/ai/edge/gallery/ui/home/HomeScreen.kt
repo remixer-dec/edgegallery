@@ -1062,7 +1062,7 @@ private fun TaskCard(
             style = MaterialTheme.typography.titleMedium,
           )
           Text(
-            if (task.shortDescriptionResId != 0) stringResource(task.shortDescriptionResId) else task.shortDescription,
+            task.shortDescription,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp, lineHeight = 14.sp),
             modifier = Modifier.clearAndSetSemantics {},
@@ -1133,7 +1133,7 @@ private fun TaskCard(
               if (task.experimental) {
                 Icon(
                   painter = painterResource(R.drawable.ic_experiment),
-                  contentDescription = stringResource(R.string.cd_experimental),
+                  contentDescription = "Experimental",
                   modifier = Modifier.size(20.dp).padding(start = 4.dp),
                   tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

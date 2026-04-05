@@ -369,6 +369,17 @@ abstract class ChatViewModel() : ViewModel() {
     return (_uiState.value.messagesByModel[model.name] ?: listOf()).indexOf(message)
   }
 
+  /** Removes all messages at or after [fromIndex] for the given model. */
+  fun truncateMessagesFrom(model: Model, fromIndex: Int) {
+    val newMessagesByModel = _uiState.value.messagesByModel.toMutableMap()
+    val newMessages = newMessagesByModel[model.name]?.toMutableList() ?: mutableListOf()
+    if (fromIndex >= 0 && fromIndex < newMessages.size) {
+      newMessages.subList(fromIndex, newMessages.size).clear()
+    }
+    newMessagesByModel[model.name] = newMessages
+    _uiState.update { _uiState.value.copy(messagesByModel = newMessagesByModel) }
+  }
+
   private fun createUiState(): ChatUiState {
     return ChatUiState()
   }

@@ -18,8 +18,11 @@ package com.google.ai.edge.gallery.ui.home
 
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import android.app.UiModeManager
+import android.os.Build
 import android.content.Context
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -29,6 +32,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -40,6 +44,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,6 +60,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,23 +75,34 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.ai.edge.gallery.BuildConfig
 import com.google.ai.edge.gallery.R
+import com.google.ai.edge.gallery.proto.AcceleratorOverride
 import com.google.ai.edge.gallery.proto.Theme
 import com.google.ai.edge.gallery.ui.common.ClickableLink
 import com.google.ai.edge.gallery.ui.common.tos.AppTosDialog
 import com.google.ai.edge.gallery.ui.modelmanager.ModelManagerViewModel
+import com.google.ai.edge.gallery.ui.theme.AcceleratorSettings
 import com.google.ai.edge.gallery.ui.theme.ThemeSettings
 import com.google.ai.edge.gallery.ui.theme.labelSmallNarrow
-import android.os.Build
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.min
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private val THEME_OPTIONS = listOf(Theme.THEME_AUTO, Theme.THEME_LIGHT, Theme.THEME_DARK)
+private val ACCELERATOR_OPTIONS = listOf(
+  AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO,
+  AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU,
+  AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU,
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,6 +112,7 @@ fun SettingsDialog(
   onDismissed: () -> Unit,
 ) {
   var selectedTheme by remember { mutableStateOf(curThemeOverride) }
+  var selectedAccelerator by remember { mutableStateOf(modelManagerViewModel.readAcceleratorOverride()) }
   var hfToken by remember { mutableStateOf(modelManagerViewModel.getTokenStatusAndData().data) }
   val dateFormatter = remember { SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) }
   var customHfToken by remember { mutableStateOf("") }
@@ -103,8 +121,46 @@ fun SettingsDialog(
   val interactionSource = remember { MutableInteractionSource() }
   var showTos by remember { mutableStateOf(false) }
 
+  // LiteRT lib override state
+  var liteRtLibOverridePath by remember { mutableStateOf(modelManagerViewModel.readLiteRtLibOverridePath()) }
+  var showLiteRtRestartNotice by remember { mutableStateOf(false) }
+  val coroutineScope = rememberCoroutineScope()
+
+  // System prompt state
+  var systemPrompt by remember { mutableStateOf(modelManagerViewModel.readSystemPrompt()) }
+  var isSystemPromptFocused by remember { mutableStateOf(false) }
+
   Dialog(onDismissRequest = onDismissed) {
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+
+    // File picker for .so file
+    val soFilePicker = rememberLauncherForActivityResult(
+      contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+      if (uri != null) {
+        coroutineScope.launch(Dispatchers.IO) {
+          try {
+            val destFile = File(context.filesDir, "liblitertlm_jni.so")
+            val inputStream = context.contentResolver.openInputStream(uri)
+            if (inputStream != null) {
+              val outputStream = FileOutputStream(destFile)
+              inputStream.copyTo(outputStream)
+              inputStream.close()
+              outputStream.close()
+              destFile.setExecutable(true, false)
+              val path = destFile.absolutePath
+              modelManagerViewModel.saveLiteRtLibOverridePath(path)
+              liteRtLibOverridePath = path
+              showLiteRtRestartNotice = true
+            }
+          } catch (e: Exception) {
+            // Silently ignore errors
+          }
+        }
+      }
+    }
+
     Card(
       modifier =
         Modifier.fillMaxWidth().clickable(
@@ -139,7 +195,6 @@ fun SettingsDialog(
           modifier = Modifier.verticalScroll(rememberScrollState()).weight(1f, fill = false),
           verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-          val context = LocalContext.current
           // Theme switcher.
           Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
             Text(
@@ -163,8 +218,7 @@ fun SettingsDialog(
 
                     // Update ui mode.
                     //
-                    // This is necessary to make other Activities launched from MainActivity to have
-                    // the correct theme. setApplicationNightMode requires API 31+.
+                    // setApplicationNightMode requires API 31+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                       val uiModeManager =
                         context.applicationContext.getSystemService(Context.UI_MODE_SERVICE)
@@ -179,8 +233,134 @@ fun SettingsDialog(
                     }
                   },
                   checked = theme == selectedTheme,
-                  label = { Text(themeLabel(theme, context)) },
+                  label = { Text(themeLabel(theme)) },
                 )
+              }
+            }
+          }
+
+          // Accelerator toggle.
+          Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
+            Text(
+              stringResource(R.string.settings_dialog_accelerator_section),
+              style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium),
+            )
+            MultiChoiceSegmentedButtonRow {
+              ACCELERATOR_OPTIONS.forEachIndexed { index, accel ->
+                SegmentedButton(
+                  shape = SegmentedButtonDefaults.itemShape(index = index, count = ACCELERATOR_OPTIONS.size),
+                  onCheckedChange = {
+                    selectedAccelerator = accel
+                    AcceleratorSettings.acceleratorOverride.value = accel
+                    modelManagerViewModel.saveAcceleratorOverride(accel)
+                  },
+                  checked = accel == selectedAccelerator,
+                  label = { Text(acceleratorLabel(accel)) },
+                )
+              }
+            }
+          }
+
+          // LiteRT library override.
+          Column(
+            modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {},
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+          ) {
+            Text(
+              stringResource(R.string.settings_dialog_litert_lib_section),
+              style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium),
+            )
+            if (liteRtLibOverridePath.isEmpty()) {
+              Text(
+                stringResource(R.string.settings_litert_lib_using_builtin),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+              OutlinedButton(onClick = { soFilePicker.launch("*/*") }) {
+                Text(stringResource(R.string.settings_litert_lib_select))
+              }
+            } else {
+              Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+              ) {
+                Text(
+                  File(liteRtLibOverridePath).name,
+                  style = MaterialTheme.typography.bodyMedium,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                  modifier = Modifier.weight(1f),
+                )
+                IconButton(
+                  onClick = {
+                    modelManagerViewModel.saveLiteRtLibOverridePath("")
+                    liteRtLibOverridePath = ""
+                    showLiteRtRestartNotice = true
+                  }
+                ) {
+                  Icon(
+                    Icons.Rounded.Delete,
+                    contentDescription = "Remove LiteRT lib override",
+                    tint = MaterialTheme.colorScheme.error,
+                  )
+                }
+              }
+            }
+            if (showLiteRtRestartNotice) {
+              Text(
+                stringResource(R.string.settings_litert_lib_restart_notice),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+              )
+            }
+          }
+
+          // System prompt.
+          Column(
+            modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {},
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+          ) {
+            Text(
+              stringResource(R.string.settings_dialog_system_prompt_section),
+              style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium),
+            )
+            BasicTextField(
+              value = systemPrompt,
+              singleLine = false,
+              keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction = ImeAction.Default,
+              ),
+              modifier =
+                Modifier.fillMaxWidth()
+                  .onFocusChanged { isSystemPromptFocused = it.isFocused },
+              onValueChange = {
+                systemPrompt = it
+                modelManagerViewModel.saveSystemPrompt(it)
+                com.google.ai.edge.gallery.ui.theme.SystemPromptSettings.systemPrompt.value = it
+              },
+              textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+              cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
+            ) { innerTextField ->
+              Box(
+                modifier =
+                  Modifier.border(
+                      width = if (isSystemPromptFocused) 2.dp else 1.dp,
+                      color =
+                        if (isSystemPromptFocused) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.outline,
+                      shape = RoundedCornerShape(8.dp),
+                    )
+                    .heightIn(min = 80.dp)
+                    .padding(12.dp),
+              ) {
+                if (systemPrompt.isEmpty()) {
+                  Text(
+                    "Default",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                  )
+                }
+                innerTextField()
               }
             }
           }
@@ -319,12 +499,12 @@ fun SettingsDialog(
             ClickableLink(
               url = "https://ai.google.dev/gemma/terms",
               linkText = stringResource(R.string.tos_dialog_title_gemma),
-              modifier = Modifier.padding(top = 4.dp),
+              modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
             )
             ClickableLink(
               url = "https://ai.google.dev/gemma/prohibited_use_policy",
               linkText = stringResource(R.string.settings_dialog_gemma_prohibited_use_policy),
-              modifier = Modifier.padding(top = 8.dp),
+              modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             )
           }
         }
@@ -346,11 +526,20 @@ fun SettingsDialog(
   }
 }
 
-private fun themeLabel(theme: Theme, context: android.content.Context): String {
+@Composable
+private fun themeLabel(theme: Theme): String {
   return when (theme) {
-    Theme.THEME_AUTO -> context.getString(R.string.settings_theme_auto)
-    Theme.THEME_LIGHT -> context.getString(R.string.settings_theme_light)
-    Theme.THEME_DARK -> context.getString(R.string.settings_theme_dark)
-    else -> context.getString(R.string.settings_theme_unknown)
+    Theme.THEME_AUTO -> stringResource(R.string.settings_theme_auto)
+    Theme.THEME_LIGHT -> stringResource(R.string.settings_theme_light)
+    Theme.THEME_DARK -> stringResource(R.string.settings_theme_dark)
+    else -> stringResource(R.string.settings_theme_unknown)
+  }
+}
+
+private fun acceleratorLabel(override: AcceleratorOverride): String {
+  return when (override) {
+    AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU -> "CPU"
+    AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU -> "GPU"
+    else -> "Auto"
   }
 }

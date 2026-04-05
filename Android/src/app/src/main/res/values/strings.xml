@@ -191,6 +191,13 @@
   <string name="view_results" translatable="false">View results</string>
   <string name="view_console_logs" translatable="false">View console logs</string>
   <string name="warming_up" translatable="false">warming up…</string>
+
+  <!-- Message action strings -->
+  <string name="message_action_copy">Copy text</string>
+  <string name="message_action_delete">Delete</string>
+  <string name="message_action_edit">Edit</string>
+  <string name="message_action_regenerate">Regenerate</string>
+  <string name="message_on_backend">on %1$s</string>
   <string name="warning_no_function_call" translatable="false">No function recognized</string>
   <string name="snackbar_no_function_call" translatable="false">No function recognized</string>
   <string name="unknown_error" translatable="false">Unknown error</string>
@@ -433,6 +440,23 @@
   <string name="settings_dialog_enter_token_manually">Enter token manually</string>
   <string name="settings_dialog_third_party_libs_section">Third-party libraries</string>
   <string name="settings_dialog_view_licenses">View licenses</string>
+
+  <!-- Settings: accelerator -->
+  <string name="settings_dialog_accelerator_section">Inference accelerator</string>
+  <string name="settings_accelerator_auto">Auto</string>
+  <string name="settings_accelerator_cpu">CPU</string>
+  <string name="settings_accelerator_gpu">GPU</string>
+  <string name="settings_accelerator_npu">NPU</string>
+
+  <!-- Settings: LiteRT library -->
+  <string name="settings_dialog_litert_lib_section">LiteRT library override</string>
+  <string name="settings_litert_lib_using_builtin">Using built-in library</string>
+  <string name="settings_litert_lib_select">Select .so file</string>
+  <string name="settings_litert_lib_restart_notice">Restart app to apply changes</string>
+
+  <!-- Settings: system prompt -->
+  <string name="settings_dialog_system_prompt_section">System prompt</string>
+  <string name="settings_system_prompt_placeholder">Default (empty)</string>
 
   <!-- Chat / input strings -->
   <string name="record_audio_clip">Record audio clip</string>

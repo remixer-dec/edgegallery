@@ -566,4 +566,28 @@
   <!-- UI strings: model picker -->
   <string name="task_models_label" translatable="false">Модели: %s</string>
 
+  <!-- Message action strings -->
+  <string name="message_action_copy" translatable="false">Копировать текст</string>
+  <string name="message_action_delete" translatable="false">Удалить</string>
+  <string name="message_action_edit" translatable="false">Редактировать</string>
+  <string name="message_action_regenerate" translatable="false">Сгенерировать заново</string>
+  <string name="message_on_backend">на %1$s</string>
+
+  <!-- Settings: accelerator -->
+  <string name="settings_dialog_accelerator_section" translatable="false">Ускоритель вывода</string>
+  <string name="settings_accelerator_auto" translatable="false">Авто</string>
+  <string name="settings_accelerator_cpu" translatable="false">CPU</string>
+  <string name="settings_accelerator_gpu" translatable="false">GPU</string>
+  <string name="settings_accelerator_npu" translatable="false">NPU</string>
+
+  <!-- Settings: LiteRT library -->
+  <string name="settings_dialog_litert_lib_section" translatable="false">Выбрать библиотеку LiteRT</string>
+  <string name="settings_litert_lib_using_builtin" translatable="false">Используется встроенная библиотека</string>
+  <string name="settings_litert_lib_select" translatable="false">Выбрать .so файл</string>
+  <string name="settings_litert_lib_restart_notice" translatable="false">Перезапустите приложение для применения изменений</string>
+
+  <!-- Settings: system prompt -->
+  <string name="settings_dialog_system_prompt_section" translatable="false">Системный промпт</string>
+  <string name="settings_system_prompt_placeholder" translatable="false">По умолчанию (пусто)</string>
+
 </resources>

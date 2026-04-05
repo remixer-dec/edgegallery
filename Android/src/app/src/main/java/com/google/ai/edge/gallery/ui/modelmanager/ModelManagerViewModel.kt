@@ -50,6 +50,7 @@ import com.google.ai.edge.gallery.data.Task
 import com.google.ai.edge.gallery.data.ValueType
 import com.google.ai.edge.gallery.data.createLlmChatConfigs
 import com.google.ai.edge.gallery.proto.AccessTokenData
+import com.google.ai.edge.gallery.proto.AcceleratorOverride
 import com.google.ai.edge.gallery.proto.ImportedModel
 import com.google.ai.edge.gallery.proto.Theme
 import com.google.gson.Gson
@@ -80,6 +81,103 @@ private const val ALLOWLIST_BASE_URL =
   "https://raw.githubusercontent.com/google-ai-edge/gallery/refs/heads/main/model_allowlists"
 
 private const val TEST_MODEL_ALLOW_LIST = ""
+
+private const val CUSTOM_MODEL_ALLOW_LIST = """
+{
+  "models": [
+    {
+      "name": "Qwen3.5-0.8B-Q8-EKV2048",
+      "description": "[unofficial] Qwen3.5 0.8B Q8 EKV2048 by GabrieleConte (1.16 GB)",
+      "url": "https://huggingface.co/GabrieleConte/Qwen3.5-0.8B-LiteRT/resolve/main/qwen35_mm_q8_ekv2048.litertlm",
+      "downloadFileName": "qwen35_mm_q8_ekv2048.litertlm",
+      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "defaultConfig": {
+        "accelerators": "cpu,gpu"
+      }
+    },
+    {
+      "name": "Qwen3.5-9B-LiteRT",
+      "description": "[unofficial] Qwen3.5 9B quantized by litert-community",
+      "url": "https://huggingface.co/litert-community/Qwen3.5-9B-LiteRT/resolve/main/model_multimodal.litertlm",
+      "downloadFileName": "model_multimodal.litertlm",
+      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "defaultConfig": {
+        "accelerators": "cpu,gpu"
+      }
+    },
+    {
+      "name": "Qwen3.5-4B-LiteRT-Multimodal",
+      "description": "[unofficial] Qwen3.5 4B multimodal by litert-community",
+      "url": "https://huggingface.co/litert-community/Qwen3.5-4B-LiteRT/resolve/main/model_multimodal.litertlm",
+      "downloadFileName": "model_multimodal.litertlm",
+      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "defaultConfig": {
+        "accelerators": "cpu,gpu"
+      }
+    },
+    {
+      "name": "Qwen3.5-4B-LiteRT-Quantized",
+      "description": "[unofficial] Qwen3.5 4B quantized by litert-community",
+      "url": "https://huggingface.co/litert-community/Qwen3.5-4B-LiteRT/resolve/main/model_quantized.litertlm",
+      "downloadFileName": "model_quantized.litertlm",
+      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "defaultConfig": {
+        "accelerators": "cpu,gpu"
+      }
+    },
+    {
+      "name": "Qwen3.5-2B-LiteRT",
+      "description": "[unofficial] Qwen3.5 2B by litert-community",
+      "url": "https://huggingface.co/litert-community/Qwen3.5-2B-LiteRT/resolve/main/model_multimodal.litertlm",
+      "downloadFileName": "model_multimodal.litertlm",
+      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "defaultConfig": {
+        "accelerators": "cpu,gpu"
+      }
+    },
+    {
+      "name": "Qwen3.5-0.8B-LiteRT",
+      "description": "[unofficial] Qwen3.5 0.8B by litert-community",
+      "url": "https://huggingface.co/litert-community/Qwen3.5-0.8B-LiteRT/resolve/main/model_multimodal.litertlm",
+      "downloadFileName": "model_multimodal.litertlm",
+      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "defaultConfig": {
+        "accelerators": "cpu,gpu"
+      }
+    },
+    {
+      "name": "MedGemma-1.5-4B",
+      "description": "[unofficial] MedGemma 1.5 4B medical AI model",
+      "url": "https://huggingface.co/ai4med-id/medgemma-1.5-4b-it-litertlm/resolve/main/model_multimodal.litertlm",
+      "downloadFileName": "model_multimodal.litertlm",
+      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "defaultConfig": {
+        "accelerators": "cpu,gpu"
+      }
+    },
+    {
+      "name": "MobileActions-270M",
+      "description": "[unofficial] Function-calling model for mobile actions",
+      "url": "https://huggingface.co/Thorge-AI/functiongemma-270m-it-mobile-actions.litertlm/resolve/main/model_multimodal.litertlm",
+      "downloadFileName": "model_multimodal.litertlm",
+      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "defaultConfig": {
+        "accelerators": "cpu,gpu"
+      }
+    },
+    {
+      "name": "Gemmasutra-Mini-2B",
+      "description": "[unofficial] Gemmasutra Mini 2B creative writing model",
+      "url": "https://huggingface.co/SuperPauly/Gemmasutra_LiteRT-LM/resolve/main/model_multimodal.litertlm",
+      "downloadFileName": "model_multimodal.litertlm",
+      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "defaultConfig": {
+        "accelerators": "cpu,gpu"
+      }
+    }
+  ]
+}
+"""
 
 data class ModelInitializationStatus(
   val status: ModelInitializationStatusType,
@@ -539,6 +637,26 @@ constructor(
   fun saveThemeOverride(theme: Theme) {
     dataStoreRepository.saveTheme(theme = theme)
   }
+
+  fun readAcceleratorOverride(): com.google.ai.edge.gallery.proto.AcceleratorOverride {
+    return dataStoreRepository.readAcceleratorOverride()
+  }
+
+  fun saveAcceleratorOverride(override: com.google.ai.edge.gallery.proto.AcceleratorOverride) {
+    dataStoreRepository.saveAcceleratorOverride(override)
+  }
+
+  fun saveLiteRtLibOverridePath(path: String) {
+    dataStoreRepository.saveLiteRtLibOverridePath(path)
+  }
+
+  fun readLiteRtLibOverridePath(): String = dataStoreRepository.readLiteRtLibOverridePath()
+
+  fun saveSystemPrompt(prompt: String) {
+    dataStoreRepository.saveSystemPrompt(prompt)
+  }
+
+  fun readSystemPrompt(): String = dataStoreRepository.readSystemPrompt()
 
   fun getModelUrlResponse(model: Model, accessToken: String? = null): Int {
     try {

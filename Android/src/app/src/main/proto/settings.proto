@@ -33,6 +33,12 @@ enum Theme {
   THEME_AUTO = 3;
 }
 
+enum AcceleratorOverride {
+  ACCELERATOR_OVERRIDE_AUTO = 0;
+  ACCELERATOR_OVERRIDE_CPU = 1;
+  ACCELERATOR_OVERRIDE_GPU = 2;
+}
+
 message AccessTokenData {
   string access_token = 1;
   string refresh_token = 2;
@@ -78,6 +84,9 @@ message Settings {
   // copybara:strip_end
 
   repeated string viewed_promo_id = 10;
+  AcceleratorOverride accelerator_override = 11;
+  string litert_lib_override_path = 12;
+  string system_prompt = 13;
 }
 
 message UserData {
