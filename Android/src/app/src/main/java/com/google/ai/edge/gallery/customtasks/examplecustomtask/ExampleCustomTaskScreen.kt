@@ -48,8 +48,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.ai.edge.gallery.R
 import com.google.ai.edge.gallery.data.ConfigKey
 import com.google.ai.edge.gallery.data.NumberSliderConfig
 import com.google.ai.edge.gallery.data.ValueType
@@ -132,7 +134,7 @@ fun ExampleCustomTaskScreen(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(16.dp),
       ) {
-        Text("Text color: ")
+        Text(stringResource(R.string.example_custom_task_text_color_label))
         for (color in colors) {
           Box(
             modifier =

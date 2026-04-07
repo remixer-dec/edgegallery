@@ -88,6 +88,8 @@
   <string name="drawer_settings_description" translatable="false">Управление настройками приложения</string>
   <string name="drawer_models_label" translatable="false">Модели</string>
   <string name="drawer_models_description" translatable="false">Просматривайте, тестируйте и сравнивайте модели</string>
+  <string name="server_label" translatable="false">Сервер</string>
+  <string name="server_description" translatable="false">Локальный OpenAI API</string>
   <string name="edit" translatable="false">Редактировать</string>
   <string name="edit_secret" translatable="false">Редактировать секрет</string>
   <string name="enter_instruction" translatable="false">Введите инструкцию</string>
@@ -143,7 +145,7 @@
   <string name="reset" translatable="false">Сбросить</string>
   <string name="reset_note" translatable="false">Нажатие \"Сбросить\" сбросит только движок LiteRT-LM. Прогресс не будет затронут.</string>
   <string name="resetting_engine" translatable="false">Сброс движка...</string>
-  <string name="restore_default" translatable="false">Восстановить по умолчанию</string>
+  <string name="restore_default" translatable="false">Восстановить</string>
   <string name="reinitializing_description" translatable="false">Прогресс не будет затронут</string>
   <string name="run" translatable="false">Запустить</string>
   <string name="running" translatable="false">Выполняется...</string>
@@ -289,13 +291,18 @@
   <string name="no_directory_selected" translatable="false">Папка не выбрана</string>
   <string name="pick_skill_dir" translatable="false">Выберите корневой каталог навыка</string>
   <string name="prompt_copied_message" translatable="false">Промпт скопирован в буфер обмена. Вставьте его в любимое приложение LLM, чтобы сгенерировать код, а затем скопируйте и вставьте код сюда.</string>
-  <string name="prompt_chip_kitchen_adventure" translatable="false">Кухонное приключение</string>
-  <string name="prompt_chip_calculate_hash" translatable="false">Вычислить хэш</string>
-  <string name="prompt_chip_query_wikipedia" translatable="false">Запросить Wikipedia</string>
-  <string name="prompt_chip_plot_chart" translatable="false">Построить график</string>
-  <string name="prompt_chip_interactive_map" translatable="false">Интерактивная карта</string>
-  <string name="prompt_chip_text_spinner" translatable="false">Провернуть подпись на моей голове</string>
-  <string name="prompt_chip_send_email" translatable="false">Отправить письмо</string>
+  <string name="tryout_chip_label_kitchen_adventure" translatable="false">Кухонное приключение</string>
+  <string name="tryout_chip_label_calculate_hash" translatable="false">Вычислить хэш</string>
+  <string name="tryout_chip_label_query_wikipedia" translatable="false">Запросить Wikipedia</string>
+  <string name="tryout_chip_label_track_mood" translatable="false">Проследить за настроением</string>
+  <string name="tryout_chip_label_interactive_map" translatable="false">Интерактивная карта</string>
+  <string name="tryout_chip_label_generate_qr_code" translatable="false">Создать QR-код</string>
+  <string name="tryout_chip_label_send_email" translatable="false">Отправить письмо</string>
+  <string name="tryout_chip_label_text_spinner" translatable="false">Крутящийся текст</string>
+  <string name="agent_skills_intro_prefix">Используйте специализированные рассуждения высокого порядка, загружая различные навыки или </string>
+  <string name="agent_skills_intro_link">создавая\u00A0свои\u00A0собственные</string>
+  <string name="agent_skills_intro_suffix">.\n\nПопробуйте нажать на пример запроса ниже, чтобы увидеть Agent Skills в действии!</string>
+  <string name="response_placeholder">Ответ появится здесь</string>
   <string name="replace_skill_dialog_title" translatable="false">Заменить существующий навык</string>
   <string name="replace_skill_dialog_content" translatable="false">Навык с таким именем уже существует. Хотите заменить его?</string>
   <string name="search_skill" translatable="false">Поиск навыка</string>
@@ -517,22 +524,45 @@
   <string name="config_label_reset_conversation_turn_count" translatable="false">Количество ходов до сброса беседы</string>
   <string name="config_label_prefill_tokens" translatable="false">Токены предзаполнения</string>
   <string name="config_label_decode_tokens" translatable="false">Токены декодирования</string>
-  <string name="config_label_number_of_runs" translatable="false">Количество запусков</string>
+   <string name="config_label_number_of_runs" translatable="false">Количество запусков</string>
+
+  <!-- Server Screen strings -->
+  <string name="server_screen_title" translatable="false">OpenAI-Compatible Local Server</string>
+  <string name="server_screen_description" translatable="false">Запустите локальный сервер, принимающий запросы на завершен чата OpenAI. Поддерживает текст, аудио-вход и нативные инструменты Android.</string>
+  <string name="server_ip_address_label" translatable="false">IP-адрес</string>
+  <string name="server_port_label" translatable="false">Порт</string>
+  <string name="server_enable_vision" translatable="false">Включить поддержку изображений</string>
+  <string name="server_enable_tools_label" translatable="false">Включить нативные инструменты Android</string>
+  <string name="server_enable_tools_description" translatable="false">Позволяет модели искать карты, устанавливать будильники и таймеры, проверять заряд батареи, включать/выключать фонарик и воспроизводить музыку.</string>
+  <string name="server_select_model_label" translatable="false">Выбрать модель</string>
+  <string name="server_no_llm_models_downloaded" translatable="false">LLM-модели не загружены.</string>
+  <string name="server_button_start" translatable="false">Запустить сервер</string>
+  <string name="server_button_stop" translatable="false">Остановить сервер</string>
+  <string name="server_config_dialog_title" translatable="false">Конфигурации модели сервера</string>
+
+  <!-- Skill Tester Bottom Sheet strings -->
+  <string name="skill_tester_input_data_label" translatable="false">Входные данные</string>
+  <string name="skill_tester_custom_data_label" translatable="false">Пользовательские данные</string>
+  <string name="skill_tester_tab_result" translatable="false">Результат</string>
+  <string name="skill_tester_tab_logs" translatable="false">Логи</string>
+
+  <!-- Chat Panel Edit Dialog strings -->
+  <string name="chat_edit_dialog_save" translatable="false">Сохранить</string>
+
+  <!-- Example Custom Task strings -->
+  <string name="example_custom_task_text_color_label" translatable="false">Цвет текста: </string>
 
   <!-- UI strings: promo screen -->
   <string name="promo_introducing" translatable="false">Представляем</string>
   <string name="promo_gemma4_description" translatable="false">Ощутите возможности самых продвинутых открытых моделей, разработанных для запуска передового интеллекта прямо на вашем устройстве.</string>
   <string name="promo_dismiss" translatable="false">Закрыть</string>
-
   <!-- UI strings: home screen promo tiles -->
   <string name="gemma4_announcement" translatable="false">Gemma 4 E2B и E4B уже здесь! Попробуйте их в ИИ-чате, Агентских навыках или в сценариях ниже.</string>
   <string name="gemma4_chat_task_description" translatable="false">Общайтесь с последней моделью Gemma 4 уже сегодня</string>
-  <string name="gemma4_agent_task_description" translatable="false">Пусть Gemma 4 выполняет агентские задачи за\u00A0вас</string>
-
+  <string name="gemma4_agent_task_description" translatable="false">Пусть Gemma 4 выполняет агентские задачи за вас</string>
   <!-- UI strings: home screen app intro (gm4 variant) -->
   <string name="app_intro_gm4_part1" translatable="false">Откройте возможности моделей ИИ на устройстве от  </string>
   <string name="app_intro_gm4_part2" translatable="false">, включая совершенно новую  </string>
-
   <!-- UI strings: task cards -->
   <string name="badge_new" translatable="false">Новинка</string>
   <string name="cd_experimental" translatable="false">Экспериментально</string>
@@ -542,55 +572,81 @@
     <item quantity="many">%d моделей</item>
     <item quantity="other">%d модели</item>
   </plurals>
-
   <!-- UI strings: model list / task screen -->
   <string name="api_documentation" translatable="false">Документация API</string>
   <string name="example_code" translatable="false">Пример кода</string>
-
   <!-- UI strings: logs viewer -->
   <string name="cd_close_viewer" translatable="false">Закрыть просмотр</string>
   <string name="cd_clear_filter" translatable="false">Очистить фильтр</string>
-
   <!-- UI strings: benchmark config dialog -->
   <string name="benchmark_configs_title" translatable="false">Настройки бенчмарка</string>
   <string name="start" translatable="false">Запустить</string>
-
   <!-- UI strings: model page app bar -->
   <string name="configurations_title" translatable="false">Конфигурации</string>
-
   <!-- UI strings: collapsable progress panel -->
   <string name="cd_collapse_panel" translatable="false">Свернуть панель</string>
   <string name="cd_expand_panel" translatable="false">Развернуть панель</string>
-
   <!-- UI strings: thinking panel -->
   <string name="cd_hide_thinking" translatable="false">Скрыть рассуждения</string>
   <string name="cd_show_thinking" translatable="false">Показать рассуждения</string>
-
   <!-- UI strings: model picker -->
   <string name="task_models_label" translatable="false">Модели: %s</string>
-
   <!-- Message action strings -->
   <string name="message_action_copy" translatable="false">Копировать текст</string>
   <string name="message_action_delete" translatable="false">Удалить</string>
   <string name="message_action_edit" translatable="false">Редактировать</string>
   <string name="message_action_regenerate" translatable="false">Сгенерировать заново</string>
   <string name="message_on_backend">на %1$s</string>
-
   <!-- Settings: accelerator -->
   <string name="settings_dialog_accelerator_section" translatable="false">Ускоритель вывода</string>
   <string name="settings_accelerator_auto" translatable="false">Авто</string>
   <string name="settings_accelerator_cpu" translatable="false">CPU</string>
   <string name="settings_accelerator_gpu" translatable="false">GPU</string>
   <string name="settings_accelerator_npu" translatable="false">NPU</string>
-
   <!-- Settings: LiteRT library -->
   <string name="settings_dialog_litert_lib_section" translatable="false">Выбрать библиотеку LiteRT</string>
   <string name="settings_litert_lib_using_builtin" translatable="false">Используется встроенная библиотека</string>
   <string name="settings_litert_lib_select" translatable="false">Выбрать .so файл</string>
   <string name="settings_litert_lib_restart_notice" translatable="false">Перезапустите приложение для применения изменений</string>
-
   <!-- Settings: system prompt -->
   <string name="settings_dialog_system_prompt_section" translatable="false">Системный промпт</string>
   <string name="settings_system_prompt_placeholder" translatable="false">По умолчанию (пусто)</string>
+  <!-- UI strings: single-turn response panel -->
+  <string name="llmsingleturn_response_placeholder" translatable="false">Здесь появится ответ</string>
+  <!-- UI strings: prompt template types -->
+  <string name="prompt_template_free_form" translatable="false">Свободный ввод</string>
+  <string name="prompt_template_rewrite_tone" translatable="false">Изменить тон</string>
+  <string name="prompt_template_summarize_text" translatable="false">Сжать текст</string>
+  <string name="prompt_template_code_snippet" translatable="false">Фрагмент кода</string>
+  <string name="prompt_template_select_example" translatable="false">Выберите пример</string>
+  <!-- UI strings: rewrite tone options -->
+  <string name="tone_formal" translatable="false">Официальный</string>
+  <string name="tone_casual" translatable="false">Свободный</string>
+  <string name="tone_friendly" translatable="false">Дружелюбный</string>
+  <string name="tone_polite" translatable="false">Вежливый</string>
+  <string name="tone_enthusiastic" translatable="false">Энтузиастичный</string>
+  <string name="tone_concise" translatable="false">Лаконичный</string>
+  <!-- UI strings: summarization options -->
+  <string name="summary_bullets" translatable="false">Основные тезисы (3-5)</string>
+  <string name="summary_paragraph" translatable="false">Краткий параграф (1-2 предложения)</string>
+  <string name="summary_concise" translatable="false">Сжатое резюме (~50 слов)</string>
+  <string name="summary_headline" translatable="false">Заголовок / название</string>
+  <string name="summary_onesentence" translatable="false">Резюме одним предложением</string>
+  <!-- UI strings: language options -->
+  <string name="language_cplusplus" translatable="false">C++</string>
+  <string name="language_java" translatable="false">Java</string>
+  <string name="language_javascript" translatable="false">JavaScript</string>
+  <string name="language_kotlin" translatable="false">Kotlin</string>
+  <string name="language_python" translatable="false">Python</string>
+  <string name="language_swift" translatable="false">Swift</string>
+  <string name="language_typescript" translatable="false">TypeScript</string>
+  <!-- UI strings: input editor labels -->
+  <string name="editor_label_tone" translatable="false">Тон</string>
+  <string name="editor_label_style" translatable="false">Стиль</string>
+  <string name="editor_label_language" translatable="false">Язык</string>
+  <!-- Settings dialog: Firebase Analytics -->
+  <string name="settings_privacy_section" translatable="false">Конфиденциальность</string>
+  <string name="settings_enable_firebase_analytics" translatable="false">Включить Firebase Analytics</string>
+  <string name="settings_firebase_analytics_description" translatable="false">Улучшить приложение, поделившись данными об использовании.</string>
 
 </resources>

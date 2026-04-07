@@ -101,7 +101,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val promptTemplateTypes: List<PromptTemplateType> = PromptTemplateType.entries
-private val TAB_TITLES = PromptTemplateType.entries.map { it.label }
 private val ICON_BUTTON_SIZE = 42.dp
 
 const val FULL_PROMPT_SWITCH_KEY = "full_prompt"
@@ -153,7 +152,7 @@ fun PromptTemplatesPanel(
   Column(modifier = modifier) {
     // Scrollable tab row for all prompt templates.
     PrimaryScrollableTabRow(selectedTabIndex = selectedTabIndex) {
-      TAB_TITLES.forEachIndexed { index, title ->
+      promptTemplateTypes.forEachIndexed { index, templateType ->
         Tab(
           selected = selectedTabIndex == index,
           enabled = !inProgress,
@@ -166,12 +165,12 @@ fun PromptTemplatesPanel(
             selectedTabIndex = index
             viewModel.selectPromptTemplate(
               model = model,
-              promptTemplateType = promptTemplateTypes[index],
+              promptTemplateType = templateType,
             )
           },
           text = {
             Text(
-              text = title,
+              text = stringResource(id = templateType.label),
               modifier = Modifier.alpha(if (inProgress) 0.5f else 1f),
               color =
                 if (selectedTabIndex == index) MaterialTheme.colorScheme.primary

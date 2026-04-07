@@ -62,7 +62,7 @@ enum class AgentActionName() {
 
 data class SkillTryOutChip(
   val icon: ImageVector,
-  val label: String,
+  val label: Int,
   val prompt: String,
   val skillName: String,
 )

@@ -88,6 +88,8 @@
   <string name="drawer_settings_description" translatable="false">Manage application settings</string>
   <string name="drawer_models_label" translatable="false">Models</string>
   <string name="drawer_models_description" translatable="false">Browse, try, and benchmark models</string>
+  <string name="server_label" translatable="false">Server</string>
+  <string name="server_description" translatable="false">Run local API</string>
   <string name="edit" translatable="false">Edit</string>
   <string name="edit_secret" translatable="false">Edit secret</string>
   <string name="enter_instruction" translatable="false">Enter instruction</string>
@@ -286,13 +288,18 @@
   <string name="no_directory_selected" translatable="false">No directory selected</string>
   <string name="pick_skill_dir" translatable="false">Pick skill\'s root directory</string>
   <string name="prompt_copied_message" translatable="false">Prompt copied to clipboard. Paste it into your favorite LLM app to generate the code and copy/paste the code here.</string>
-  <string name="prompt_chip_kitchen_adventure" translatable="false">Kitchen adventure</string>
-  <string name="prompt_chip_calculate_hash" translatable="false">Calculate hash</string>
-  <string name="prompt_chip_query_wikipedia" translatable="false">Query Wikipedia</string>
-  <string name="prompt_chip_plot_chart" translatable="false">Plot chart</string>
-  <string name="prompt_chip_interactive_map" translatable="false">Interactive map</string>
-  <string name="prompt_chip_text_spinner" translatable="false">Spin label on my head</string>
-  <string name="prompt_chip_send_email" translatable="false">Send email</string>
+  <string name="tryout_chip_label_kitchen_adventure" translatable="false">Kitchen Adventure</string>
+  <string name="tryout_chip_label_calculate_hash" translatable="false">Calculate Hash</string>
+  <string name="tryout_chip_label_text_spinner" translatable="false">Text Spinner</string>
+  <string name="tryout_chip_label_send_email" translatable="false">Send Email</string>
+  <string name="tryout_chip_label_interactive_map" translatable="false">Interactive Map</string>
+  <string name="tryout_chip_label_track_mood" translatable="false">Track my mood</string>
+  <string name="tryout_chip_label_query_wikipedia" translatable="false">Query Wikipedia</string>
+  <string name="tryout_chip_label_generate_qr_code" translatable="false">Generate QR code</string>
+  <string name="agent_skills_intro_prefix">Use specialized, high-order reasoning by loading different skills or </string>
+  <string name="agent_skills_intro_link">creating\u00A0your\u00A0own</string>
+  <string name="agent_skills_intro_suffix">.\n\nTry tapping a sample prompt below to see Agent Skills in action!</string>
+  <string name="response_placeholder">Response will appear here</string>
   <string name="replace_skill_dialog_title" translatable="false">Replace existing skill</string>
   <string name="replace_skill_dialog_content" translatable="false">A skill with the same name already exists. Do you want to replace it?</string>
   <string name="search_skill" translatable="false">Search for a skill</string>
@@ -578,5 +585,75 @@
 
   <!-- UI strings: model picker -->
   <string name="task_models_label" translatable="false">%s models</string>
+
+  <!-- UI strings: single-turn response panel -->
+  <string name="llmsingleturn_response_placeholder" translatable="false">Response will appear here</string>
+
+  <!-- UI strings: prompt template types -->
+  <string name="prompt_template_free_form" translatable="false">Free form</string>
+  <string name="prompt_template_rewrite_tone" translatable="false">Rewrite tone</string>
+  <string name="prompt_template_summarize_text" translatable="false">Summarize text</string>
+  <string name="prompt_template_code_snippet" translatable="false">Code snippet</string>
+  <string name="prompt_template_select_example" translatable="false">Select an example</string>
+
+  <!-- UI strings: rewrite tone options -->
+  <string name="tone_formal" translatable="false">Formal</string>
+  <string name="tone_casual" translatable="false">Casual</string>
+  <string name="tone_friendly" translatable="false">Friendly</string>
+  <string name="tone_polite" translatable="false">Polite</string>
+  <string name="tone_enthusiastic" translatable="false">Enthusiastic</string>
+  <string name="tone_concise" translatable="false">Concise</string>
+
+  <!-- UI strings: summarization options -->
+  <string name="summary_bullets" translatable="false">Key bullet points (3-5)</string>
+  <string name="summary_paragraph" translatable="false">Short paragraph (1-2 sentences)</string>
+  <string name="summary_concise" translatable="false">Concise summary (~50 words)</string>
+  <string name="summary_headline" translatable="false">Headline / title</string>
+  <string name="summary_onesentence" translatable="false">One-sentence summary</string>
+
+  <!-- UI strings: language options -->
+  <string name="language_cplusplus" translatable="false">C++</string>
+  <string name="language_java" translatable="false">Java</string>
+  <string name="language_javascript" translatable="false">JavaScript</string>
+  <string name="language_kotlin" translatable="false">Kotlin</string>
+  <string name="language_python" translatable="false">Python</string>
+  <string name="language_swift" translatable="false">Swift</string>
+  <string name="language_typescript" translatable="false">TypeScript</string>
+
+  <!-- UI strings: input editor labels -->
+  <string name="editor_label_tone" translatable="false">Tone</string>
+  <string name="editor_label_style" translatable="false">Style</string>
+  <string name="editor_label_language" translatable="false">Language</string>
+
+  <!-- Settings dialog: Firebase Analytics -->
+  <string name="settings_privacy_section" translatable="false">Privacy</string>
+  <string name="settings_enable_firebase_analytics" translatable="false">Enable Firebase Analytics</string>
+  <string name="settings_firebase_analytics_description" translatable="false">Improve the app by sharing usage data.</string>
+
+  <!-- Server Screen strings -->
+  <string name="server_screen_title" translatable="false">OpenAI-Compatible Local Server</string>
+  <string name="server_screen_description" translatable="false">Run a local server that accepts OpenAI chat completion requests. Supports text, audio input, and Android native tools.</string>
+  <string name="server_ip_address_label" translatable="false">IP Address</string>
+  <string name="server_port_label" translatable="false">Port</string>
+  <string name="server_enable_vision" translatable="false">Enable image processing</string>
+  <string name="server_enable_tools_label" translatable="false">Enable Native Android Tools</string>
+  <string name="server_enable_tools_description" translatable="false">Allows the model to search maps, set alarms and timers, check battery, and play music, toggle flashlight.</string>
+  <string name="server_select_model_label" translatable="false">Select Model</string>
+  <string name="server_no_llm_models_downloaded" translatable="false">No LLM models downloaded.</string>
+  <string name="server_button_start" translatable="false">Start Server</string>
+  <string name="server_button_stop" translatable="false">Stop Server</string>
+  <string name="server_config_dialog_title" translatable="false">Server Model Configs</string>
+
+  <!-- Skill Tester Bottom Sheet strings -->
+  <string name="skill_tester_input_data_label" translatable="false">Input Data</string>
+  <string name="skill_tester_custom_data_label" translatable="false">Custom Data</string>
+  <string name="skill_tester_tab_result" translatable="false">Result</string>
+  <string name="skill_tester_tab_logs" translatable="false">Logs</string>
+
+  <!-- Chat Panel Edit Dialog strings -->
+  <string name="chat_edit_dialog_save" translatable="false">Save</string>
+
+  <!-- Example Custom Task strings -->
+  <string name="example_custom_task_text_color_label" translatable="false">Text color: </string>
 
 </resources>

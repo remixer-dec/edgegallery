@@ -22,6 +22,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Kitchen
@@ -38,9 +39,9 @@ import androidx.lifecycle.viewModelScope
 import com.google.ai.edge.gallery.common.LOCAL_URL_BASE
 import com.google.ai.edge.gallery.common.SkillTryOutChip
 import com.google.ai.edge.gallery.common.getJsonResponse
+import com.google.ai.edge.gallery.R
 import com.google.ai.edge.gallery.data.AllowedSkill
 import com.google.ai.edge.gallery.data.DataStoreRepository
-import com.google.ai.edge.gallery.data.SkillAllowlist
 import com.google.ai.edge.gallery.proto.Skill
 import com.google.ai.edge.litertlm.Contents
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,59 +58,66 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 private const val TAG = "AGSkillManagerVM"
 
 private const val SKILL_ALLOWLIST_URL = ""
 
+
 val TRYOUT_CHIPS: List<SkillTryOutChip> =
   listOf(
     SkillTryOutChip(
       icon = Icons.Outlined.Map,
-      label = "Interactive Map",
+      label = R.string.tryout_chip_label_interactive_map,
       prompt = "Show me Googleplex on interactive map.",
       skillName = "interactive-map",
     ),
     SkillTryOutChip(
       icon = Icons.Outlined.Kitchen,
-      label = "Kitchen Adventure",
+      label = R.string.tryout_chip_label_kitchen_adventure,
       prompt = "Start kitchen adventure",
       skillName = "kitchen-adventure",
     ),
     SkillTryOutChip(
       icon = Icons.Outlined.Tag,
-      label = "Calculate Hash",
+      label = R.string.tryout_chip_label_calculate_hash,
       prompt = "What is the sha1 hash of \"gemma\"?",
       skillName = "calculate-hash",
     ),
     SkillTryOutChip(
       icon = Icons.Outlined.ScreenRotation,
-      label = "Text Spinner",
+      label = R.string.tryout_chip_label_text_spinner,
       prompt = "Spin \"Gemma\" on my head",
       skillName = "text-spinner",
     ),
     SkillTryOutChip(
       icon = Icons.Outlined.Email,
-      label = "Send Email",
+      label = R.string.tryout_chip_label_send_email,
       prompt = "Send email 'Good morning' to abc@example.com. Content: 'Any plans for tonight?'",
       skillName = "send-email",
     ),
     SkillTryOutChip(
       icon = Icons.Outlined.SentimentVerySatisfied,
-      label = "Track my mood",
+      label = R.string.tryout_chip_label_track_mood,
       prompt =
         "Log yesterday's mood as 2 because it was raining quite heavily, and log today's mood as 9 because I had a great time playing pickleball again. Then show me my mood dashboard.",
       skillName = "mood-tracker",
     ),
     SkillTryOutChip(
       icon = Icons.Outlined.LocalLibrary,
-      label = "Query Wikipedia",
+      label = R.string.tryout_chip_label_query_wikipedia,
       prompt = "Check Wikipedia about Oscars 2026. Tell me who won the best picture.",
       skillName = "query-wikipedia",
     ),
     SkillTryOutChip(
       icon = Icons.Outlined.QrCode,
-      label = "Generate QR code",
+      label = R.string.tryout_chip_label_generate_qr_code,
       prompt = "Generate QR code for https://deepmind.google/models/gemma/",
       skillName = "qr-code",
     ),
@@ -140,9 +148,7 @@ constructor(
   var skillLoaded = false
 
   init {
-    if (SKILL_ALLOWLIST_URL.isNotEmpty()) {
-      loadSkillAllowlist()
-    }
+    loadSkillAllowlist()
   }
 
   fun loadSkills(onDone: () -> Unit) {
@@ -236,21 +242,51 @@ constructor(
 
   private fun loadSkillAllowlist() {
     _uiState.update { it.copy(loadingSkillAllowlist = true, skillAllowlistError = null) }
+  
     viewModelScope.launch(Dispatchers.IO) {
       try {
-        val url = SKILL_ALLOWLIST_URL
-        Log.d(TAG, "Fetching skill allowlist from: $url")
-        val result =
-          getJsonResponse<SkillAllowlist>(url)
-            ?: throw Exception("Failed to fetch or parse JSON from $url")
-
-        val allowlist = result.jsonObj
-        Log.d(TAG, "Successfully loaded ${allowlist.featuredSkills.size} featured skills.")
-
+        val json = """
+          {
+            "featuredSkills": [
+              {
+                "name": "mood-music",
+                "description": "Suggest or play music based on the user's mood",
+                "skillUrl": "https://google-ai-edge.github.io/gallery/skills/featured/mood-music",
+                "attributionLabel": "Loudly API",
+                "attributionUrl": "https://www.loudly.com/"
+              },
+              {
+                "name": "restaurant-roulette",
+                "description": "Show a roulette wheel to randomly select a restaurant",
+                "skillUrl": "https://google-ai-edge.github.io/gallery/skills/featured/restaurant-roulette"
+              },
+              {
+                "name": "virtual-piano",
+                "description": "Show a virtual piano to play music",
+                "skillUrl": "https://google-ai-edge.github.io/gallery/skills/featured/virtual-piano"
+              }
+            ]
+          }
+        """.trimIndent()
+  
+        val root = Json.parseToJsonElement(json).jsonObject
+        val featuredSkillsJson = root["featuredSkills"]?.jsonArray ?: emptyList()
+  
+        val featuredSkills = featuredSkillsJson.map { element ->
+          val obj = element.jsonObject
+          AllowedSkill(
+            name = obj["name"]?.jsonPrimitive?.content ?: "",
+            description = obj["description"]?.jsonPrimitive?.content ?: "",
+            skillUrl = obj["skillUrl"]?.jsonPrimitive?.content ?: "",
+            attributionLabel = obj["attributionLabel"]?.jsonPrimitive?.contentOrNull,
+            attributionUrl = obj["attributionUrl"]?.jsonPrimitive?.contentOrNull,
+          )
+        }
+  
         _uiState.update { currentState ->
           currentState.copy(
             loadingSkillAllowlist = false,
-            featuredSkills = allowlist.featuredSkills,
+            featuredSkills = featuredSkills,
           )
         }
       } catch (e: Exception) {

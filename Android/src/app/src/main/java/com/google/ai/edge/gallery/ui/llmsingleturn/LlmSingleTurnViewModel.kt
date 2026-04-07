@@ -140,7 +140,7 @@ class LlmSingleTurnViewModel @Inject constructor() : ViewModel() {
     _uiState.update { currentState ->
       val currentResponses = currentState.responsesByModel
       val modelResponses = currentResponses[model.name]?.toMutableMap() ?: mutableMapOf()
-      modelResponses[promptTemplateType.label] = response
+      modelResponses[promptTemplateType.name] = response
       val newResponses = currentResponses.toMutableMap()
       newResponses[model.name] = modelResponses
       currentState.copy(responsesByModel = newResponses)

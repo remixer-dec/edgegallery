@@ -749,11 +749,11 @@ fun ChatPanel(
             editDialogMessage = null
           }
         ) {
-          Text("Save")
+          Text(stringResource(R.string.chat_edit_dialog_save))
         }
       },
       dismissButton = {
-        TextButton(onClick = { editDialogMessage = null }) { Text("Cancel") }
+        TextButton(onClick = { editDialogMessage = null }) { Text(stringResource(R.string.cancel)) }
       },
     )
   }
