@@ -31,23 +31,26 @@ import com.google.ai.edge.gallery.ui.llmchat.LlmChatModelHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 
-class LlmSingleTurnTask @Inject constructor() : CustomTask {
+class LlmSingleTurnTask @Inject constructor(
+  private val context: Context
+) : CustomTask {
   override val task: Task =
     Task(
       id = BuiltInTaskId.LLM_PROMPT_LAB,
-      label = "Prompt Lab",
+      label = context.getString(R.string.task_label_prompt_lab),
       labelResId = R.string.task_label_prompt_lab,
       category = Category.LLM,
       icon = Icons.Outlined.Widgets,
       models = mutableListOf(),
-      description = "Single turn use cases with on-device large language models",
+      description = context.getString(R.string.task_desc_prompt_lab),
       descriptionResId = R.string.task_desc_prompt_lab,
-      shortDescription = "Single turn use cases",
+      shortDescription = context.getString(R.string.task_short_desc_prompt_lab),
       shortDescriptionResId = R.string.task_short_desc_prompt_lab,
       docUrl = "https://github.com/google-ai-edge/LiteRT-LM/blob/main/kotlin/README.md",
       sourceCodeUrl =
@@ -93,8 +96,8 @@ class LlmSingleTurnTask @Inject constructor() : CustomTask {
 @InstallIn(SingletonComponent::class) // Or another component that fits your scope
 internal object LlmSingleTurnTaskModule {
   @Provides
-  @IntoSet
-  fun provideTask(): CustomTask {
-    return LlmSingleTurnTask()
+  @IntoSet()
+  fun provideTask(@ApplicationContext context: Context): CustomTask {
+    return LlmSingleTurnTask(context)
   }
 }

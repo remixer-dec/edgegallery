@@ -22,7 +22,7 @@
   <string name="add_audio" translatable="false">+Аудио</string>
   <string name="aichat_initializing_title" translatable="false">Инициализация модели</string>
   <string name="aichat_initializing_content" translatable="false">Подождите, это может занять до 1 минуты</string>
-  <string name="app_intro" translatable="false">Откройте для себя мир удивительных локальных моделей от</string>
+  <string name="app_intro" translatable="false">Откройте для себя мир удивительных локальных моделей от </string>
   <string name="app_name" translatable="false">Google AI Edge Gallery</string>
   <string name="app_name_first_part" translatable="false">Google AI</string>
   <string name="app_name_second_part" translatable="false">Edge Gallery</string>
@@ -482,9 +482,12 @@
   <string name="task_desc_agent_skills" translatable="false">Общайтесь с LLM на устройстве с помощью навыков и инструментов</string>
   <string name="task_short_desc_agent_skills" translatable="false">Агентские задачи в чате</string>
   <string name="task_desc_tiny_garden" translatable="false">Используйте естественный язык для посадки, полива и сбора урожая в этой полностью офлайн мини-игре.\n\nПримечание: работает на экспериментальной модели FunctionGemma, оптимизированной по скорости. Из-за компактного размера (270M) хорошо справляется с простыми инструкциями, но реакция на сложные взаимодействия может варьироваться.</string>
-  <string name="task_short_desc_tiny_garden" translatable="false">Естественный язык для посадки</string>
+   <string name="task_short_desc_tiny_garden" translatable="false">Естественный язык для посадки</string>
+   <string name="task_label_mobile_actions" translatable="false">Мобильные действия</string>
+   <string name="task_desc_mobile_actions" translatable="false">Выполнять различные действия на устройстве через Function Gemma</string>
+   <string name="task_short_desc_mobile_actions" translatable="false">Использовать мобильные действия устройства</string>
 
-  <!-- Config key labels -->
+   <!-- Config key labels -->
   <string name="config_label_max_tokens" translatable="false">Макс. токенов</string>
   <string name="config_label_topk" translatable="false">TopK</string>
   <string name="config_label_topp" translatable="false">TopP</string>
@@ -496,7 +499,7 @@
   <string name="config_label_support_image" translatable="false">Поддержка изображений</string>
   <string name="config_label_support_audio" translatable="false">Поддержка аудио</string>
   <string name="config_label_support_tiny_garden" translatable="false">Поддержка Tiny Garden</string>
-  <string name="config_label_support_mobile_actions" translatable="false">Поддержка Mobile Actions</string>
+   <string name="config_label_support_mobile_actions" translatable="false">Поддержка мобильных действий</string>
   <string name="config_label_support_thinking" translatable="false">Поддержка рассуждений</string>
   <string name="config_label_enable_thinking" translatable="false">Включить рассуждения</string>
   <string name="config_label_max_result_count" translatable="false">Макс. кол-во результатов</string>
@@ -527,8 +530,8 @@
   <string name="gemma4_agent_task_description" translatable="false">Пусть Gemma 4 выполняет агентские задачи за\u00A0вас</string>
 
   <!-- UI strings: home screen app intro (gm4 variant) -->
-  <string name="app_intro_gm4_part1" translatable="false">Откройте возможности моделей ИИ на устройстве от </string>
-  <string name="app_intro_gm4_part2" translatable="false">, включая совершенно новую </string>
+  <string name="app_intro_gm4_part1" translatable="false">Откройте возможности моделей ИИ на устройстве от  </string>
+  <string name="app_intro_gm4_part2" translatable="false">, включая совершенно новую  </string>
 
   <!-- UI strings: task cards -->
   <string name="badge_new" translatable="false">Новинка</string>

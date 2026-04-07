@@ -38,7 +38,11 @@ private const val AUDIO_METER_MIN_DB = -2.0f
 private const val AUDIO_METER_MAX_DB = 100.0f
 
 /** The UI state of the HoldToDictateViewModel. */
-data class HoldToDictateUiState(val recognizing: Boolean = false, val recognizedText: String = "")
+data class HoldToDictateUiState(
+  val recognizing: Boolean = false,
+  val recognizedText: String = "",
+  val error: String? = null,
+)
 
 @HiltViewModel
 class HoldToDictateViewModel @Inject constructor(@ApplicationContext private val context: Context) :
@@ -75,6 +79,7 @@ class HoldToDictateViewModel @Inject constructor(@ApplicationContext private val
     speechRecognizer.startListening(recognizerIntent)
     setRecognizedText(text = "")
     setRecognizing(recognizing = true)
+    clearError()
   }
 
   fun stopSpeechRecognition() {
@@ -97,6 +102,10 @@ class HoldToDictateViewModel @Inject constructor(@ApplicationContext private val
     _uiState.update { uiState.value.copy(recognizedText = text) }
   }
 
+  fun clearError() {
+    _uiState.update { uiState.value.copy(error = null) }
+  }
+
   override fun onReadyForSpeech(params: Bundle?) {}
 
   override fun onBeginningOfSpeech() {}
@@ -109,7 +118,26 @@ class HoldToDictateViewModel @Inject constructor(@ApplicationContext private val
 
   override fun onEndOfSpeech() {}
 
-  override fun onError(error: Int) {}
+  override fun onError(error: Int) {
+    val errorMessage = getErrorMessage(error)
+    _uiState.update { state ->
+      state.copy(recognizing = false, error = errorMessage)
+    }
+  }
+
+  private fun getErrorMessage(error: Int): String {
+    return when (error) {
+      SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
+      SpeechRecognizer.ERROR_CLIENT -> "Client error"
+      SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Microphone permission denied"
+      SpeechRecognizer.ERROR_NETWORK -> "No internet connection. Speech recognition requires network access."
+      SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network request timed out"
+      SpeechRecognizer.ERROR_NO_MATCH -> "No speech heard"
+      SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Speech recognizer is busy"
+      SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "Service temporarily unavailable or no speech detected."
+      else -> "Speech recognition error: $error"
+    }
+  }
 
   override fun onResults(results: Bundle?) {
     val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)

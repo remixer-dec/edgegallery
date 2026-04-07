@@ -30,26 +30,29 @@ import com.google.ai.edge.litertlm.tool
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 
-class AgentChatTask @Inject constructor() : CustomTask {
+class AgentChatTask @Inject constructor(
+  private val context: Context
+) : CustomTask {
   private val agentTools = AgentTools()
 
   override val task: Task =
     Task(
       id = BuiltInTaskId.LLM_AGENT_CHAT,
-      label = "Agent Skills",
+      label = context.getString(R.string.task_label_agent_skills),
       labelResId = R.string.task_label_agent_skills,
       category = Category.LLM,
       iconVectorResourceId = R.drawable.agent,
       newFeature = true,
       models = mutableListOf(),
-      description = "Chat with on-device large language models with skills and tools",
+      description = context.getString(R.string.task_desc_agent_skills),
       descriptionResId = R.string.task_desc_agent_skills,
-      shortDescription = "Complete agentic tasks with chat",
+      shortDescription = context.getString(R.string.task_short_desc_agent_skills),
       shortDescriptionResId = R.string.task_short_desc_agent_skills,
       docUrl = "https://github.com/google-ai-edge/LiteRT-LM/blob/main/kotlin/README.md",
       sourceCodeUrl =
@@ -73,6 +76,7 @@ class AgentChatTask @Inject constructor() : CustomTask {
         """
           .trimIndent(),
     )
+
 
   override fun initializeModelFn(
     context: Context,
@@ -125,7 +129,7 @@ class AgentChatTask @Inject constructor() : CustomTask {
 internal object AgentChatTaskModule {
   @Provides
   @IntoSet
-  fun provideTask(): CustomTask {
-    return AgentChatTask()
+  fun provideTask(@ApplicationContext context: Context): CustomTask {
+    return AgentChatTask(context)
   }
 }

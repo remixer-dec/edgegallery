@@ -59,6 +59,8 @@ import com.google.ai.edge.gallery.data.Task
 import com.google.ai.edge.gallery.data.convertValueToTargetType
 import com.google.ai.edge.gallery.ui.modelmanager.ModelInitializationStatusType
 import com.google.ai.edge.gallery.ui.modelmanager.ModelManagerViewModel
+import com.google.ai.edge.gallery.proto.AcceleratorOverride
+import com.google.ai.edge.gallery.ui.theme.AcceleratorSettings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -215,14 +217,36 @@ fun ModelPageAppBar(
     if (!task.allowThinking()) {
       modelConfigs.removeIf { it.key == ConfigKeys.ENABLE_THINKING }
     }
+    val acceleratorOverride = AcceleratorSettings.acceleratorOverride.value
+    val effectiveInitialValues =
+      if (acceleratorOverride != AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO) {
+        model.configValues.toMutableMap().apply {
+          this[ConfigKeys.ACCELERATOR.label] =
+            when (acceleratorOverride) {
+              AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU -> "CPU" // Make these UPPERCASE
+              AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU -> "GPU"
+              AcceleratorOverride.ACCELERATOR_OVERRIDE_NPU -> "NPU"
+              else -> this[ConfigKeys.ACCELERATOR.label] ?: "GPU"
+            }
+        }
+      } else {
+        model.configValues
+      }
     ConfigDialog(
       title = stringResource(R.string.configurations_title),
       configs = modelConfigs,
-      initialValues = model.configValues,
+      initialValues = effectiveInitialValues,
       onDismissed = { showConfigDialog = false },
       onOk = { curConfigValues, oldSystemPrompt, newSystemPrompt ->
         // Hide config dialog.
         showConfigDialog = false
+        val newAccel = curConfigValues[ConfigKeys.ACCELERATOR.label] as? String
+        val oldAccel = effectiveInitialValues[ConfigKeys.ACCELERATOR.label] as? String
+        if (newAccel != oldAccel) {
+            AcceleratorSettings.acceleratorOverride.value = AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO
+            modelManagerViewModel.saveAcceleratorOverride(AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO)
+        }
+
 
         // Check if the configs are changed or not. Also check if the model needs to be
         // re-initialized.

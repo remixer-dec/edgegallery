@@ -60,6 +60,17 @@ abstract class ChatViewModel() : ViewModel() {
     if (newMessages.size > 0 && newMessages.last().type == ChatMessageType.PROMPT_TEMPLATES) {
       newMessages.removeAt(newMessages.size - 1)
     }
+    // Do not add a duplicate user message if one with the same content already exists at the end.
+    if (
+      message is ChatMessageText &&
+        message.side == ChatSide.USER &&
+        newMessages.isNotEmpty() &&
+        newMessages.last() is ChatMessageText &&
+        (newMessages.last() as ChatMessageText).side == ChatSide.USER &&
+        (newMessages.last() as ChatMessageText).content == message.content
+    ) {
+      return
+    }
     newMessages.add(message)
     _uiState.update { _uiState.value.copy(messagesByModel = newMessagesByModel) }
   }

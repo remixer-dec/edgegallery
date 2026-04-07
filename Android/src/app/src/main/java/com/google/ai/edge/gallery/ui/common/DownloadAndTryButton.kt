@@ -16,6 +16,7 @@
 
 package com.google.ai.edge.gallery.ui.common
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -139,6 +140,7 @@ fun DownloadAndTryButton(
 ) {
   val scope = rememberCoroutineScope()
   val context = LocalContext.current
+  val prefs = context.getSharedPreferences("memory_warnings", Context.MODE_PRIVATE)
   var checkingToken by remember { mutableStateOf(false) }
   var showAgreementAckSheet by remember { mutableStateOf(false) }
   var showErrorDialog by remember { mutableStateOf(false) }
@@ -337,7 +339,8 @@ fun DownloadAndTryButton(
   }
 
   val checkMemoryAndClickDownloadButton = {
-    if (isMemoryLow(context = context, model = model)) {
+    val warningAcknowledged = prefs.getBoolean(model.name, false)
+    if (!warningAcknowledged && isMemoryLow(context = context, model = model)) {
       showMemoryWarning = true
     } else {
       handleClickButton()
@@ -569,6 +572,7 @@ fun DownloadAndTryButton(
   if (showMemoryWarning) {
     MemoryWarningAlert(
       onProceeded = {
+        prefs.edit().putBoolean(model.name, true).apply()
         handleClickButton()
         showMemoryWarning = false
       },

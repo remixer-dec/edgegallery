@@ -63,6 +63,7 @@ open class LlmChatViewModelBase() : ChatViewModel() {
     val accelerator = when (AcceleratorSettings.acceleratorOverride.value) {
       AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU -> "cpu"
       AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU -> "gpu"
+      AcceleratorOverride.ACCELERATOR_OVERRIDE_NPU -> "npu"
       else -> modelAccelerator
     }
     viewModelScope.launch(Dispatchers.Default) {

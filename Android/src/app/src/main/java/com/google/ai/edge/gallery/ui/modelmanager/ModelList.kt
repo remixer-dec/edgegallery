@@ -226,7 +226,7 @@ fun ModelList(
 
           // Description.
           Text(
-            if (task.descriptionResId != 0) stringResource(task.descriptionResId) else task.description,
+            if (task.descriptionResId != 0) stringResource(task.descriptionResId) else "",
             textAlign = TextAlign.Center,
             style = bodyLargeNarrow,
             modifier =
@@ -302,8 +302,8 @@ fun ModelList(
         }
 
       // List of models within a task.
-      items(items = models) { model ->
-        val expanded = modelItemExpandedStates.getOrDefault(model.name, null)
+      items(items = models, key = { it.name }) { model ->
+        val expanded = modelItemExpandedStates.getOrDefault(model.name, true)
         ModelItem(
           model = model,
           task = task,

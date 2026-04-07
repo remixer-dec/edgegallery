@@ -501,55 +501,57 @@ fun ChatPanel(
                             editDialogText = message.content
                           },
                         )
-                        // Regenerate
-                        DropdownMenuItem(
-                          text = { Text(stringResource(R.string.message_action_regenerate)) },
-                          onClick = {
-                            showPopupMenu = false
-                            if (message.side == ChatSide.USER) {
-                              // Truncate history after user message and regenerate.
-                              viewModel.truncateMessagesFrom(
-                                model = selectedModel,
-                                fromIndex = index,
-                              )
-                              onSendMessage(
-                                selectedModel,
-                                listOf(
-                                  ChatMessageText(
-                                    content = message.content,
-                                    side = ChatSide.USER,
-                                  )
-                                ),
-                              )
-                            } else {
-                              // AI message: find the preceding user message and regenerate from there.
-                              viewModel.truncateMessagesFrom(
-                                model = selectedModel,
-                                fromIndex = index,
-                              )
-                              // Find the last user text message before this index.
-                              val currentMessages =
-                                uiState.messagesByModel[selectedModel.name] ?: listOf()
-                              val lastUserMsg =
-                                currentMessages
-                                  .take(index)
-                                  .lastOrNull {
-                                    it is ChatMessageText && it.side == ChatSide.USER
-                                  }
-                              if (lastUserMsg != null && lastUserMsg is ChatMessageText) {
-                                onSendMessage(
-                                  selectedModel,
-                                  listOf(
-                                    ChatMessageText(
-                                      content = lastUserMsg.content,
-                                      side = ChatSide.USER,
-                                    )
-                                  ),
-                                )
-                              }
-                            }
-                          },
-                        )
+                         // Regenerate
+                         DropdownMenuItem(
+                           text = { Text(stringResource(R.string.message_action_regenerate)) },
+                           onClick = {
+                             showPopupMenu = false
+                             if (message.side == ChatSide.USER) {
+                               // Truncate history after user message and regenerate.
+                               viewModel.truncateMessagesFrom(
+                                 model = selectedModel,
+                                 fromIndex = index + 1,
+                               )
+                               // Send the user message to trigger AI regeneration.
+                               onSendMessage(
+                                 selectedModel,
+                                 listOf(
+                                   ChatMessageText(
+                                     content = message.content,
+                                     side = ChatSide.USER,
+                                   )
+                                 ),
+                               )
+                             } else {
+                               // AI message: truncate from AI message and regenerate.
+                               viewModel.truncateMessagesFrom(
+                                 model = selectedModel,
+                                 fromIndex = index,
+                               )
+                               // Find the last user text message before this index and send it
+                               // to trigger AI regeneration.
+                               val currentMessages =
+                                 uiState.messagesByModel[selectedModel.name] ?: listOf()
+                               val lastUserMsg =
+                                 currentMessages
+                                   .take(index)
+                                   .lastOrNull {
+                                     it is ChatMessageText && it.side == ChatSide.USER
+                                   }
+                               if (lastUserMsg != null && lastUserMsg is ChatMessageText) {
+                                 onSendMessage(
+                                   selectedModel,
+                                   listOf(
+                                     ChatMessageText(
+                                       content = lastUserMsg.content,
+                                       side = ChatSide.USER,
+                                     )
+                                   ),
+                                 )
+                               }
+                             }
+                           },
+                         )
                       }
                     }
                   }

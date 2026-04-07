@@ -868,8 +868,8 @@ private fun TaskList(
         )
       for (task in
         listOf(
-          modelManagerViewModel.getTaskById(BuiltInTaskId.LLM_CHAT)!!,
-          modelManagerViewModel.getTaskById(BuiltInTaskId.LLM_AGENT_CHAT)!!,
+          modelManagerViewModel.getTaskById(BuiltInTaskId.LLM_CHAT)!!, 
+          modelManagerViewModel.getTaskById(BuiltInTaskId.LLM_AGENT_CHAT)!!, 
         )) {
         TaskCard(
           task = task,
