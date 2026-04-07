@@ -37,6 +37,7 @@ enum AcceleratorOverride {
   ACCELERATOR_OVERRIDE_AUTO = 0;
   ACCELERATOR_OVERRIDE_CPU = 1;
   ACCELERATOR_OVERRIDE_GPU = 2;
+  ACCELERATOR_OVERRIDE_NPU = 3;
 }
 
 message AccessTokenData {

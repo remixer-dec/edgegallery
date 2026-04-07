@@ -24,6 +24,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -90,6 +92,25 @@ fun HoldToDictate(
         recordAudioPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
       }
     }
+  }
+
+  if (uiState.error != null) {
+    AlertDialog(
+      onDismissRequest = {
+        viewModel.clearError()
+      },
+      title = { Text("Error") },
+      text = { Text(uiState.error!!) },
+      confirmButton = {
+        Button(
+          onClick = {
+            viewModel.clearError()
+          },
+        ) {
+          Text("OK")
+        }
+      },
+    )
   }
 
   if (recordAudioPermissionGranted) {

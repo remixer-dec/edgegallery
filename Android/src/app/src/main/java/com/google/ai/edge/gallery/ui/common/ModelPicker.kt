@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import android.content.Context
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -69,6 +70,7 @@ fun ModelPicker(
   var showMemoryWarning by remember { mutableStateOf(false) }
   var modelToPick by remember { mutableStateOf<Model?>(null) }
   val context = LocalContext.current
+  val prefs = context.getSharedPreferences("memory_warnings", Context.MODE_PRIVATE)
 
   Column(modifier = Modifier.padding(bottom = 8.dp)) {
     // Title
@@ -101,7 +103,8 @@ fun ModelPicker(
           Modifier.fillMaxWidth()
             .clickable {
               // Show memory warning before proceeding.
-              if (isMemoryLow(context = context, model = model)) {
+              val warningAcknowledged = prefs.getBoolean(model.name, false)
+              if (!warningAcknowledged && isMemoryLow(context = context, model = model)) {
                 modelToPick = model
                 showMemoryWarning = true
               } else {
@@ -157,6 +160,7 @@ fun ModelPicker(
       onProceeded = {
         val curModelToPick = modelToPick
         if (curModelToPick != null) {
+          prefs.edit().putBoolean(curModelToPick.name, true).apply()
           onModelSelected(curModelToPick)
         }
         showMemoryWarning = false

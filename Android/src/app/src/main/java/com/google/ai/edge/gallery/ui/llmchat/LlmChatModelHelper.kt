@@ -44,7 +44,6 @@ import com.google.ai.edge.litertlm.Message
 import com.google.ai.edge.litertlm.MessageCallback
 import com.google.ai.edge.litertlm.SamplerConfig
 import com.google.ai.edge.litertlm.ToolProvider
-import com.google.ai.edge.gallery.proto.AcceleratorOverride
 import com.google.ai.edge.gallery.ui.theme.AcceleratorSettings
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.CancellationException
@@ -77,8 +76,6 @@ object LlmChatModelHelper : LlmModelHelper {
     val topP = model.getFloatConfigValue(key = ConfigKeys.TOPP, defaultValue = DEFAULT_TOPP)
     val temperature =
       model.getFloatConfigValue(key = ConfigKeys.TEMPERATURE, defaultValue = DEFAULT_TEMPERATURE)
-    val accelerator =
-      model.getStringConfigValue(key = ConfigKeys.ACCELERATOR, defaultValue = Accelerator.GPU.label)
     val visionAccelerator =
       model.getStringConfigValue(
         key = ConfigKeys.VISION_ACCELERATOR,
@@ -94,21 +91,15 @@ object LlmChatModelHelper : LlmModelHelper {
       }
     val shouldEnableImage = supportImage
     val shouldEnableAudio = supportAudio
-    val acceleratorOverride = AcceleratorSettings.acceleratorOverride.value
+    val accelerator = model.getStringConfigValue(key = ConfigKeys.ACCELERATOR, defaultValue = Accelerator.GPU.label)
     val preferredBackend =
-      when (acceleratorOverride) {
-        AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU -> Backend.CPU()
-        AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU -> Backend.GPU()
-        else ->
-          when (accelerator) {
-            Accelerator.CPU.label -> Backend.CPU()
-            Accelerator.GPU.label -> Backend.GPU()
-            Accelerator.NPU.label ->
-              Backend.NPU(nativeLibraryDir = context.applicationInfo.nativeLibraryDir)
-            else -> Backend.CPU()
-          }
+      when (accelerator) {
+        "CPU" -> Backend.CPU()
+        "GPU" -> Backend.GPU()
+        "NPU" -> Backend.NPU(nativeLibraryDir = context.applicationInfo.nativeLibraryDir)
+        else -> Backend.CPU()
       }
-    Log.d(TAG, "Preferred backend: $preferredBackend (override: $acceleratorOverride)")
+    Log.d(TAG, "Preferred backend: $preferredBackend")
 
     val modelPath = model.getPath(context = context)
     val engineConfig =

@@ -50,6 +50,7 @@ import com.google.ai.edge.litertlm.Contents
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import javax.inject.Inject
@@ -58,18 +59,20 @@ import kotlinx.coroutines.CoroutineScope
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // AI Chat.
 
-class LlmChatTask @Inject constructor() : CustomTask {
+class LlmChatTask @Inject constructor(
+  private val context: Context
+) : CustomTask {
   override val task: Task =
     Task(
       id = BuiltInTaskId.LLM_CHAT,
-      label = "AI Chat",
+      label = context.getString(R.string.task_label_ai_chat),
       labelResId = R.string.task_label_ai_chat,
       category = Category.LLM,
       icon = Icons.Outlined.Forum,
       models = mutableListOf(),
-      description = "Chat with on-device large language models",
+      description = context.getString(R.string.task_desc_ai_chat),
       descriptionResId = R.string.task_desc_ai_chat,
-      shortDescription = "Chat with an on-device LLM",
+      shortDescription = context.getString(R.string.task_short_desc_ai_chat),
       shortDescriptionResId = R.string.task_short_desc_ai_chat,
       docUrl = "https://github.com/google-ai-edge/LiteRT-LM/blob/main/kotlin/README.md",
       sourceCodeUrl =
@@ -139,26 +142,28 @@ class LlmChatTask @Inject constructor() : CustomTask {
 internal object LlmChatTaskModule {
   @Provides
   @IntoSet
-  fun provideTask(): CustomTask {
-    return LlmChatTask()
+  fun provideTask(@ApplicationContext context: Context): CustomTask {
+    return LlmChatTask(context)
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////
 // Ask image.
 
-class LlmAskImageTask @Inject constructor() : CustomTask {
+class LlmAskImageTask @Inject constructor(
+  private val context: Context
+) : CustomTask {
   override val task: Task =
     Task(
       id = BuiltInTaskId.LLM_ASK_IMAGE,
-      label = "Ask Image",
+      label = context.getString(R.string.task_label_ask_image),
       labelResId = R.string.task_label_ask_image,
       category = Category.LLM,
       icon = Icons.Outlined.Mms,
       models = mutableListOf(),
-      description = "Ask questions about images with on-device large language models",
+      description = context.getString(R.string.task_desc_ask_image),
       descriptionResId = R.string.task_desc_ask_image,
-      shortDescription = "Ask questions about images",
+      shortDescription = context.getString(R.string.task_short_desc_ask_image),
       shortDescriptionResId = R.string.task_short_desc_ask_image,
       docUrl = "https://github.com/google-ai-edge/LiteRT-LM/blob/main/kotlin/README.md",
       sourceCodeUrl =
@@ -206,27 +211,28 @@ class LlmAskImageTask @Inject constructor() : CustomTask {
 internal object LlmAskImageModule {
   @Provides
   @IntoSet
-  fun provideTask(): CustomTask {
-    return LlmAskImageTask()
+  fun provideTask(@ApplicationContext context: Context): CustomTask {
+    return LlmAskImageTask(context)
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////
 // Ask audio.
 
-class LlmAskAudioTask @Inject constructor() : CustomTask {
+class LlmAskAudioTask @Inject constructor(
+  private val context: Context
+) : CustomTask {
   override val task: Task =
     Task(
       id = BuiltInTaskId.LLM_ASK_AUDIO,
-      label = "Audio Scribe",
+      label = context.getString(R.string.task_label_audio_scribe),
       labelResId = R.string.task_label_audio_scribe,
       category = Category.LLM,
       icon = Icons.Outlined.Mic,
       models = mutableListOf(),
-      description =
-        "Instantly transcribe and/or translate audio clips using on-device large language models",
+      description = context.getString(R.string.task_desc_audio_scribe),
       descriptionResId = R.string.task_desc_audio_scribe,
-      shortDescription = "Transcribe and translate audio",
+      shortDescription = context.getString(R.string.task_short_desc_audio_scribe),
       shortDescriptionResId = R.string.task_short_desc_audio_scribe,
       docUrl = "https://github.com/google-ai-edge/LiteRT-LM/blob/main/kotlin/README.md",
       sourceCodeUrl =
@@ -274,7 +280,7 @@ class LlmAskAudioTask @Inject constructor() : CustomTask {
 internal object LlmAskAudioModule {
   @Provides
   @IntoSet
-  fun provideTask(): CustomTask {
-    return LlmAskAudioTask()
+  fun provideTask(@ApplicationContext context: Context): CustomTask {
+    return LlmAskAudioTask(context)
   }
 }

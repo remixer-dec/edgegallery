@@ -15,7 +15,9 @@
  */
 package com.google.ai.edge.gallery.customtasks.tinygarden
 
+import android.content.Context
 import com.google.ai.edge.gallery.customtasks.common.CustomTask
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +29,7 @@ import dagger.multibindings.IntoSet
 internal object TinyGardenTaskModule {
   @Provides
   @IntoSet
-  fun provideTask(): CustomTask {
-    return TinyGardenTask()
+  fun provideTask(@ApplicationContext context: Context): CustomTask {
+    return TinyGardenTask(context)
   }
 }

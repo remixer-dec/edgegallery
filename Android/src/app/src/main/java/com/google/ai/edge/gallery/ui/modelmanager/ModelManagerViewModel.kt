@@ -74,6 +74,10 @@ import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ResponseTypeValues
 
 private const val TAG = "AGModelManagerViewModel"
+
+private fun String.truncate(maxLen: Int): String {
+  return if (length > maxLen) substring(0..(maxLen - 1)) + "..." else this
+}
 private const val TEXT_INPUT_HISTORY_MAX_SIZE = 50
 private const val MODEL_ALLOWLIST_FILENAME = "model_allowlist.json"
 private const val MODEL_ALLOWLIST_TEST_FILENAME = "model_allowlist_test.json"
@@ -87,90 +91,108 @@ private const val CUSTOM_MODEL_ALLOW_LIST = """
   "models": [
     {
       "name": "Qwen3.5-0.8B-Q8-EKV2048",
-      "description": "[unofficial] Qwen3.5 0.8B Q8 EKV2048 by GabrieleConte (1.16 GB)",
-      "url": "https://huggingface.co/GabrieleConte/Qwen3.5-0.8B-LiteRT/resolve/main/qwen35_mm_q8_ekv2048.litertlm",
-      "downloadFileName": "qwen35_mm_q8_ekv2048.litertlm",
-      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "modelId": "GabrieleConte/Qwen3.5-0.8B-LiteRT",
+      "modelFile": "qwen35_mm_q8_ekv2048.litertlm",
+      "commitHash": "main",
+      "description": "[unofficial] Qwen3.5 0.8B Q8 EKV2048 by GabrieleConte",
+      "sizeInBytes": 1243728640,
+      "taskTypes": ["llm_chat", "llm_prompt_lab"],
       "defaultConfig": {
         "accelerators": "cpu,gpu"
       }
     },
     {
       "name": "Qwen3.5-9B-LiteRT",
+      "modelId": "litert-community/Qwen3.5-9B-LiteRT",
+      "modelFile": "model_multimodal.litertlm",
+      "commitHash": "main",
       "description": "[unofficial] Qwen3.5 9B quantized by litert-community",
-      "url": "https://huggingface.co/litert-community/Qwen3.5-9B-LiteRT/resolve/main/model_multimodal.litertlm",
-      "downloadFileName": "model_multimodal.litertlm",
-      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "sizeInBytes": 6442450944,
+      "taskTypes": ["llm_chat", "llm_prompt_lab"],
       "defaultConfig": {
         "accelerators": "cpu,gpu"
       }
     },
     {
       "name": "Qwen3.5-4B-LiteRT-Multimodal",
+      "modelId": "litert-community/Qwen3.5-4B-LiteRT",
+      "modelFile": "model_multimodal.litertlm",
+      "commitHash": "main",
       "description": "[unofficial] Qwen3.5 4B multimodal by litert-community",
-      "url": "https://huggingface.co/litert-community/Qwen3.5-4B-LiteRT/resolve/main/model_multimodal.litertlm",
-      "downloadFileName": "model_multimodal.litertlm",
-      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "sizeInBytes": 2684354560,
+      "taskTypes": ["llm_chat", "llm_prompt_lab"],
       "defaultConfig": {
         "accelerators": "cpu,gpu"
       }
     },
     {
       "name": "Qwen3.5-4B-LiteRT-Quantized",
+      "modelId": "litert-community/Qwen3.5-4B-LiteRT",
+      "modelFile": "model_quantized.litertlm",
+      "commitHash": "main",
       "description": "[unofficial] Qwen3.5 4B quantized by litert-community",
-      "url": "https://huggingface.co/litert-community/Qwen3.5-4B-LiteRT/resolve/main/model_quantized.litertlm",
-      "downloadFileName": "model_quantized.litertlm",
-      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "sizeInBytes": 2147483648,
+      "taskTypes": ["llm_chat", "llm_prompt_lab"],
       "defaultConfig": {
         "accelerators": "cpu,gpu"
       }
     },
     {
       "name": "Qwen3.5-2B-LiteRT",
+      "modelId": "litert-community/Qwen3.5-2B-LiteRT",
+      "modelFile": "model_multimodal.litertlm",
+      "commitHash": "main",
       "description": "[unofficial] Qwen3.5 2B by litert-community",
-      "url": "https://huggingface.co/litert-community/Qwen3.5-2B-LiteRT/resolve/main/model_multimodal.litertlm",
-      "downloadFileName": "model_multimodal.litertlm",
-      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "sizeInBytes": 1342177280,
+      "taskTypes": ["llm_chat", "llm_prompt_lab"],
       "defaultConfig": {
         "accelerators": "cpu,gpu"
       }
     },
     {
       "name": "Qwen3.5-0.8B-LiteRT",
+      "modelId": "litert-community/Qwen3.5-0.8B-LiteRT",
+      "modelFile": "model_multimodal.litertlm",
+      "commitHash": "main",
       "description": "[unofficial] Qwen3.5 0.8B by litert-community",
-      "url": "https://huggingface.co/litert-community/Qwen3.5-0.8B-LiteRT/resolve/main/model_multimodal.litertlm",
-      "downloadFileName": "model_multimodal.litertlm",
-      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "sizeInBytes": 671088640,
+      "taskTypes": ["llm_chat", "llm_prompt_lab"],
       "defaultConfig": {
         "accelerators": "cpu,gpu"
       }
     },
     {
       "name": "MedGemma-1.5-4B",
+      "modelId": "ai4med-id/medgemma-1.5-4b-it-litertlm",
+      "modelFile": "model_multimodal.litertlm",
+      "commitHash": "main",
       "description": "[unofficial] MedGemma 1.5 4B medical AI model",
-      "url": "https://huggingface.co/ai4med-id/medgemma-1.5-4b-it-litertlm/resolve/main/model_multimodal.litertlm",
-      "downloadFileName": "model_multimodal.litertlm",
-      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "sizeInBytes": 2684354560,
+      "taskTypes": ["llm_chat", "llm_prompt_lab"],
       "defaultConfig": {
         "accelerators": "cpu,gpu"
       }
     },
     {
       "name": "MobileActions-270M",
+      "modelId": "Thorge-AI/functiongemma-270m-it-mobile-actions.litertlm",
+      "modelFile": "model_multimodal.litertlm",
+      "commitHash": "main",
       "description": "[unofficial] Function-calling model for mobile actions",
-      "url": "https://huggingface.co/Thorge-AI/functiongemma-270m-it-mobile-actions.litertlm/resolve/main/model_multimodal.litertlm",
-      "downloadFileName": "model_multimodal.litertlm",
-      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "sizeInBytes": 335544320,
+      "taskTypes": ["llm_chat", "llm_prompt_lab"],
       "defaultConfig": {
         "accelerators": "cpu,gpu"
       }
     },
     {
       "name": "Gemmasutra-Mini-2B",
+      "modelId": "SuperPauly/Gemmasutra_LiteRT-LM",
+      "modelFile": "model_multimodal.litertlm",
+      "commitHash": "main",
       "description": "[unofficial] Gemmasutra Mini 2B creative writing model",
-      "url": "https://huggingface.co/SuperPauly/Gemmasutra_LiteRT-LM/resolve/main/model_multimodal.litertlm",
-      "downloadFileName": "model_multimodal.litertlm",
-      "taskTypes": ["LLM_CHAT", "LLM_PROMPT_LAB"],
+      "sizeInBytes": 1342177280,
+      "taskTypes": ["llm_chat", "llm_prompt_lab"],
       "defaultConfig": {
         "accelerators": "cpu,gpu"
       }
@@ -925,80 +947,148 @@ constructor(
       uiState.value.copy(loadingModelAllowlist = true, loadingModelAllowlistError = "")
     }
 
+    Log.d(TAG, "=== STARTING MODEL ALLOWLIST LOADING ===")
+    Log.d(TAG, "TEST_MODEL_ALLOW_LIST is ${if (TEST_MODEL_ALLOW_LIST.isNotEmpty()) "NOT EMPTY (${TEST_MODEL_ALLOW_LIST.length} chars)" else "EMPTY"}")
+    Log.d(TAG, "CUSTOM_MODEL_ALLOW_LIST is ${if (CUSTOM_MODEL_ALLOW_LIST.isNotEmpty()) "NOT EMPTY (${CUSTOM_MODEL_ALLOW_LIST.length} chars)" else "EMPTY"}")
+
     viewModelScope.launch(Dispatchers.IO) {
       try {
         // Load model allowlist json.
         var modelAllowlist: ModelAllowlist? = null
 
-        // Try to read the test allowlist first.
-        Log.d(TAG, "Loading test model allowlist.")
-        modelAllowlist = readModelAllowlistFromDisk(fileName = MODEL_ALLOWLIST_TEST_FILENAME)
+        // Step 1: Try to load REMOTE allowlist first (highest priority).
+        Log.d(TAG, "=== Step 1: Loading REMOTE model allowlist (prioritized) ===")
+        var version = BuildConfig.VERSION_NAME.replace(".", "_")
+        Log.d(TAG, "VERSION_NAME: ${BuildConfig.VERSION_NAME}")
+        Log.d(TAG, "VERSION after replace: $version")
+        val remoteUrl = getAllowlistUrl(version)
+        Log.d(TAG, "Remote allowlist URL: $remoteUrl")
+        Log.d(TAG, "About to call getJsonResponse...")
+        val remoteData = getJsonResponse<ModelAllowlist>(url = remoteUrl)
+        Log.d(TAG, "getJsonResponse returned: ${if (remoteData != null) "NOT NULL (hasJson=${remoteData.jsonObj != null})" else "NULL"}")
+        modelAllowlist = remoteData?.jsonObj
+        Log.d(TAG, "Remote modelAllowlist result: ${if (modelAllowlist != null) "SUCCESS (${modelAllowlist.models.size} models)" else "FAILED"}")
 
-        // Local test only.
+        if (modelAllowlist == null) {
+          Log.e(TAG, "Failed to load model allowlist from internet. Trying to load it from disk cache...")
+          modelAllowlist = readModelAllowlistFromDisk()
+          if (modelAllowlist != null) {
+            Log.e(TAG, "Loaded CACHED allowlist from disk: ${modelAllowlist.models.size} models")
+          } else {
+            Log.e(TAG, "No cached allowlist found either!")
+          }
+        } else {
+          Log.d(TAG, "Saving remote allowlist to disk for caching...")
+          saveModelAllowlistToDisk(modelAllowlistContent = remoteData?.textContent ?: "{}")
+        }
+
+        // Step 2: Load test allowlist from disk (lower priority, will be merged).
+        Log.d(TAG, "=== Step 2: Loading test model allowlist from disk ===")
+        val diskAllowlist = readModelAllowlistFromDisk(fileName = MODEL_ALLOWLIST_TEST_FILENAME)
+        Log.d(TAG, "Test allowlist from disk: ${if (diskAllowlist != null) "FOUND (${diskAllowlist.models.size} models)" else "NOT FOUND"}")
+
+        // Step 3: Load embedded TEST model allowlist (lower priority, will be merged).
         if (TEST_MODEL_ALLOW_LIST.isNotEmpty()) {
-          Log.d(TAG, "Loading local model allowlist for testing.")
+          Log.d(TAG, "=== Step 3: Loading local TEST model allowlist (embedded) ===")
           val gson = Gson()
           try {
-            modelAllowlist = gson.fromJson(TEST_MODEL_ALLOW_LIST, ModelAllowlist::class.java)
+            val testAllowlist = gson.fromJson(TEST_MODEL_ALLOW_LIST, ModelAllowlist::class.java)
+            Log.d(TAG, "TEST allowlist loaded: ${if (testAllowlist != null) "SUCCESS (${testAllowlist!!.models.size} models)" else "NULL RESULT"}")
+            if (testAllowlist != null) {
+              Log.d(TAG, "TEST models: ${testAllowlist.models.joinToString(", ") { it.name }}")
+              if (modelAllowlist != null) {
+                Log.d(TAG, "MERGING TEST allowlist (${testAllowlist.models.size} models) into main allowlist (${modelAllowlist.models.size} models)")
+                modelAllowlist = modelAllowlist.copy(models = modelAllowlist.models + testAllowlist.models)
+                Log.d(TAG, "After TEST merge: ${modelAllowlist.models.size} total models")
+              } else {
+                modelAllowlist = testAllowlist
+                Log.d(TAG, "Using TEST allowlist as fallback")
+              }
+            }
           } catch (e: JsonSyntaxException) {
-            Log.e(TAG, "Failed to parse local test json", e)
+            Log.e(TAG, "Failed to parse TEST local json", e)
+            e.printStackTrace()
+          }
+        }
+
+        // Step 4: Load embedded CUSTOM model allowlist (lowest priority, will be merged).
+        if (CUSTOM_MODEL_ALLOW_LIST.isNotEmpty()) {
+          Log.d(TAG, "=== Step 4: Loading CUSTOM model allowlist (embedded) ===")
+          val gson = Gson()
+          try {
+            val customAllowlist = gson.fromJson(CUSTOM_MODEL_ALLOW_LIST, ModelAllowlist::class.java)
+            Log.d(TAG, "Custom allowlist loaded: ${if (customAllowlist != null) "SUCCESS (${customAllowlist.models.size} models)" else "NULL RESULT"}")
+            if (customAllowlist != null) {
+              Log.d(TAG, "Custom models: ${customAllowlist.models.joinToString(", ") { it.name }}")
+              customAllowlist.models.forEach { model ->
+                Log.d(TAG, "  - ${model.name}: modelId=${model.modelId}, modelFile=${model.modelFile}, commitHash=${model.commitHash}, url=${model.url?.truncate(50)}")
+              }
+              if (modelAllowlist != null) {
+                Log.d(TAG, "MERGING custom allowlist (${customAllowlist.models.size} models) into main allowlist (${modelAllowlist.models.size} models)")
+                modelAllowlist = modelAllowlist.copy(models = modelAllowlist.models + customAllowlist.models)
+                Log.d(TAG, "After CUSTOM merge: ${modelAllowlist.models.size} total models")
+              } else {
+                modelAllowlist = customAllowlist
+                Log.d(TAG, "Using custom allowlist as fallback")
+              }
+            }
+          } catch (e: JsonSyntaxException) {
+            Log.e(TAG, "Failed to parse CUSTOM model allowlist", e)
+            e.printStackTrace()
           }
         }
 
         if (modelAllowlist == null) {
-          // Load from github.
-          var version = BuildConfig.VERSION_NAME.replace(".", "_")
-          val url = getAllowlistUrl(version)
-          Log.d(TAG, "Loading model allowlist from internet. Url: $url")
-          val data = getJsonResponse<ModelAllowlist>(url = url)
-          modelAllowlist = data?.jsonObj
-
-          if (modelAllowlist == null) {
-            Log.w(TAG, "Failed to load model allowlist from internet. Trying to load it from disk")
-            modelAllowlist = readModelAllowlistFromDisk()
-          } else {
-            Log.d(TAG, "Done: loading model allowlist from internet")
-            saveModelAllowlistToDisk(modelAllowlistContent = data?.textContent ?: "{}")
-          }
-        }
-
-        if (modelAllowlist == null) {
+          Log.e(TAG, "=== FAILED: Could not load model allowlist from any source ===")
           _uiState.update {
             uiState.value.copy(loadingModelAllowlistError = "Failed to load model list")
           }
           return@launch
         }
 
-        Log.d(TAG, "Allowlist: $modelAllowlist")
+        Log.d(TAG, "=== Allowlist loaded successfully: ${modelAllowlist.models.size} models ===")
 
         // Convert models in the allowlist.
+        Log.d(TAG, "=== Step 5: Converting allowlist models to Model objects ===")
         val curTasks = getActiveCustomTasks().map { it.task }
+        Log.d(TAG, "Available tasks: ${curTasks.joinToString(", ") { it.id }}")
         val nameToModel = mutableMapOf<String, Model>()
         for (allowedModel in modelAllowlist.models) {
+          Log.d(TAG, "Processing allowlist model: ${allowedModel.name}")
           if (allowedModel.disabled == true) {
+            Log.d(TAG, "  -> SKIPPED (disabled)")
             continue
           }
 
           // Ignore the allowedModel if its accelerator is only npu and this device's soc is not in
           // its socToModelFiles.
-          val accelerators = allowedModel.defaultConfig.accelerators ?: ""
+          val accelerators = allowedModel.defaultConfig?.accelerators ?: ""
           val acceleratorList = accelerators.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+          Log.d(TAG, "  -> Accelerators: $acceleratorList")
           if (acceleratorList.size == 1 && acceleratorList[0] == "npu") {
             val socToModelFiles = allowedModel.socToModelFiles
             if (socToModelFiles != null && !socToModelFiles.containsKey(SOC)) {
               Log.d(
                 TAG,
-                "Ignoring model '${allowedModel.name}' because it's NPU-only and not supported on SOC: $SOC",
+                "  -> SKIPPED: NPU-only model, SOC $SOC not in socToModelFiles",
               )
               continue
             }
           }
 
+          Log.d(TAG, "  -> Converting to Model object...")
           val model = allowedModel.toModel()
+          Log.d(TAG, "  -> Model created: name=${model.name}, url=${model.url.truncate(60)}")
+          Log.d(TAG, "  -> Model has description: ${model.info.isNotEmpty()}, content: ${model.info.truncate(50)}")
           nameToModel.put(model.name, model)
           for (taskType in allowedModel.taskTypes) {
             val task = curTasks.find { it.id == taskType }
-            task?.models?.add(model)
+            if (task != null) {
+              Log.d(TAG, "  -> Adding to task: $taskType")
+              task.models.add(model)
+            } else {
+              Log.w(TAG, "  -> WARNING: Task $taskType not found!")
+            }
 
             if (task?.id == BuiltInTaskId.LLM_TINY_GARDEN) {
               val newConfigs = model.configs.toMutableList()

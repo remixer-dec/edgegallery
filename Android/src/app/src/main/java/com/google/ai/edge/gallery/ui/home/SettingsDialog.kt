@@ -102,6 +102,7 @@ private val ACCELERATOR_OPTIONS = listOf(
   AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO,
   AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU,
   AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU,
+  AcceleratorOverride.ACCELERATOR_OVERRIDE_NPU,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -540,6 +541,7 @@ private fun acceleratorLabel(override: AcceleratorOverride): String {
   return when (override) {
     AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU -> "CPU"
     AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU -> "GPU"
+    AcceleratorOverride.ACCELERATOR_OVERRIDE_NPU -> "NPU"
     else -> "Auto"
   }
 }

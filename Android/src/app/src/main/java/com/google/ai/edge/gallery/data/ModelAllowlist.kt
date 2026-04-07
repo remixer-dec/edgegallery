@@ -44,13 +44,13 @@ data class SocModelFile(
 /** A model in the model allowlist. */
 data class AllowedModel(
   val name: String,
-  val modelId: String,
-  val modelFile: String,
-  val commitHash: String,
-  val description: String,
-  val sizeInBytes: Long,
-  val defaultConfig: DefaultConfig,
-  val taskTypes: List<String>,
+  val modelId: String? = null,
+  val modelFile: String? = null,
+  val commitHash: String? = null,
+  val description: String? = null,
+  val sizeInBytes: Long? = null,
+  val defaultConfig: DefaultConfig? = null,
+  val taskTypes: List<String> = listOf(),
   val disabled: Boolean? = null,
   val llmSupportImage: Boolean? = null,
   val llmSupportAudio: Boolean? = null,
@@ -63,14 +63,22 @@ data class AllowedModel(
   val url: String? = null,
   val socToModelFiles: Map<String, SocModelFile>? = null,
   val runtimeType: RuntimeType? = null,
+  val downloadFileName: String? = null,
 ) {
   fun toModel(): Model {
-    // Construct HF download url.
-    var version = commitHash
-    var downloadedFileName = modelFile
-    var downloadUrl =
-      url ?: "https://huggingface.co/$modelId/resolve/$commitHash/$modelFile?download=true"
-    var sizeInBytes = sizeInBytes
+    // Determine which format is being used
+    val hasStandardFormat = modelId != null && modelFile != null && commitHash != null
+    val hasDirectFormat = url != null && downloadFileName != null
+
+    // Construct fields based on format
+    var version = commitHash ?: "_"
+    var downloadedFileName = downloadFileName ?: modelFile ?: "_"
+    var downloadUrl = url ?: if (hasStandardFormat) {
+      "https://huggingface.co/${modelId}/resolve/${commitHash}/${modelFile}?download=true"
+    } else {
+      ""
+    }
+    var sizeInBytes = sizeInBytes ?: 0L
 
     // Handle per-soc model files.
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -101,12 +109,12 @@ data class AllowedModel(
     var accelerators: List<Accelerator> = DEFAULT_ACCELERATORS
     var visionAccelerator: Accelerator = DEFAULT_VISION_ACCELERATOR
     if (isLlmModel) {
-      val defaultTopK: Int = defaultConfig.topK ?: DEFAULT_TOPK
-      val defaultTopP: Float = defaultConfig.topP ?: DEFAULT_TOPP
-      val defaultTemperature: Float = defaultConfig.temperature ?: DEFAULT_TEMPERATURE
-      llmMaxToken = defaultConfig.maxTokens ?: 1024
-      llmMaxContextLength = defaultConfig.maxContextLength
-      if (defaultConfig.accelerators != null) {
+      val defaultTopK: Int = defaultConfig?.topK ?: DEFAULT_TOPK
+      val defaultTopP: Float = defaultConfig?.topP ?: DEFAULT_TOPP
+      val defaultTemperature: Float = defaultConfig?.temperature ?: DEFAULT_TEMPERATURE
+      llmMaxToken = defaultConfig?.maxTokens ?: 1024
+      llmMaxContextLength = defaultConfig?.maxContextLength
+      if (defaultConfig?.accelerators != null) {
         val items = defaultConfig.accelerators.split(",")
         accelerators = mutableListOf()
         for (item in items) {
@@ -123,7 +131,7 @@ data class AllowedModel(
           accelerators.remove(Accelerator.GPU)
         }
       }
-      if (defaultConfig.visionAccelerator != null) {
+      if (defaultConfig?.visionAccelerator != null) {
         val accelerator = defaultConfig.visionAccelerator
         if (accelerator == "cpu") {
           visionAccelerator = Accelerator.CPU
@@ -155,7 +163,7 @@ data class AllowedModel(
           .toMutableList()
     }
 
-    var learnMoreUrl = "https://huggingface.co/${modelId}"
+    var learnMoreUrl = if (modelId != null) "https://huggingface.co/${modelId}" else ""
 
     // Misc.
     var showBenchmarkButton = true
@@ -164,10 +172,13 @@ data class AllowedModel(
       showBenchmarkButton = false
       showRunAgainButton = false
     }
+    // Use name as fallback for both name and info
+    val modelInfo = description ?: ""
+
     return Model(
       name = name,
       version = version,
-      info = description,
+      info = modelInfo,
       url = downloadUrl,
       sizeInBytes = sizeInBytes,
       minDeviceMemoryInGb = minDeviceMemoryInGb,

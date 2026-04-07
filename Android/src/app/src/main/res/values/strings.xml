@@ -474,27 +474,30 @@
   <string name="import_model_btn">Import</string>
   <string name="import_model_title">Import Model</string>
 
-  <!-- Task labels -->
-  <string name="task_label_ai_chat" translatable="false">AI Chat</string>
-  <string name="task_label_ask_image" translatable="false">Ask Image</string>
-  <string name="task_label_audio_scribe" translatable="false">Audio Scribe</string>
-  <string name="task_label_prompt_lab" translatable="false">Prompt Lab</string>
-  <string name="task_label_agent_skills" translatable="false">Agent Skills</string>
-  <string name="task_label_tiny_garden" translatable="false">Tiny Garden</string>
+   <!-- Task labels -->
+   <string name="task_label_ai_chat" translatable="false">AI Chat</string>
+   <string name="task_label_ask_image" translatable="false">Ask Image</string>
+   <string name="task_label_audio_scribe" translatable="false">Audio Scribe</string>
+   <string name="task_label_prompt_lab" translatable="false">Prompt Lab</string>
+   <string name="task_label_agent_skills" translatable="false">Agent Skills</string>
+   <string name="task_label_tiny_garden" translatable="false">Tiny Garden</string>
+   <string name="task_label_mobile_actions" translatable="false">Mobile Actions</string>
 
-  <!-- Task descriptions -->
-  <string name="task_desc_ai_chat" translatable="false">Chat with on-device large language models</string>
-  <string name="task_short_desc_ai_chat" translatable="false">Chat with an on-device LLM</string>
-  <string name="task_desc_ask_image" translatable="false">Ask questions about images with on-device large language models</string>
-  <string name="task_short_desc_ask_image" translatable="false">Ask questions about images</string>
-  <string name="task_desc_audio_scribe" translatable="false">Instantly transcribe and/or translate audio clips using on-device large language models</string>
-  <string name="task_short_desc_audio_scribe" translatable="false">Transcribe and translate audio</string>
-  <string name="task_desc_prompt_lab" translatable="false">Single turn use cases with on-device large language models</string>
-  <string name="task_short_desc_prompt_lab" translatable="false">Single turn use cases</string>
-  <string name="task_desc_agent_skills" translatable="false">Chat with on-device large language models with skills and tools</string>
-  <string name="task_short_desc_agent_skills" translatable="false">Complete agentic tasks with chat</string>
-  <string name="task_desc_tiny_garden" translatable="false">Use natural language to plant, water, and harvest in this fully offline mini-game.\n\nNote: This is powered by the experimental FunctionGemma model optimized for latency. Due to its compact size (270M), it works well on simple instructions but responses may vary to more complex interactions.</string>
-  <string name="task_short_desc_tiny_garden" translatable="false">Use natural language to plant</string>
+   <!-- Task descriptions -->
+   <string name="task_desc_ai_chat" translatable="false">Chat with on-device large language models</string>
+   <string name="task_short_desc_ai_chat" translatable="false">Chat with an on-device LLM</string>
+   <string name="task_desc_ask_image" translatable="false">Ask questions about images with on-device large language models</string>
+   <string name="task_short_desc_ask_image" translatable="false">Ask questions about images</string>
+   <string name="task_desc_audio_scribe" translatable="false">Instantly transcribe and/or translate audio clips using on-device large language models</string>
+   <string name="task_short_desc_audio_scribe" translatable="false">Transcribe and translate audio</string>
+   <string name="task_desc_prompt_lab" translatable="false">Single turn use cases with on-device large language models</string>
+   <string name="task_short_desc_prompt_lab" translatable="false">Single turn use cases</string>
+   <string name="task_desc_agent_skills" translatable="false">Chat with on-device large language models with skills and tools</string>
+   <string name="task_short_desc_agent_skills" translatable="false">Complete agentic tasks with chat</string>
+   <string name="task_desc_tiny_garden" translatable="false">Use natural language to plant, water, and harvest in this fully offline mini-game.\n\nNote: This is powered by the experimental FunctionGemma model optimized for latency. Due to its compact size (270M), it works well on simple instructions but responses may vary to more complex interactions.</string>
+   <string name="task_short_desc_tiny_garden" translatable="false">Use natural language to plant</string>
+   <string name="task_desc_mobile_actions" translatable="false">Perform various device actions through Function Gemma</string>
+   <string name="task_short_desc_mobile_actions" translatable="false">Leverage device mobile actions</string>
 
   <!-- Config key labels -->
   <string name="config_label_max_tokens" translatable="false">Max tokens</string>

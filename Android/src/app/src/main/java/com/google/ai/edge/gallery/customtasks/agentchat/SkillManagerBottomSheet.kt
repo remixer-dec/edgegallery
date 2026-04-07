@@ -132,6 +132,18 @@ private data class AddSkillOption(
 private val ADD_SKILL_OPTIONS =
   listOf(
     AddSkillOption(
+      type = AddSkillOptionType.FeaturedList,
+      titleResId = R.string.add_skill_option_featured_list_title,
+      descriptionResId = R.string.add_skill_option_featured_list_description,
+      icon = Icons.AutoMirrored.Outlined.ListAlt, // Or any icon you prefer
+    ),
+    AddSkillOption(
+      type = AddSkillOptionType.ManualInput,
+      titleResId = R.string.add_skill_option_skill_creator_title,
+      descriptionResId = R.string.add_skill_option_skill_creator_description,
+      icon = Icons.Rounded.Add,
+    ),
+    AddSkillOption(
       type = AddSkillOptionType.RemoteUrl,
       titleResId = R.string.add_skill_option_url_title,
       descriptionResId = R.string.add_skill_option_url_description,
