@@ -88,6 +88,7 @@ message Settings {
   AcceleratorOverride accelerator_override = 11;
   string litert_lib_override_path = 12;
   string system_prompt = 13;
+  bool disable_analytics = 14;
 }
 
 message UserData {

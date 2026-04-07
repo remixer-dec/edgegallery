@@ -21,6 +21,7 @@ import android.app.UiModeManager
 import android.os.Build
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
@@ -52,6 +53,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -88,6 +90,8 @@ import com.google.ai.edge.gallery.ui.modelmanager.ModelManagerViewModel
 import com.google.ai.edge.gallery.ui.theme.AcceleratorSettings
 import com.google.ai.edge.gallery.ui.theme.ThemeSettings
 import com.google.ai.edge.gallery.ui.theme.labelSmallNarrow
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -121,6 +125,9 @@ fun SettingsDialog(
   val focusRequester = remember { FocusRequester() }
   val interactionSource = remember { MutableInteractionSource() }
   var showTos by remember { mutableStateOf(false) }
+
+  // Firebase Analytics toggle state
+  var disableAnalytics by remember { mutableStateOf(modelManagerViewModel.dataStoreRepository.isAnalyticsDisabled()) }
 
   // LiteRT lib override state
   var liteRtLibOverridePath by remember { mutableStateOf(modelManagerViewModel.readLiteRtLibOverridePath()) }
@@ -507,6 +514,35 @@ fun SettingsDialog(
               linkText = stringResource(R.string.settings_dialog_gemma_prohibited_use_policy),
               modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             )
+          }
+          Column(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
+            Text(stringResource(R.string.settings_privacy_section), style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium))
+            Row(
+              modifier = Modifier.fillMaxWidth().padding(top = 8.dp), 
+              horizontalArrangement = Arrangement.SpaceBetween, 
+              verticalAlignment = Alignment.CenterVertically
+            ) {
+              Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
+                Text(stringResource(R.string.settings_enable_firebase_analytics), style = MaterialTheme.typography.bodyMedium)
+                Text(
+                  stringResource(R.string.settings_firebase_analytics_description), 
+                  style = MaterialTheme.typography.bodySmall, 
+                  color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+              }
+               Switch(
+                 checked = !disableAnalytics,
+                 onCheckedChange = { enabled ->
+                   disableAnalytics = !enabled
+                   modelManagerViewModel.dataStoreRepository.setAnalyticsDisabled(!enabled)
+                   try {
+                     com.google.ai.edge.gallery.firebaseAnalytics?.setAnalyticsCollectionEnabled(enabled)
+                   } catch (e: Exception) {
+                     Log.w("SettingsAnalytics", "Firebase Analytics not configured.", e)
+                   }
+                 }
+               )
+            }
           }
         }
 

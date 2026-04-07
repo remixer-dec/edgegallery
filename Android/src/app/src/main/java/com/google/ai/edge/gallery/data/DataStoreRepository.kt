@@ -122,6 +122,8 @@ interface DataStoreRepository {
   fun saveSystemPrompt(prompt: String)
 
   fun readSystemPrompt(): String
+  fun isAnalyticsDisabled(): Boolean
+  fun setAnalyticsDisabled(disabled: Boolean)
 }
 
 /** Repository for managing data using Proto DataStore. */
@@ -136,6 +138,17 @@ class DefaultDataStoreRepository(
     runBlocking {
       dataStore.updateData { settings ->
         settings.toBuilder().clearTextInputHistory().addAllTextInputHistory(history).build()
+      }
+    }
+  }
+  override fun isAnalyticsDisabled(): Boolean {
+    return runBlocking { dataStore.data.first().disableAnalytics }
+  }
+  
+  override fun setAnalyticsDisabled(disabled: Boolean) {
+    runBlocking {
+      dataStore.updateData { settings ->
+        settings.toBuilder().setDisableAnalytics(disabled).build()
       }
     }
   }

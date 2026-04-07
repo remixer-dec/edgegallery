@@ -23,6 +23,8 @@ import com.google.ai.edge.gallery.ui.theme.AcceleratorSettings
 import com.google.ai.edge.gallery.ui.theme.SystemPromptSettings
 import com.google.ai.edge.gallery.ui.theme.ThemeSettings
 import com.google.firebase.FirebaseApp
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -51,6 +53,13 @@ class GalleryApplication : Application() {
     SystemPromptSettings.systemPrompt.value = dataStoreRepository.readSystemPrompt()
 
     FirebaseApp.initializeApp(this)
+    try {
+      val isAnalyticsDisabled = dataStoreRepository.isAnalyticsDisabled()
+            
+      com.google.ai.edge.gallery.firebaseAnalytics?.setAnalyticsCollectionEnabled(!isAnalyticsDisabled)
+    } catch (e: Exception) {
+      android.util.Log.w("GalleryApplication", "Firebase Analytics not configured.", e)
+    }
   }
 
   companion object {
