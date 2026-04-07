@@ -115,7 +115,7 @@ fun ResponsePanel(
     val curPageModel = task.models[pageIndex]
 
     val response =
-      uiState.responsesByModel[curPageModel.name]?.get(selectedPromptTemplateType.label) ?: ""
+      uiState.responsesByModel[curPageModel.name]?.get(selectedPromptTemplateType.name) ?: ""
 
     // Scroll to bottom when response changes.
     LaunchedEffect(response) {
@@ -140,7 +140,7 @@ fun ResponsePanel(
           verticalAlignment = Alignment.CenterVertically,
         ) {
           Text(
-            "Response will appear here",
+            stringResource(R.string.response_placeholder),
             modifier = Modifier.alpha(0.5f),
             style = MaterialTheme.typography.labelMedium,
           )

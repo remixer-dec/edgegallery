@@ -22,6 +22,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.res.stringResource
+import com.google.ai.edge.gallery.R
 
 enum class PromptTemplateInputEditorType {
   SINGLE_SELECT
@@ -87,7 +89,7 @@ private val GEMINI_GRADIENT_STYLE =
 
 @Suppress("ImmutableEnum")
 enum class PromptTemplateType(
-  val label: String,
+  val label: Int,
   val config: PromptTemplateConfig,
   val genFullPrompt: (userInput: String, inputEditorValues: Map<String, Any>) -> AnnotatedString =
     { _, _ ->
@@ -96,7 +98,7 @@ enum class PromptTemplateType(
   val examplePrompts: List<String> = listOf(),
 ) {
   FREE_FORM(
-    label = "Free form",
+    label = R.string.prompt_template_free_form,
     config = PromptTemplateConfig(),
     genFullPrompt = { userInput, _ -> AnnotatedString(userInput) },
     examplePrompts =
@@ -112,7 +114,7 @@ enum class PromptTemplateType(
       ),
   ),
   REWRITE_TONE(
-    label = "Rewrite tone",
+    label = R.string.prompt_template_rewrite_tone,
     config =
       PromptTemplateConfig(
         inputEditors =
@@ -143,7 +145,7 @@ enum class PromptTemplateType(
       ),
   ),
   SUMMARIZE_TEXT(
-    label = "Summarize text",
+    label = R.string.prompt_template_summarize_text,
     config =
       PromptTemplateConfig(
         inputEditors =
@@ -171,7 +173,7 @@ enum class PromptTemplateType(
       ),
   ),
   CODE_SNIPPET(
-    label = "Code snippet",
+    label = R.string.prompt_template_code_snippet,
     config =
       PromptTemplateConfig(
         inputEditors =
