@@ -37,7 +37,25 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <!-- Required before JellyBean MR1, optional for newer versions of Android. -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="geo" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SET_ALARM" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SET_TIMER" />
+        </intent>
+    </queries>
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -63,6 +81,7 @@
         <activity
             android:name="com.google.ai.edge.gallery.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.Gallery.SplashScreen"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
@@ -111,7 +130,14 @@
             android:exported="false"
             tools:node="merge">
         </service>
-
+        <service
+          android:name=".server.LlmServerService"
+          android:exported="false"
+          android:foregroundServiceType="specialUse">
+              <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Local LLM inference server exposing an OpenAI-compatible API on localhost" />
+        </service>
         <!-- For Firebase Analytics. -->
         <receiver
             android:name="com.google.android.gms.measurement.AppMeasurementReceiver"

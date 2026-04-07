@@ -86,6 +86,7 @@ import com.google.ai.edge.gallery.ui.modelmanager.GlobalModelManager
 import com.google.ai.edge.gallery.ui.modelmanager.ModelInitializationStatusType
 import com.google.ai.edge.gallery.ui.modelmanager.ModelManager
 import com.google.ai.edge.gallery.ui.modelmanager.ModelManagerViewModel
+import com.google.ai.edge.gallery.ui.server.ServerScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -96,6 +97,7 @@ private const val ROUTE_MODEL_LIST = "model_list"
 private const val ROUTE_MODEL = "route_model"
 private const val ROUTE_BENCHMARK = "benchmark"
 private const val ROUTE_MODEL_MANAGER = "model_manager"
+private const val ROUTE_SERVER_SCREEN = "server_screen"
 private const val ENTER_ANIMATION_DURATION_MS = 500
 private val ENTER_ANIMATION_EASING = EaseOutExpo
 private const val ENTER_ANIMATION_DELAY_MS = 100
@@ -208,6 +210,7 @@ fun GalleryNavHost(
               )
             },
             onModelsClicked = { navController.navigate(ROUTE_MODEL_MANAGER) },
+            onServerClicked = { navController.navigate(ROUTE_SERVER_SCREEN) },
             gm4 = true,
           )
         }
@@ -247,7 +250,13 @@ fun GalleryNavHost(
         }
       }
     }
-
+    // Server
+    composable(route = "server_screen") {
+        ServerScreen(
+            modelManagerViewModel = modelManagerViewModel,
+            navigateUp = { navController.navigateUp() }
+        )
+    }
     // Model list.
     composable(
       route = ROUTE_MODEL_LIST,
