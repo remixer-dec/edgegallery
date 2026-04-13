@@ -112,6 +112,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.compose.material.icons.rounded.Dns
 import com.google.ai.edge.gallery.GalleryTopAppBar
 import com.google.ai.edge.gallery.R
 import com.google.ai.edge.gallery.data.AppBarAction
@@ -150,7 +151,8 @@ private const val CONTENT_COMPOSABLES_OFFSET_Y = 16
 
 /** Navigation destination data */
 private object HomeScreenDestination {
-  @StringRes val titleRes = R.string.app_name
+  @StringRes
+  val titleRes = R.string.app_name
 }
 
 private val PREDEFINED_CATEGORY_ORDER = listOf(Category.LLM.id, Category.EXPERIMENTAL.id)
@@ -162,6 +164,7 @@ fun HomeScreen(
   tosViewModel: TosViewModel,
   navigateToTaskScreen: (Task) -> Unit,
   onModelsClicked: () -> Unit,
+  onServerClicked: () -> Unit,
   enableAnimation: Boolean,
   modifier: Modifier = Modifier,
   gm4: Boolean = false,
@@ -256,8 +259,7 @@ fun HomeScreen(
       val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
       val requestPermissionLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-          isGranted: Boolean ->
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
           if (isGranted) {
             // FCM SDK (and your app) can post notifications.
           }
@@ -268,7 +270,7 @@ fun HomeScreen(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           if (
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
-              PackageManager.PERMISSION_GRANTED
+            PackageManager.PERMISSION_GRANTED
           ) {
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
           }
@@ -282,7 +284,11 @@ fun HomeScreen(
         drawerState = drawerState,
         drawerContent = {
           ModalDrawerSheet {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+              modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+            ) {
               Row(modifier = Modifier.fillMaxWidth()) {
                 SquareDrawerItem(
                   label = stringResource(R.string.drawer_settings_label),
@@ -323,6 +329,64 @@ fun HomeScreen(
                           MaterialTheme.customColors.taskBgGradientColors[1][1],
                         )
                     ),
+                )
+              }
+              Spacer(modifier = Modifier.height(16.dp))
+
+              // ROW 2: Server and empty space
+              Row(modifier = Modifier.fillMaxWidth()) {
+                SquareDrawerItem(
+                  label = stringResource(R.string.server_label),
+                  description = stringResource(R.string.server_description),
+                  icon = Icons.Rounded.Dns,
+                  onClick = {
+                    scope.launch { drawerState.close() }
+                    scope.launch {
+                      delay(50)
+                      onServerClicked()
+                    }
+                  },
+                  modifier = Modifier.weight(1f), // Takes up exactly half the width
+                  iconBrush = linearGradient(
+                    colors = listOf(
+                      MaterialTheme.customColors.taskBgGradientColors[3][0],
+                      MaterialTheme.customColors.taskBgGradientColors[3][1],
+                    )
+                  )
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.weight(1f)) // Invisible spacer to keep the layout grid perfect
+              }
+              // Footer with clickable link
+              Spacer(modifier = Modifier.weight(1f))
+              val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+              ) {
+                Text(
+                  text = "REbuild v1 by remixer-dec, ",
+                  style = MaterialTheme.typography.bodySmall,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                  text = "[mods] ",
+                  style = MaterialTheme.typography.bodySmall,
+                  color = MaterialTheme.colorScheme.primary,
+                  textDecoration = MaterialTheme.typography.bodySmall.textDecoration ?: androidx.compose.ui.text.style.TextDecoration.Underline,
+                  modifier = Modifier.clickable {
+                    uriHandler.openUri("tg://resolve?domain=rdreleases")
+                  },
+                )
+                Text(
+                  text = "[models]",
+                  style = MaterialTheme.typography.bodySmall,
+                  color = MaterialTheme.colorScheme.primary,
+                  textDecoration = MaterialTheme.typography.bodySmall.textDecoration ?: androidx.compose.ui.text.style.TextDecoration.Underline,
+                  modifier = Modifier.clickable {
+                    uriHandler.openUri("tg://resolve?domain=genaimon")
+                  },
                 )
               }
             }
@@ -425,9 +489,9 @@ fun HomeScreen(
                 Column(
                   modifier =
                     Modifier.padding(
-                        horizontal = if (gm4) 24.dp else 40.dp,
-                        vertical = if (gm4) 0.dp else 48.dp,
-                      )
+                      horizontal = if (gm4) 24.dp else 40.dp,
+                      vertical = if (gm4) 0.dp else 48.dp,
+                    )
                       .padding(top = 24.dp, bottom = 16.dp)
                       .semantics(mergeDescendants = true) {},
                   verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -477,7 +541,7 @@ fun HomeScreen(
                   grid = grid,
                 )
 
-                Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding() + 10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
               }
             }
 
@@ -488,7 +552,10 @@ fun HomeScreen(
                   .height(innerPadding.calculateBottomPadding())
                   .background(
                     Brush.verticalGradient(
-                      colors = listOf(Color.Transparent, MaterialTheme.colorScheme.surfaceContainer)
+                      colors = listOf(
+                        Color.Transparent,
+                        MaterialTheme.colorScheme.surfaceContainer
+                      )
                     )
                   )
                   .align(Alignment.BottomCenter)
@@ -665,9 +732,9 @@ private fun IntroText(enableAnimation: Boolean, gm4: Boolean) {
     val gemma4Url = "https://ai.google.dev/gemma"
     if (gm4) {
       append(stringResource(R.string.app_intro_gm4_part1))
-      append(buildTrackableUrlAnnotatedString(url = litertUrl, linkText = "LiteRT community"))
+      append(buildTrackableUrlAnnotatedString(url = litertUrl, linkText = " LiteRT community"))
       append(stringResource(R.string.app_intro_gm4_part2))
-      append(buildTrackableUrlAnnotatedString(url = gemma4Url, linkText = "Gemma 4"))
+      append(buildTrackableUrlAnnotatedString(url = gemma4Url, linkText = " Gemma 4"))
       append(".")
     } else {
       append("${stringResource(R.string.app_intro)} ")
@@ -793,8 +860,8 @@ private fun CategoryTabHeader(
                 }
                 if (
                   targetItem == null ||
-                    targetItem.offset < 0 ||
-                    targetItem.offset + targetItem.size > listState.layoutInfo.viewportSize.width
+                  targetItem.offset < 0 ||
+                  targetItem.offset + targetItem.size > listState.layoutInfo.viewportSize.width
                 ) {
                   listState.animateScrollToItem(index = index)
                 }
@@ -867,10 +934,10 @@ private fun TaskList(
           BuiltInTaskId.LLM_AGENT_CHAT to stringResource(R.string.gemma4_agent_task_description),
         )
       for (task in
-        listOf(
-          modelManagerViewModel.getTaskById(BuiltInTaskId.LLM_CHAT)!!, 
-          modelManagerViewModel.getTaskById(BuiltInTaskId.LLM_AGENT_CHAT)!!, 
-        )) {
+      listOf(
+        modelManagerViewModel.getTaskById(BuiltInTaskId.LLM_CHAT)!!,
+        modelManagerViewModel.getTaskById(BuiltInTaskId.LLM_AGENT_CHAT)!!,
+      )) {
         TaskCard(
           task = task,
           index = 0,
