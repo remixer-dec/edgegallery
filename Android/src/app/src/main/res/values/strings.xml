@@ -75,6 +75,10 @@
   <string name="config_dialog_tab_system_prompt" translatable="false">System prompt</string>
   <string name="continue_button_label" translatable="false">Continue</string>
   <string name="conversation_history" translatable="false">Conversation History</string>
+  <string name="chat_history_save_current" translatable="false">Save current chat</string>
+  <string name="cd_chat_history_delete_icon" translatable="false">Delete</string>
+  <string name="chat_history_delete_dialog_title" translatable="false">Delete chat?</string>
+  <string name="chat_history_rename_dialog_title" translatable="false">Rename chat</string>
   <string name="copy" translatable="false">Copy</string>
   <string name="create" translatable="false">Create</string>
   <string name="delete" translatable="false">Delete</string>
@@ -594,6 +598,7 @@
   <string name="prompt_template_rewrite_tone" translatable="false">Rewrite tone</string>
   <string name="prompt_template_summarize_text" translatable="false">Summarize text</string>
   <string name="prompt_template_code_snippet" translatable="false">Code snippet</string>
+  <string name="prompt_template_translator" translatable="false">Translator</string>
   <string name="prompt_template_select_example" translatable="false">Select an example</string>
 
   <!-- UI strings: rewrite tone options -->
@@ -603,6 +608,7 @@
   <string name="tone_polite" translatable="false">Polite</string>
   <string name="tone_enthusiastic" translatable="false">Enthusiastic</string>
   <string name="tone_concise" translatable="false">Concise</string>
+  
 
   <!-- UI strings: summarization options -->
   <string name="summary_bullets" translatable="false">Key bullet points (3-5)</string>
@@ -619,6 +625,7 @@
   <string name="language_python" translatable="false">Python</string>
   <string name="language_swift" translatable="false">Swift</string>
   <string name="language_typescript" translatable="false">TypeScript</string>
+
 
   <!-- UI strings: input editor labels -->
   <string name="editor_label_tone" translatable="false">Tone</string>
@@ -639,6 +646,8 @@
   <string name="server_enable_tools_label" translatable="false">Enable Native Android Tools</string>
   <string name="server_enable_tools_description" translatable="false">Allows the model to search maps, set alarms and timers, check battery, and play music, toggle flashlight.</string>
   <string name="server_select_model_label" translatable="false">Select Model</string>
+  <string name="server_enable_local_history" translatable="false">Local history for audio</string>
+  <string name="server_enable_local_history_desc" translatable="false">Transcribe audio and store previous messages on the server during audio interactions</string>
   <string name="server_no_llm_models_downloaded" translatable="false">No LLM models downloaded.</string>
   <string name="server_button_start" translatable="false">Start Server</string>
   <string name="server_button_stop" translatable="false">Stop Server</string>

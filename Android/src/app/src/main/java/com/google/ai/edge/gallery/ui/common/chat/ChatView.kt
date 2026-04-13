@@ -108,6 +108,7 @@ fun ChatView(
   allowEditingSystemPrompt: Boolean = false,
   curSystemPrompt: String = "",
   onSystemPromptChanged: (String) -> Unit = {},
+  onMessageEdited: ((Model, Int, ChatMessageText) -> Unit)? = null,
   sendMessageTrigger: SendMessageTrigger? = null,
 ) {
   val uiState by viewModel.uiState.collectAsState()
@@ -122,6 +123,7 @@ fun ChatView(
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
   var navigatingUp by remember { mutableStateOf(false) }
+  var showHistoryDialog by remember { mutableStateOf(false) }
 
   val handleNavigateUp = {
     navigatingUp = true
@@ -173,6 +175,7 @@ fun ChatView(
         inProgress = uiState.inProgress,
         modelPreparing = uiState.preparing,
         onResetSessionClicked = onResetSessionClicked,
+        onHistoryClicked = { showHistoryDialog = true },
         onConfigChanged = { old, new ->
           // Filter out config values that are not relevant to the task.
           //
@@ -246,6 +249,7 @@ fun ChatView(
                 showImagePicker = showImagePicker,
                 showAudioPicker = showAudioPicker,
                 emptyStateComposable = emptyStateComposable,
+                onMessageEdited = onMessageEdited ?: { _, _, _ -> },
               )
             // Model download
             false ->
@@ -301,6 +305,24 @@ fun ChatView(
             )
           }
         }
+      }
+      if (showHistoryDialog) {
+        ChatHistoryDialog(
+          onDismiss = { showHistoryDialog = false },
+          onSaveCurrent = {
+            val current = uiState.messagesByModel[selectedModel.name] ?: emptyList()
+            ChatHistoryStore.saveCurrent(context, current)
+          },
+          onLoadChat = { chat ->
+            val restored = chat.messages.map {
+              ChatMessageText(
+                content = it.content,
+                side = if (it.isUser) ChatSide.USER else ChatSide.AGENT,
+              )
+            }
+            viewModel.loadMessages(selectedModel, restored)
+          },
+        )
       }
     }
   }

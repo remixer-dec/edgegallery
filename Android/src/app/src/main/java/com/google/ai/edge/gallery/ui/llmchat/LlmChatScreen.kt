@@ -44,6 +44,7 @@ import com.google.ai.edge.gallery.firebaseAnalytics
 import com.google.ai.edge.gallery.ui.common.chat.ChatMessageAudioClip
 import com.google.ai.edge.gallery.ui.common.chat.ChatMessageImage
 import com.google.ai.edge.gallery.ui.common.chat.ChatMessageText
+import com.google.ai.edge.gallery.ui.common.chat.ChatSide
 import com.google.ai.edge.gallery.ui.common.chat.ChatView
 import com.google.ai.edge.gallery.ui.common.chat.SendMessageTrigger
 import com.google.ai.edge.gallery.ui.modelmanager.ModelManagerViewModel
@@ -182,9 +183,10 @@ fun ChatViewWrapper(
   allowEditingSystemPrompt: Boolean = false,
   curSystemPrompt: String = "",
   onSystemPromptChanged: (String) -> Unit = {},
-  sendMessageTrigger: SendMessageTrigger? = null,
   showImagePicker: Boolean = false,
   showAudioPicker: Boolean = false,
+  onMessageEdited: ((Model, Int, ChatMessageText) -> Unit)? = null,
+  sendMessageTrigger: SendMessageTrigger? = null,
 ) {
   val context = LocalContext.current
   val task = modelManagerViewModel.getTaskById(id = taskId)!!
@@ -286,5 +288,42 @@ fun ChatViewWrapper(
     onSystemPromptChanged = onSystemPromptChanged,
     sendMessageTrigger = sendMessageTrigger,
     showAudioPicker = showAudioPicker,
+    onMessageEdited = { model, index, message ->
+      if (index != -1 && message.side == ChatSide.USER) {
+        val messages = viewModel.uiState.value.messagesByModel[model.name] ?: emptyList()
+        val lastUserMsgIndex = messages.indexOfLast { it is ChatMessageText && it.side == ChatSide.USER }
+        val isLastUserMessage = lastUserMsgIndex == index
+        
+        if (isLastUserMessage) {
+          viewModel.editUserMessageAndRegenerate(
+            model = model,
+            index = index,
+            newMessage = message,
+            supportImage = showImagePicker,
+            supportAudio = showAudioPicker,
+            onFirstToken = onFirstToken,
+            onDone = { onGenerateResponseDone(model) },
+            onError = { errorMessage ->
+              viewModel.handleError(
+                context = context,
+                task = task,
+                model = model,
+                errorMessage = errorMessage,
+                modelManagerViewModel = modelManagerViewModel,
+              )
+            },
+            allowThinking = allowThinking
+          )
+        } else {
+          viewModel.replaceMessage(model, index, message)
+        }
+      } else {
+        viewModel.resetNativeSessionOnly(
+          model = model,
+          supportImage = showImagePicker,
+          supportAudio = showAudioPicker,
+        )
+      }
+    },
   )
 }

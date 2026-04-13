@@ -32,104 +32,104 @@ import com.google.ai.edge.gallery.R
  * To register a custom task, see [com.google.ai.edge.gallery.customtasks.common.CustomTask].
  */
 data class Task(
-  /**
-   * The id of the task.
-   *
-   * The ids in [BuiltInTaskId] are reserved for built-in tasks.
-   */
-  val id: String,
+   /**
+    * The id of the task.
+    *
+    * The ids in [BuiltInTaskId] are reserved for built-in tasks.
+    */
+   val id: String,
 
-  /** The label of the task, for display purpose. */
-  val label: String,
+    /** The label of the task, for display purpose. */
+    val label: String,
 
-  /** Optional string resource ID for the label (used for localization). Overrides [label] in UI. */
-  @StringRes val labelResId: Int = 0,
+    /** Optional string resource ID for the label (used for localization). Overrides [label] in UI. */
+    @StringRes val labelResId: Int = 0,
 
-  /** Optional string resource ID for the description (used for localization). */
-  @StringRes val descriptionResId: Int = 0,
+   /** Optional string resource ID for the description (used for localization). */
+   @StringRes val descriptionResId: Int = 0,
 
-  /** Optional string resource ID for the short description (used for localization). */
-  @StringRes val shortDescriptionResId: Int = 0,
+   /** Optional string resource ID for the short description (used for localization). */
+   @StringRes val shortDescriptionResId: Int = 0,
 
-  /**
-   * The category of the task.
-   *
-   * We've pre-defined several categories in [Category]. Feel free to create your own category.
-   */
-  val category: CategoryInfo,
+   /**
+    * The category of the task.
+    *
+    * We've pre-defined several categories in [Category]. Feel free to create your own category.
+    */
+   val category: CategoryInfo,
 
-  /** Icon to be shown in the task tile. */
-  val icon: ImageVector? = null,
+   /** Icon to be shown in the task tile. */
+   val icon: ImageVector? = null,
 
-  /** Vector resource id for the icon. This precedes the icon if both are set. */
-  val iconVectorResourceId: Int? = null,
+   /** Vector resource id for the icon. This precedes the icon if both are set. */
+   val iconVectorResourceId: Int? = null,
 
-  /**
-   * Description of the task.
-   *
-   * Will be shown at the top of the task screen.
-   */
-  val description: String,
+    /**
+     * Description of the task.
+     *
+     * Will be shown at the top of the task screen.
+     */
+    val description: String = "",
 
-  /** Shorter description (within 6 words) of the task. */
-  val shortDescription: String = "",
+    /** Shorter description (within 6 words) of the task. */
+    val shortDescription: String = "",
 
-  /**
-   * (optional)
-   *
-   * Documentation url for the task.
-   *
-   * Will be shown below the description on the task screen.
-   */
-  val docUrl: String = "",
+   /**
+    * (optional)
+    *
+    * Documentation url for the task.
+    *
+    * Will be shown below the description on the task screen.
+    */
+   val docUrl: String = "",
 
-  /**
-   * (optional)
-   *
-   * Source code url for the model-related functions.
-   *
-   * Will be shown below the description on the task screen.
-   */
-  val sourceCodeUrl: String = "",
+   /**
+    * (optional)
+    *
+    * Source code url for the model-related functions.
+    *
+    * Will be shown below the description on the task screen.
+    */
+   val sourceCodeUrl: String = "",
 
-  /** List of models for the task. */
-  val models: MutableList<Model>,
+   /** List of models for the task. */
+   val models: MutableList<Model>,
 
-  /**
-   * List of model names for the task.
-   *
-   * If this field is non-empty, the task will try to find the models with the matching names from
-   * the allowlist
-   */
-  val modelNames: List<String> = listOf(),
+   /**
+    * List of model names for the task.
+    *
+    * If this field is non-empty, the task will try to find the models with the matching names from
+    * the allowlist
+    */
+   val modelNames: List<String> = listOf(),
 
-  /**
-   * Whether to handel model config changes in task's screen itself. The default behavior is to
-   * automatically re-initialize the model.
-   */
-  val handleModelConfigChangesInTask: Boolean = false,
+   /**
+    * Whether to handel model config changes in task's screen itself. The default behavior is to
+    * automatically re-initialize the model.
+    */
+   val handleModelConfigChangesInTask: Boolean = false,
 
-  /** Whether the task is experimental. */
-  val experimental: Boolean = false,
+   /** Whether the task is experimental. */
+   val experimental: Boolean = false,
 
-  /** Whether the task should have a "new" badge on home screen. */
-  val newFeature: Boolean = false,
+   /** Whether the task should have a "new" badge on home screen. */
+   val newFeature: Boolean = false,
 
-  /** Whether to use theme color instead of the task tint color. */
-  val useThemeColor: Boolean = false,
+   /** Whether to use theme color instead of the task tint color. */
+   val useThemeColor: Boolean = false,
 
-  /** The default system prompt for this task. */
-  val defaultSystemPrompt: String = "",
+   /** The default system prompt for this task. */
+   val defaultSystemPrompt: String = "",
 
-  // The following fields are only used for built-in tasks. Can ignore if you are creating your own
-  // custom tasks.
-  //
+   // The following fields are only used for built-in tasks. Can ignore if you are creating your own
+   // custom tasks.
+   //
 
-  /** Placeholder text for the name of the agent shown above chat messages. */
-  @StringRes val agentNameRes: Int = R.string.chat_generic_agent_name,
+   /** Placeholder text for the name of the agent shown above chat messages. */
+   @StringRes val agentNameRes: Int = R.string.chat_generic_agent_name,
 
-  /** Placeholder text for the text input field. */
-  @StringRes val textInputPlaceHolderRes: Int = R.string.chat_textinput_placeholder,
+   /** Placeholder text for the text input field. */
+   @StringRes val textInputPlaceHolderRes: Int = R.string.chat_textinput_placeholder,
 
   // The following fields are managed by the app. Don't need to set manually.
   //

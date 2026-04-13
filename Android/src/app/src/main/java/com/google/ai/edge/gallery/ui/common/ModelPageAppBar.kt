@@ -21,14 +21,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.MapsUgc
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -65,249 +70,280 @@ import com.google.ai.edge.gallery.ui.theme.AcceleratorSettings
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModelPageAppBar(
-  task: Task,
-  model: Model,
-  modelManagerViewModel: ModelManagerViewModel,
-  onBackClicked: () -> Unit,
-  onModelSelected: (prev: Model, cur: Model) -> Unit,
-  inProgress: Boolean,
-  modelPreparing: Boolean,
-  modifier: Modifier = Modifier,
-  isResettingSession: Boolean = false,
-  onResetSessionClicked: (Model) -> Unit = {},
-  canShowResetSessionButton: Boolean = false,
-  hideModelSelector: Boolean = false,
-  useThemeColor: Boolean = false,
-  onConfigChanged: (oldConfigValues: Map<String, Any>, newConfigValues: Map<String, Any>) -> Unit =
-    { _, _ ->
-    },
-  allowEditingSystemPrompt: Boolean = false,
-  curSystemPrompt: String = "",
-  onSystemPromptChanged: (String) -> Unit = {},
+    task: Task,
+    model: Model,
+    modelManagerViewModel: ModelManagerViewModel,
+    onBackClicked: () -> Unit,
+    onModelSelected: (prev: Model, cur: Model) -> Unit,
+    inProgress: Boolean,
+    modelPreparing: Boolean,
+    modifier: Modifier = Modifier,
+    isResettingSession: Boolean = false,
+    onResetSessionClicked: (Model) -> Unit = {},
+    canShowResetSessionButton: Boolean = false,
+    hideModelSelector: Boolean = false,
+    useThemeColor: Boolean = false,
+    onConfigChanged: (oldConfigValues: Map<String, Any>, newConfigValues: Map<String, Any>) -> Unit =
+        { _, _ ->
+        },
+    allowEditingSystemPrompt: Boolean = false,
+    curSystemPrompt: String = "",
+    onSystemPromptChanged: (String) -> Unit = {},
+    onHistoryClicked: () -> Unit = {},
 ) {
-  var showConfigDialog by remember { mutableStateOf(false) }
-  val modelManagerUiState by modelManagerViewModel.uiState.collectAsState()
-  val context = LocalContext.current
-  val curDownloadStatus = modelManagerUiState.modelDownloadStatus[model.name]
-  val modelInitializationStatus = modelManagerUiState.modelInitializationStatus[model.name]
-  val isModelInitializing =
-    modelInitializationStatus?.status == ModelInitializationStatusType.INITIALIZING
-  val isModelInitialized =
-    modelInitializationStatus?.status == ModelInitializationStatusType.INITIALIZED
+    var showConfigDialog by remember { mutableStateOf(false) }
+    val modelManagerUiState by modelManagerViewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val curDownloadStatus = modelManagerUiState.modelDownloadStatus[model.name]
+    val modelInitializationStatus = modelManagerUiState.modelInitializationStatus[model.name]
+    val isModelInitializing =
+        modelInitializationStatus?.status == ModelInitializationStatusType.INITIALIZING
+    val isModelInitialized =
+        modelInitializationStatus?.status == ModelInitializationStatusType.INITIALIZED
 
-  CenterAlignedTopAppBar(
-    title = {
-      Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-      ) {
-        // Task type.
-        Row(
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-          val tintColor =
-            if (useThemeColor) MaterialTheme.colorScheme.onSurface
-            else getTaskIconColor(task = task)
-          Icon(
-            task.icon ?: ImageVector.vectorResource(task.iconVectorResourceId!!),
-            tint = tintColor,
-            modifier = Modifier.size(24.dp),
-            contentDescription = null,
-          )
-          Text(if (task.labelResId != 0) stringResource(task.labelResId) else task.label, style = MaterialTheme.typography.titleMedium, color = tintColor)
-        }
-
-        // Model chips pager.
-        if (!hideModelSelector) {
-          val enableModelPickerChip = !isModelInitializing && !inProgress
-          ModelPickerChip(
-            enabled = enableModelPickerChip,
-            task = task,
-            initialModel = model,
-            modelManagerViewModel = modelManagerViewModel,
-            onModelSelected = onModelSelected,
-          )
-        }
-      }
-    },
-    modifier = modifier,
-    // The back button.
-    navigationIcon = {
-      val enableBackButton = !isModelInitializing && !inProgress
-      IconButton(onClick = onBackClicked, enabled = enableBackButton) {
-        Icon(
-          imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-          contentDescription = stringResource(R.string.cd_navigate_back_icon),
-        )
-      }
-    },
-    // The config button for the model (if existed).
-    actions = {
-      val downloadSucceeded = curDownloadStatus?.status == ModelDownloadStatusType.SUCCEEDED
-      val showConfigButton = model.configs.isNotEmpty() && downloadSucceeded
-      val showResetSessionButton = canShowResetSessionButton && downloadSucceeded
-      Box(modifier = Modifier.size(42.dp), contentAlignment = Alignment.Center) {
-        var configButtonOffset = 0.dp
-        if (showConfigButton && canShowResetSessionButton) {
-          configButtonOffset = (-40).dp
-        }
-        if (showConfigButton) {
-          val enableConfigButton = !isModelInitializing && !inProgress && isModelInitialized
-          IconButton(
-            onClick = { showConfigDialog = true },
-            enabled = enableConfigButton,
-            modifier =
-              Modifier.offset(x = configButtonOffset).alpha(if (!enableConfigButton) 0.5f else 1f),
-          ) {
-            Icon(
-              imageVector = Icons.Rounded.Tune,
-              contentDescription = stringResource(R.string.cd_model_settings_icon),
-              tint = MaterialTheme.colorScheme.onSurface,
-              modifier = Modifier.size(20.dp),
-            )
-          }
-        }
-        if (showResetSessionButton) {
-          if (isResettingSession) {
-            CircularProgressIndicator(
-              trackColor = MaterialTheme.colorScheme.surfaceVariant,
-              strokeWidth = 2.dp,
-              modifier = Modifier.size(16.dp),
-            )
-          } else {
-            val enableResetButton =
-              !isModelInitializing && !modelPreparing && !inProgress && isModelInitialized
-            IconButton(
-              onClick = { onResetSessionClicked(model) },
-              enabled = enableResetButton,
-              modifier = Modifier.alpha(if (!enableResetButton) 0.5f else 1f),
+    CenterAlignedTopAppBar(
+        title = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-              Box(
-                modifier =
-                  Modifier.size(32.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceContainer),
-                contentAlignment = Alignment.Center,
-              ) {
-                Icon(
-                  imageVector = Icons.Rounded.MapsUgc,
-                  contentDescription = stringResource(R.string.cd_reset_session_icon),
-                  tint = MaterialTheme.colorScheme.onSurface,
-                  modifier = Modifier.size(20.dp),
-                )
-              }
-            }
-          }
-        }
-      }
-    },
-  )
+                // Task type.
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp), // Ровный отступ между иконкой и текстом
+                ) {
+                    val tintColor =
+                        if (useThemeColor) MaterialTheme.colorScheme.onSurface
+                        else getTaskIconColor(task = task)
 
-  // Config dialog.
-  if (showConfigDialog) {
-    // Remove the reset conversation turn count config for non-tiny-garden tasks.
-    //
-    // This may happen when user imports a model with "enable tiny garden" turned on and use the
-    // model in another non-tiny-garden task.
-    val modelConfigs = model.configs.toMutableList()
-    if (task.id != BuiltInTaskId.LLM_TINY_GARDEN) {
-      modelConfigs.removeIf { it.key == ConfigKeys.RESET_CONVERSATION_TURN_COUNT }
-    }
-    if (!task.allowThinking()) {
-      modelConfigs.removeIf { it.key == ConfigKeys.ENABLE_THINKING }
-    }
-    val acceleratorOverride = AcceleratorSettings.acceleratorOverride.value
-    val effectiveInitialValues =
-      if (acceleratorOverride != AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO) {
-        model.configValues.toMutableMap().apply {
-          this[ConfigKeys.ACCELERATOR.label] =
-            when (acceleratorOverride) {
-              AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU -> "CPU" // Make these UPPERCASE
-              AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU -> "GPU"
-              AcceleratorOverride.ACCELERATOR_OVERRIDE_NPU -> "NPU"
-              else -> this[ConfigKeys.ACCELERATOR.label] ?: "GPU"
-            }
-        }
-      } else {
-        model.configValues
-      }
-    ConfigDialog(
-      title = stringResource(R.string.configurations_title),
-      configs = modelConfigs,
-      initialValues = effectiveInitialValues,
-      onDismissed = { showConfigDialog = false },
-      onOk = { curConfigValues, oldSystemPrompt, newSystemPrompt ->
-        // Hide config dialog.
-        showConfigDialog = false
-        val newAccel = curConfigValues[ConfigKeys.ACCELERATOR.label] as? String
-        val oldAccel = effectiveInitialValues[ConfigKeys.ACCELERATOR.label] as? String
-        if (newAccel != oldAccel) {
-            AcceleratorSettings.acceleratorOverride.value = AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO
-            modelManagerViewModel.saveAcceleratorOverride(AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO)
-        }
-
-
-        // Check if the configs are changed or not. Also check if the model needs to be
-        // re-initialized.
-        var same = true
-        var needReinitialization = false
-        for (config in modelConfigs) {
-          val key = config.key.label
-          val oldValue =
-            convertValueToTargetType(
-              value = model.configValues.getValue(key),
-              valueType = config.valueType,
-            )
-          val newValue =
-            convertValueToTargetType(
-              value = curConfigValues.getValue(key),
-              valueType = config.valueType,
-            )
-          if (oldValue != newValue) {
-            same = false
-            if (config.needReinitialization) {
-              needReinitialization = true
-            }
-            break
-          }
-        }
-        if (same) {
-          if (newSystemPrompt != oldSystemPrompt) {
-            onSystemPromptChanged(newSystemPrompt)
-          }
-          return@ConfigDialog
-        }
-
-        // Save the config values to Model.
-        val oldConfigValues = model.configValues
-        model.prevConfigValues = oldConfigValues
-        model.configValues = curConfigValues
-        modelManagerViewModel.updateConfigValuesUpdateTrigger()
-
-        if (!task.handleModelConfigChangesInTask) {
-          // Force to re-initialize the model with the new configs.
-          if (needReinitialization) {
-            modelManagerViewModel.initializeModel(
-              context = context,
-              task = task,
-              model = model,
-              force = true,
-              onDone = {
-                if (oldSystemPrompt != newSystemPrompt) {
-                  onSystemPromptChanged(newSystemPrompt)
+                    Icon(
+                        task.icon ?: ImageVector.vectorResource(task.iconVectorResourceId!!),
+                        tint = tintColor,
+                        modifier = Modifier.size(24.dp),
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = if (task.labelResId != 0) stringResource(task.labelResId) else task.label,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = tintColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
-              },
-            )
-          }
 
-          // Notify.
-          onConfigChanged(oldConfigValues, model.configValues)
-        }
-      },
-      showSystemPromptEditorTab = allowEditingSystemPrompt,
-      defaultSystemPrompt = task.defaultSystemPrompt,
-      curSystemPrompt = curSystemPrompt,
+                // Model chips pager.
+                if (!hideModelSelector) {
+                    val enableModelPickerChip = !isModelInitializing && !inProgress
+                    ModelPickerChip(
+                        enabled = enableModelPickerChip,
+                        task = task,
+                        initialModel = model,
+                        modelManagerViewModel = modelManagerViewModel,
+                        onModelSelected = onModelSelected,
+                    )
+                }
+            }
+        },
+        modifier = modifier,
+
+        navigationIcon = {
+            val downloadSucceeded = curDownloadStatus?.status == ModelDownloadStatusType.SUCCEEDED
+            val showConfigButton = model.configs.isNotEmpty() && downloadSucceeded
+            val showResetSessionButton = canShowResetSessionButton && downloadSucceeded
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                val enableBackButton = !isModelInitializing && !inProgress
+                IconButton(onClick = onBackClicked, enabled = enableBackButton) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = stringResource(R.string.cd_navigate_back_icon),
+                    )
+                }
+
+                val rightIconsCount = (if (showResetSessionButton) 2 else 0) + (if (showConfigButton) 1 else 0)
+
+                val spacersNeeded = maxOf(0, rightIconsCount - 1)
+                repeat(spacersNeeded) {
+                    Spacer(Modifier.width(48.dp))
+                }
+            }
+        },
+
+        actions = {
+            val downloadSucceeded = curDownloadStatus?.status == ModelDownloadStatusType.SUCCEEDED
+            val showConfigButton = model.configs.isNotEmpty() && downloadSucceeded
+            val showResetSessionButton = canShowResetSessionButton && downloadSucceeded
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (showResetSessionButton) {
+                    IconButton(onClick = onHistoryClicked) {
+                        Icon(
+                            Icons.Rounded.History,
+                            contentDescription = "Chat history",
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
+
+                if (showConfigButton) {
+                    val enableConfigButton = !isModelInitializing && !inProgress && isModelInitialized
+                    IconButton(
+                        onClick = { showConfigDialog = true },
+                        enabled = enableConfigButton,
+                        modifier = Modifier.alpha(if (!enableConfigButton) 0.5f else 1f),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Tune,
+                            contentDescription = stringResource(R.string.cd_model_settings_icon),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                }
+
+                if (showResetSessionButton) {
+                    if (isResettingSession) {
+                        Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                strokeWidth = 2.dp,
+                                modifier = Modifier.size(16.dp),
+                            )
+                        }
+                    } else {
+                        val enableResetButton =
+                            !isModelInitializing && !modelPreparing && !inProgress && isModelInitialized
+                        IconButton(
+                            onClick = { onResetSessionClicked(model) },
+                            enabled = enableResetButton,
+                            modifier = Modifier.alpha(if (!enableResetButton) 0.5f else 1f),
+                        ) {
+                            Box(
+                                modifier =
+                                    Modifier.size(32.dp)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.surfaceContainer),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.MapsUgc,
+                                    contentDescription = stringResource(R.string.cd_reset_session_icon),
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
     )
-  }
+
+    // Config dialog.
+    if (showConfigDialog) {
+        // Remove the reset conversation turn count config for non-tiny-garden tasks.
+        //
+        // This may happen when user imports a model with "enable tiny garden" turned on and use the
+        // model in another non-tiny-garden task.
+        val modelConfigs = model.configs.toMutableList()
+        if (task.id != BuiltInTaskId.LLM_TINY_GARDEN) {
+            modelConfigs.removeIf { it.key == ConfigKeys.RESET_CONVERSATION_TURN_COUNT }
+        }
+        if (!task.allowThinking()) {
+            modelConfigs.removeIf { it.key == ConfigKeys.ENABLE_THINKING }
+        }
+        val acceleratorOverride = AcceleratorSettings.acceleratorOverride.value
+        val effectiveInitialValues =
+            if (acceleratorOverride != AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO) {
+                model.configValues.toMutableMap().apply {
+                    this[ConfigKeys.ACCELERATOR.label] =
+                        when (acceleratorOverride) {
+                            AcceleratorOverride.ACCELERATOR_OVERRIDE_CPU -> "CPU" // Make these UPPERCASE
+                            AcceleratorOverride.ACCELERATOR_OVERRIDE_GPU -> "GPU"
+                            AcceleratorOverride.ACCELERATOR_OVERRIDE_NPU -> "NPU"
+                            else -> this[ConfigKeys.ACCELERATOR.label] ?: "GPU"
+                        }
+                }
+            } else {
+                model.configValues
+            }
+        ConfigDialog(
+            title = stringResource(R.string.configurations_title),
+            configs = modelConfigs,
+            initialValues = effectiveInitialValues,
+            onDismissed = { showConfigDialog = false },
+            onOk = { curConfigValues, oldSystemPrompt, newSystemPrompt ->
+                // Hide config dialog.
+                showConfigDialog = false
+                val newAccel = curConfigValues[ConfigKeys.ACCELERATOR.label] as? String
+                val oldAccel = effectiveInitialValues[ConfigKeys.ACCELERATOR.label] as? String
+                if (newAccel != oldAccel) {
+                    AcceleratorSettings.acceleratorOverride.value = AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO
+                    modelManagerViewModel.saveAcceleratorOverride(AcceleratorOverride.ACCELERATOR_OVERRIDE_AUTO)
+                }
+
+
+                // Check if the configs are changed or not. Also check if the model needs to be
+                // re-initialized.
+                var same = true
+                var needReinitialization = false
+                for (config in modelConfigs) {
+                    val key = config.key.label
+                    val oldValue =
+                        convertValueToTargetType(
+                            value = model.configValues.getValue(key),
+                            valueType = config.valueType,
+                        )
+                    val newValue =
+                        convertValueToTargetType(
+                            value = curConfigValues.getValue(key),
+                            valueType = config.valueType,
+                        )
+                    if (oldValue != newValue) {
+                        same = false
+                        if (config.needReinitialization) {
+                            needReinitialization = true
+                        }
+                        break
+                    }
+                }
+                if (same) {
+                    if (newSystemPrompt != oldSystemPrompt) {
+                        onSystemPromptChanged(newSystemPrompt)
+                    }
+                    return@ConfigDialog
+                }
+
+                // Save the config values to Model.
+                val oldConfigValues = model.configValues
+                model.prevConfigValues = oldConfigValues
+                model.configValues = curConfigValues
+                modelManagerViewModel.updateConfigValuesUpdateTrigger()
+
+                if (!task.handleModelConfigChangesInTask) {
+                    // Force to re-initialize the model with the new configs.
+                    if (needReinitialization) {
+                        modelManagerViewModel.initializeModel(
+                            context = context,
+                            task = task,
+                            model = model,
+                            force = true,
+                            onDone = {
+                                if (oldSystemPrompt != newSystemPrompt) {
+                                    onSystemPromptChanged(newSystemPrompt)
+                                }
+                            },
+                        )
+                    }
+
+                    // Notify.
+                    onConfigChanged(oldConfigValues, model.configValues)
+                }
+            },
+            showSystemPromptEditorTab = allowEditingSystemPrompt,
+            defaultSystemPrompt = task.defaultSystemPrompt,
+            curSystemPrompt = curSystemPrompt,
+        )
+    }
 }
