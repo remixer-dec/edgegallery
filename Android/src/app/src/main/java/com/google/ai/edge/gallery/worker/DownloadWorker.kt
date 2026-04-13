@@ -76,17 +76,18 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
 
   init {
     if (!channelCreated) {
-      // Create a notification channel for showing notifications for model downloading progress.
-      val channel =
-        NotificationChannel(
-            FOREGROUND_NOTIFICATION_CHANNEL_ID,
-            "Model Downloading",
-            // Make it silent.
-            NotificationManager.IMPORTANCE_LOW,
-          )
-          .apply { description = "Notifications for model downloading" }
-      notificationManager.createNotificationChannel(channel)
-      channelCreated = true
+        // FIX: Wrap in API 26+ check
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            // Create a notification channel for showing notifications for model downloading progress.
+            val channel = NotificationChannel(
+                FOREGROUND_NOTIFICATION_CHANNEL_ID,
+                "Model Downloading",
+                // Make it silent.
+                NotificationManager.IMPORTANCE_LOW,
+            ).apply { description = "Notifications for model downloading" }
+            notificationManager.createNotificationChannel(channel)
+        }
+        channelCreated = true
     }
   }
 

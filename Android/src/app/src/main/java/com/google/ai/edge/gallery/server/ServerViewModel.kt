@@ -26,6 +26,7 @@ class ServerViewModel @Inject constructor(
         model: Model, 
         useTools: Boolean, 
         enableVision: Boolean,
+        enableLocalHistory: Boolean,
         maxTokens: Int, 
         accelerator: String, 
         topK: Int, 
@@ -50,6 +51,7 @@ class ServerViewModel @Inject constructor(
             intent.putExtra(LlmServerService.EXTRA_TOP_P, topP)
             intent.putExtra(LlmServerService.EXTRA_TEMPERATURE, temperature)
             intent.putExtra(LlmServerService.EXTRA_ENABLE_VISION, enableVision)
+            intent.putExtra(LlmServerService.EXTRA_ENABLE_HISTORY, enableLocalHistory)
             
             context.startService(intent)
             _isRunning.update { true }

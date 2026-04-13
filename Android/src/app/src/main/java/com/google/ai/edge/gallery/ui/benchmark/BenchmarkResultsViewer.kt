@@ -769,11 +769,11 @@ private fun StatRow(
   value: String,
   modifier: Modifier = Modifier,
   unit: String = "",
+  numericValue: Double? = null,
   baselineValue: Double? = null,
   lessIsBetter: Boolean = false,
 ) {
   Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-    // label.
     Text(
       label,
       style = MaterialTheme.typography.labelMedium,
@@ -782,7 +782,6 @@ private fun StatRow(
       maxLines = 1,
       overflow = TextOverflow.MiddleEllipsis,
     )
-    // Value
     Column(
       verticalArrangement = Arrangement.Top,
       horizontalAlignment = Alignment.Start,
@@ -805,9 +804,8 @@ private fun StatRow(
           contentAlignment = Alignment.CenterStart,
           transitionSpec = { fadeIn() togetherWith fadeOut() },
         ) { curBaselineValue ->
-          if (curBaselineValue != null) {
-            val doubleValue = value.toDouble()
-            val pct = (doubleValue - curBaselineValue) / curBaselineValue * 100
+          if (curBaselineValue != null && numericValue != null && abs(curBaselineValue) > 1e-6) {
+            val pct = (numericValue - curBaselineValue) / curBaselineValue * 100
             val strPct = String.format(Locale.getDefault(), "%.1f", abs(pct))
             val sign = if (pct >= 0.0) "+" else "-"
             val betterSign = if (lessIsBetter) "-" else "+"

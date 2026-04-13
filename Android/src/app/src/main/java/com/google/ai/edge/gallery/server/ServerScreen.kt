@@ -36,6 +36,7 @@ fun ServerScreen(
     var ipAddress by remember { mutableStateOf("127.0.0.1") }
     var port by remember { mutableStateOf("8080") }
     var enableTools by remember { mutableStateOf(false) }
+    var enableLocalHistory by remember { mutableStateOf(false) }
     var enableVision by remember { mutableStateOf(false) }
     var showConfigDialog by remember { mutableStateOf(false) }
     
@@ -130,6 +131,27 @@ fun ServerScreen(
                     enabled = !isRunning && (selectedModel?.llmSupportImage == true)
                 )
             }
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(stringResource(R.string.server_enable_local_history), style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        stringResource(R.string.server_enable_local_history_desc),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                Switch(
+                    checked = enableLocalHistory,
+                    onCheckedChange = { enableLocalHistory = it },
+                    enabled = !isRunning
+                )
+            }
 
             Text(stringResource(R.string.server_select_model_label), style = MaterialTheme.typography.titleSmall)
             if (downloadedModels.isNotEmpty()) {
@@ -168,7 +190,7 @@ fun ServerScreen(
                         }
 
                         viewModel.toggleServer(
-                            ipAddress, port.toInt(), model, enableTools, enableVision,
+                            ipAddress, port.toInt(), model, enableTools, enableVision, enableLocalHistory,
                             maxTokens, accelerator, topK, topP, temp
                         )
                     }
