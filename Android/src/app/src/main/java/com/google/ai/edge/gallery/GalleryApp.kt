@@ -17,6 +17,7 @@
 package com.google.ai.edge.gallery
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.ai.edge.gallery.ui.modelmanager.ModelManagerViewModel
@@ -25,8 +26,19 @@ import com.google.ai.edge.gallery.ui.navigation.GalleryNavHost
 /** Top level composable representing the main screen of the application. */
 @Composable
 fun GalleryApp(
-  navController: NavHostController = rememberNavController(),
   modelManagerViewModel: ModelManagerViewModel,
+  openDestination: String?,
+  onDestinationHandled: () -> Unit,
+  navController: NavHostController = rememberNavController(),
 ) {
-  GalleryNavHost(navController = navController, modelManagerViewModel = modelManagerViewModel)
+  LaunchedEffect(openDestination) {
+    val destination = openDestination ?: return@LaunchedEffect
+    navController.navigate(destination)
+    onDestinationHandled()
+  }
+
+  GalleryNavHost(
+    navController = navController,
+    modelManagerViewModel = modelManagerViewModel
+  )
 }
