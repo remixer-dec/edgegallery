@@ -1,18 +1,31 @@
 #!/usr/bin/env bash
-# Builds a release APK for AI Edge Gallery.
+# Builds AI Edge Gallery APK.
 # Run env.setup.sh first if building on a fresh machine.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ANDROID_SRC="$SCRIPT_DIR/Android/src"
 ANDROID_SDK="${ANDROID_HOME:-/opt/android-sdk}"
+BUILD_TYPE="${1:-debug}"
+
+# Detect architecture for aapt2 override
+ARCH=$(uname -m)
+if [[ "$ARCH" == "aarch64" ]]; then
+  # ARM64: use lzhiyong's native aapt2 (35.0.2)
+  AAPT2_PATH="$ANDROID_SDK/build-tools/35.0.2/aapt2"
+  if [ -f "$AAPT2_PATH" ]; then
+    echo "Using ARM64 aapt2: $AAPT2_PATH"
+    "$AAPT2_PATH" version 2>/dev/null | head -1 || true
+  fi
+else
+  # x86_64: use Google's official build-tools
+  AAPT2_PATH="$ANDROID_SDK/build-tools/35.0.0/aapt2"
+fi
 
 # ── Proxy detection ───────────────────────────────────────────────────────────
-# If an HTTP proxy is set in the environment, inject it into gradle.properties
-# so Gradle can reach Maven repositories (including Google's Maven).
-# Existing systemProp.* lines are removed first to avoid duplicates.
 PROPS="$ANDROID_SRC/gradle.properties"
-sed -i '/^systemProp\.\(http\|https\)\.\(proxyHost\|proxyPort\|proxyUser\|proxyPassword\|nonProxyHosts\)/d' "$PROPS"
+# Clean existing proxy settings
+sed -i '/^systemProp\.\(http\|https\)\.\(proxyHost\|proxyPort\|proxyUser\|proxyPassword\|nonProxyHosts\)/d' "$PROPS" 2>/dev/null || true
 
 if [ -n "${https_proxy:-}" ]; then
   PROXY_PROTO="${https_proxy%%://*}"
@@ -23,7 +36,7 @@ if [ -n "${https_proxy:-}" ]; then
   PROXY_PORT="${PROXY_HOSTPORT##*:}"
   PROXY_USER="${PROXY_USERINFO%%:*}"
   PROXY_PASS="${PROXY_USERINFO#*:}"
-
+  
   for SCHEME in http https; do
     {
       echo "systemProp.${SCHEME}.proxyHost=${PROXY_HOST}"
@@ -35,16 +48,39 @@ if [ -n "${https_proxy:-}" ]; then
   done
 fi
 
-# ── Build ─────────────────────────────────────────────────────────────────────
+# ── Build configuration ───────────────────────────────────────────────────────
 export ANDROID_HOME="$ANDROID_SDK"
 export ANDROID_SDK_ROOT="$ANDROID_SDK"
+export JAVA_HOME
 
+if [[ "$BUILD_TYPE" == "debug" ]]; then
+  GRADLE_TASK="assembleDebug"
+  APK_PATH="$ANDROID_SRC/app/build/outputs/apk/debug/app-debug.apk"
+else
+  GRADLE_TASK="assembleRelease"
+  APK_PATH="$ANDROID_SRC/app/build/outputs/apk/release/app-release.apk"
+fi
+
+# ── Build ─────────────────────────────────────────────────────────────────────
 cd "$ANDROID_SRC"
 chmod +x gradlew
-./gradlew assembleRelease --no-daemon "$@"
 
-APK="$ANDROID_SRC/app/build/outputs/apk/release/app-release.apk"
-if [ -f "$APK" ]; then
-  echo ""
-  echo "Build successful: $APK ($(du -h "$APK" | cut -f1))"
+echo "Building $BUILD_TYPE APK..."
+./gradlew assemble${BUILD_TYPE^} --no-daemon 2>&1
+
+APK_SIZE=$(du -h "$APK_PATH" 2>/dev/null | cut -f1)
+DEX_COUNT=$(unzip -l "$APK_PATH" 2>/dev/null | grep -c 'classes.*\.dex' || echo "0")
+
+echo ""
+echo "════════════════════════════════════════════════"
+echo "Build successful: $BUILD_TYPE"
+echo "════════════════════════════════════════════════"
+echo "  APK:  $APK_PATH"
+echo "  Size: $APK_SIZE"
+echo "  DEX:  $DEX_COUNT files"
+echo ""
+if [[ "$BUILD_TYPE" == "debug" ]]; then
+  echo "Note: Debug APKs are larger (no R8 shrinking)."
+  echo "      Run './build.sh release' for optimized build."
 fi
+echo "════════════════════════════════════════════════"
