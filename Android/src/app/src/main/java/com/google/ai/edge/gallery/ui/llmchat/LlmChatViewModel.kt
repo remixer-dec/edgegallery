@@ -253,6 +253,90 @@ open class LlmChatViewModelBase() : ChatViewModel() {
     Log.d(TAG, "Done stopping response")
   }
 
+  fun editUserMessageAndRegenerate(
+    model: Model,
+    index: Int,
+    newMessage: ChatMessageText,
+    supportImage: Boolean = false,
+    supportAudio: Boolean = false,
+    onFirstToken: (Model) -> Unit = {},
+    onDone: () -> Unit = {},
+    onError: (String) -> Unit,
+    allowThinking: Boolean = false,
+  ) {
+    viewModelScope.launch(Dispatchers.Default) {
+      val history = uiState.value.messagesByModel[model.name]?.take(index) ?: emptyList()
+      val historyText = history.mapNotNull {
+        if (it is ChatMessageText) {
+          if (it.side == ChatSide.USER) "User: ${it.content}" else "Model: ${it.content}"
+        } else null
+      }.joinToString("\n")
+      val fullInput = if (historyText.isNotEmpty()) "$historyText\nUser: ${newMessage.content}" else newMessage.content
+
+      truncateMessagesFrom(model = model, fromIndex = index)
+      addMessage(model = model, message = newMessage)
+
+      setIsResettingSession(true)
+      model.runtimeHelper.stopResponse(model)
+
+      while (true) {
+        try {
+          model.runtimeHelper.resetConversation(
+            model = model,
+            supportImage = supportImage,
+            supportAudio = supportAudio,
+            systemInstruction = null,
+            tools = listOf(),
+            enableConversationConstrainedDecoding = false,
+          )
+          break
+        } catch (e: Exception) {
+          Log.d(TAG, "Failed to reset native session. Retrying")
+          delay(200)
+        }
+      }
+      setIsResettingSession(false)
+
+      generateResponse(
+        model = model,
+        input = fullInput,
+        images = listOf(),
+        audioMessages = listOf(),
+        onFirstToken = onFirstToken,
+        onDone = onDone,
+        onError = onError,
+        allowThinking = allowThinking
+      )
+    }
+  }
+
+  fun resetNativeSessionOnly(
+    model: Model,
+    supportImage: Boolean = false,
+    supportAudio: Boolean = false,
+  ) {
+    viewModelScope.launch(Dispatchers.Default) {
+      setIsResettingSession(true)
+      while (true) {
+        try {
+          model.runtimeHelper.resetConversation(
+            model = model,
+            supportImage = supportImage,
+            supportAudio = supportAudio,
+            systemInstruction = null,
+            tools = listOf(),
+            enableConversationConstrainedDecoding = false,
+          )
+          break
+        } catch (e: Exception) {
+          Log.d(TAG, "Failed to reset native session. Retrying")
+        }
+        delay(200)
+      }
+      setIsResettingSession(false)
+    }
+  }
+  
   fun resetSession(
     task: Task,
     model: Model,

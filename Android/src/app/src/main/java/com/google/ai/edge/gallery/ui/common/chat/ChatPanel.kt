@@ -129,6 +129,7 @@ fun ChatPanel(
   showImagePicker: Boolean = false,
   showAudioPicker: Boolean = false,
   emptyStateComposable: @Composable (Model) -> Unit = {},
+  onMessageEdited: (Model, Int, ChatMessageText) -> Unit = { _, _, _ -> },
 ) {
   val uiState by viewModel.uiState.collectAsState()
   val modelManagerUiState by modelManagerViewModel.uiState.collectAsState()
@@ -741,11 +742,17 @@ fun ChatPanel(
                 hideSenderLabel = currentEditMessage.hideSenderLabel,
                 data = currentEditMessage.data,
               )
-            viewModel.replaceMessage(
-              model = selectedModel,
-              index = editDialogMessageIndex,
-              message = updatedMessage,
-            )
+            
+            if (currentEditMessage.side == ChatSide.USER) {
+              onMessageEdited(selectedModel, editDialogMessageIndex, updatedMessage)
+            } else {
+              viewModel.replaceMessage(
+                model = selectedModel,
+                index = editDialogMessageIndex,
+                message = updatedMessage,
+              )
+              onMessageEdited(selectedModel, -1, updatedMessage)
+            }
             editDialogMessage = null
           }
         ) {

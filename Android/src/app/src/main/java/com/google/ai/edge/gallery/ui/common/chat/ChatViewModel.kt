@@ -235,6 +235,12 @@ abstract class ChatViewModel() : ViewModel() {
     newStreamingMessagesByModel[model.name] = message
     _uiState.update { _uiState.value.copy(streamingMessagesByModel = newStreamingMessagesByModel) }
   }
+  
+  fun loadMessages(model: Model, messages: List<ChatMessage>) {
+    val newMessagesByModel = _uiState.value.messagesByModel.toMutableMap()
+    newMessagesByModel[model.name] = messages.toMutableList()
+    _uiState.update { _uiState.value.copy(messagesByModel = newMessagesByModel) }
+  }
 
   fun updateCollapsableProgressPanelMessage(
     model: Model,

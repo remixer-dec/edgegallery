@@ -26,9 +26,9 @@
   <string name="app_name" translatable="false">Google AI Edge Gallery</string>
   <string name="app_name_first_part" translatable="false">Google AI</string>
   <string name="app_name_second_part" translatable="false">Edge Gallery</string>
-  <string name="askimage_emptystate_title" translatable="false">Спросить по изображению</string>
+  <string name="askimage_emptystate_title" translatable="false">Вопросы по картинке</string>
   <string name="askimage_emptystate_content" translatable="false">Чтобы начать, нажмите + ниже, чтобы добавить изображение (не более 10 изображений на чат), и введите запрос с вопросом по нему!</string>
-  <string name="askaudio_emptystate_title" translatable="false">Спросить по аудио</string>
+  <string name="askaudio_emptystate_title" translatable="false">Вопросы по аудио</string>
   <string name="askaudio_emptystate_content" translatable="false">Чтобы начать, нажмите + ниже, чтобы добавить аудиоклип (только 1 клип длительностью до 30 секунд), и введите запрос, чтобы расшифровать или перевести его!</string>
   <string name="gallery_news_notification_title" translatable="false">Новости галереи</string>
   <string name="baseline" translatable="false">Базовый уровень</string>
@@ -75,6 +75,10 @@
   <string name="config_dialog_tab_system_prompt" translatable="false">Системный промпт</string>
   <string name="continue_button_label" translatable="false">Продолжить</string>
   <string name="conversation_history" translatable="false">История беседы</string>
+  <string name="chat_history_save_current" translatable="false">Сохранить текущий чат</string>
+  <string name="cd_chat_history_delete_icon" translatable="false">Удалить</string>
+  <string name="chat_history_delete_dialog_title" translatable="false">Удалить чат?</string>
+  <string name="chat_history_rename_dialog_title" translatable="false">Переименовать чат</string>
   <string name="copy" translatable="false">Копировать</string>
   <string name="create" translatable="false">Создать</string>
   <string name="delete" translatable="false">Удалить</string>
@@ -210,13 +214,13 @@
     <item quantity="other">Параметров</item>
   </plurals>
   <string name="prompt_template_label_flash_on_off" translatable="false">Включить/выключить фонарик</string>
-  <string name="prompt_template_label_flash_on" translatable="false">Фонарик включен</string>
-  <string name="prompt_template_label_flash_off" translatable="false">Фонарик выключен</string>
-  <string name="prompt_template_label_create_contact" translatable="false">Создать контакт</string>
-  <string name="prompt_template_label_send_email" translatable="false">Отправить письмо</string>
-  <string name="prompt_template_label_create_calendar_event" translatable="false">Создать событие календаря</string>
-  <string name="prompt_template_label_show_location_on_map" translatable="false">Показать местоположение на карте</string>
-  <string name="prompt_template_label_open_wifi_settings" translatable="false">Открыть настройки Wi-Fi</string>
+  <string name="prompt_template_label_flash_on" translatable="false">Включи Фонарик</string>
+  <string name="prompt_template_label_flash_off" translatable="false">Выключи Фонарик</string>
+  <string name="prompt_template_label_create_contact" translatable="false">Создай контакт</string>
+  <string name="prompt_template_label_send_email" translatable="false">Отправь письмо</string>
+  <string name="prompt_template_label_create_calendar_event" translatable="false">Создай событие календаря</string>
+  <string name="prompt_template_label_show_location_on_map" translatable="false">Покажи местоположение на карте</string>
+  <string name="prompt_template_label_open_wifi_settings" translatable="false">Открой настройки Wi-Fi</string>
 
   <!-- Strings for MobileActionsChallengeDialog -->
   <string name="mobile_actions_challenge_title" translatable="false">Задание по дообучению Mobile Actions</string>
@@ -300,7 +304,7 @@
   <string name="tryout_chip_label_send_email" translatable="false">Отправить письмо</string>
   <string name="tryout_chip_label_text_spinner" translatable="false">Крутящийся текст</string>
   <string name="agent_skills_intro_prefix">Используйте специализированные рассуждения высокого порядка, загружая различные навыки или </string>
-  <string name="agent_skills_intro_link">создавая\u00A0свои\u00A0собственные</string>
+  <string name="agent_skills_intro_link"> создавая\u00A0свои\u00A0собственные</string>
   <string name="agent_skills_intro_suffix">.\n\nПопробуйте нажать на пример запроса ниже, чтобы увидеть Agent Skills в действии!</string>
   <string name="response_placeholder">Ответ появится здесь</string>
   <string name="replace_skill_dialog_title" translatable="false">Заменить существующий навык</string>
@@ -471,7 +475,7 @@
 
   <!-- Task labels -->
   <string name="task_label_ai_chat" translatable="false">ИИ-чат</string>
-  <string name="task_label_ask_image" translatable="false">Спросить по изображению</string>
+  <string name="task_label_ask_image" translatable="false">Вопросы по картинке</string>
   <string name="task_label_audio_scribe" translatable="false">Аудио-транскрипция</string>
   <string name="task_label_prompt_lab" translatable="false">Лаборатория промптов</string>
   <string name="task_label_agent_skills" translatable="false">Агентские навыки</string>
@@ -528,13 +532,15 @@
 
   <!-- Server Screen strings -->
   <string name="server_screen_title" translatable="false">OpenAI-Compatible Local Server</string>
-  <string name="server_screen_description" translatable="false">Запустите локальный сервер, принимающий запросы на завершен чата OpenAI. Поддерживает текст, аудио-вход и нативные инструменты Android.</string>
+  <string name="server_screen_description" translatable="false">Запустите локальный сервер, принимающий запросы формата Chat Completions. Поддерживает текст, картинки, аудио-вход, внешние и нативные инструменты Android.</string>
   <string name="server_ip_address_label" translatable="false">IP-адрес</string>
   <string name="server_port_label" translatable="false">Порт</string>
   <string name="server_enable_vision" translatable="false">Включить поддержку изображений</string>
   <string name="server_enable_tools_label" translatable="false">Включить нативные инструменты Android</string>
   <string name="server_enable_tools_description" translatable="false">Позволяет модели искать карты, устанавливать будильники и таймеры, проверять заряд батареи, включать/выключать фонарик и воспроизводить музыку.</string>
   <string name="server_select_model_label" translatable="false">Выбрать модель</string>
+  <string name="server_enable_local_history" translatable="false">История диалога для аудио</string>
+  <string name="server_enable_local_history_desc" translatable="false">Распозновать текст в аудио, и хранить локальную историю</string>
   <string name="server_no_llm_models_downloaded" translatable="false">LLM-модели не загружены.</string>
   <string name="server_button_start" translatable="false">Запустить сервер</string>
   <string name="server_button_stop" translatable="false">Остановить сервер</string>
@@ -618,6 +624,7 @@
   <string name="prompt_template_rewrite_tone" translatable="false">Изменить тон</string>
   <string name="prompt_template_summarize_text" translatable="false">Сжать текст</string>
   <string name="prompt_template_code_snippet" translatable="false">Фрагмент кода</string>
+  <string name="prompt_template_translator" translatable="false">Переводчик</string>
   <string name="prompt_template_select_example" translatable="false">Выберите пример</string>
   <!-- UI strings: rewrite tone options -->
   <string name="tone_formal" translatable="false">Официальный</string>
