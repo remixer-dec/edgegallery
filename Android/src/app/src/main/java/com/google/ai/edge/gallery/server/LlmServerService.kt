@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.google.ai.edge.gallery.server
 
 import android.app.NotificationChannel
@@ -39,6 +55,10 @@ import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 
 class LlmServerService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + Job())
@@ -48,6 +68,8 @@ class LlmServerService : Service() {
     private var activeModelName = "gemma-local"
     private var useTools = false
     private var useVision = false
+    private var useHistory = false
+    private var localHistory: LocalAudioHistory? = null
     private var topK = 40
     private var topP = 0.95
     private var temperature = 1.0
@@ -73,6 +95,7 @@ class LlmServerService : Service() {
         const val EXTRA_TOP_P = "EXTRA_TOP_P"
         const val EXTRA_TEMPERATURE = "EXTRA_TEMPERATURE"
         const val EXTRA_ENABLE_VISION = "EXTRA_ENABLE_VISION"
+        const val EXTRA_ENABLE_HISTORY = "EXTRA_ENABLE_HISTORY"
 
         private const val CHANNEL_ID = "LlmServerChannel"
         private const val NOTIFICATION_ID = 1001
@@ -96,6 +119,7 @@ class LlmServerService : Service() {
                 activeModelName = intent.getStringExtra(EXTRA_MODEL_NAME) ?: "gemma-local"
                 useTools = intent.getBooleanExtra(EXTRA_ENABLE_TOOLS, false)
                 useVision = intent.getBooleanExtra(EXTRA_ENABLE_VISION, false)
+                useHistory = intent.getBooleanExtra(EXTRA_ENABLE_HISTORY, false)
                 val maxTokens = intent.getIntExtra(EXTRA_MAX_TOKENS, 1024)
                 val accelerator = intent.getStringExtra(EXTRA_ACCELERATOR) ?: "GPU"
                 topK = intent.getIntExtra(EXTRA_TOP_K, 40)
@@ -114,8 +138,10 @@ class LlmServerService : Service() {
 
     private fun startForegroundService(ip: String, port: Int) {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel(CHANNEL_ID, "LLM Server", NotificationManager.IMPORTANCE_LOW)
-        manager.createNotificationChannel(channel)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(CHANNEL_ID, "LLM Server", NotificationManager.IMPORTANCE_LOW)
+            manager.createNotificationChannel(channel)
+        }
 
         val stopIntent = Intent(this, LlmServerService::class.java).apply { action = ACTION_STOP }
         val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
@@ -171,6 +197,10 @@ class LlmServerService : Service() {
                     visionBackend = if (useVision) Backend.GPU() else null
                 )
                 engine = Engine(engineConfig).apply { initialize() }
+                if (useHistory) {
+                    localHistory = LocalAudioHistory(maxTokens = maxTokens)
+                    Log.d(TAG, "Local audio history enabled (maxTokens=$maxTokens)")
+                }
 
                 serverSocket = ServerSocket(port, 50, InetAddress.getByName(ip))
                 Log.d(TAG, "Server started on $ip:$port")
@@ -284,7 +314,10 @@ class LlmServerService : Service() {
         } catch (e: Exception) {
             Log.e(TAG, "Client handling error", e)
         } finally {
-            try { client.close() } catch (_: Exception) {}
+            try {
+                client.close()
+            } catch (_: Exception) {
+            }
         }
     }
 
@@ -400,14 +433,16 @@ class LlmServerService : Service() {
 
                 when {
                     role == "system" -> {
-                        val text = extractText(contentElement)
+                        val text = formatText(extractText(contentElement))
                         if (text.isNotEmpty()) {
                             systemPrompt = if (systemPrompt == null) text else "$systemPrompt\n$text"
                         }
                     }
+
                     i < triggerIndex -> {
                         appendHistoryEntry(formattedHistory, role, msg, contentElement)
                     }
+
                     i == triggerIndex -> {
                         if (role == "tool") {
                             val toolCallId = msg.get("tool_call_id")?.asString
@@ -424,24 +459,26 @@ class LlmServerService : Service() {
             if (finalContents.isEmpty()) {
                 throw BadRequestException("Trigger message has no usable content")
             }
-            
-            // Tiny nudge — Gemma's FC parser bails on bare argument names like {location}
-            // instead of {location:"Paris"}. Reminding the model to fill all args fixes most cases.
+
+            val historyAudio: Content.AudioBytes? = if (useHistory) {
+                finalContents.firstOrNull { it is Content.AudioBytes } as? Content.AudioBytes
+            } else null
+            val historySystemPromptSnapshot: String? = systemPrompt
+
             if (useTools || hasExternalTools) {
                 val nudge = "When calling a tool, fill values for every argument."
                 systemPrompt = if (systemPrompt.isNullOrEmpty()) nudge else "$systemPrompt\n$nudge"
             }
 
-            
             val hasAudioInFinalMessage = finalContents.any { it is Content.AudioBytes }
-            if (hasAudioInFinalMessage && systemPrompt != null) {
-                systemPrompt += "\n\nAs a powerful multimodal model, " +
-                    "you MUST listen the audio, analyze it and respond accordingly in the same language."
+            if (hasAudioInFinalMessage) {
+                val audioNudge = "As a powerful multimodal model, you MUST listen the audio, analyze it and respond accordingly in the same language."
+                systemPrompt = if (systemPrompt.isNullOrEmpty()) audioNudge else "$systemPrompt\n\n$audioNudge"
+
                 if (useTools || hasExternalTools) {
                     systemPrompt += "\nUse tools only when it makes sense. Tools available:"
                 }
             }
-
 
             val toolList: List<ToolProvider> = when {
                 hasExternalTools -> externalToolsArray!!.mapNotNull { el ->
@@ -449,6 +486,7 @@ class LlmServerService : Service() {
                     val fn = el.asJsonObject.getAsJsonObject("function") ?: return@mapNotNull null
                     tool(DynamicOpenApiTool(fn.toString()))
                 }
+
                 useTools -> listOf(tool(AndroidServerTools(this)))
                 else -> emptyList()
             }
@@ -465,6 +503,13 @@ class LlmServerService : Service() {
                 forceDisableAutomaticToolCalling(conversation)
             }
 
+            if (historyAudio != null) {
+                val historyText = localHistory?.formatForPrompt().orEmpty()
+                if (historyText.isNotEmpty()) {
+                    finalContents.add(0, Content.Text(historyText))
+                }
+            }
+
             if (formattedHistory.isNotEmpty()) {
                 finalContents.add(
                     0,
@@ -472,10 +517,6 @@ class LlmServerService : Service() {
                 )
             }
 
-            // litertlm's native FC parser sometimes fails on Gemma's tool-call DSL when args
-            // are missing values. We catch the parse error, extract the raw DSL from the
-            // exception message, and parse it ourselves. Successful (parser-friendly) calls
-            // still come back through the structured Message path below.
             val response = try {
                 conversation.sendMessage(Contents.of(finalContents))
             } catch (e: Exception) {
@@ -490,14 +531,72 @@ class LlmServerService : Service() {
             }
 
             val toolCallsJson = if (hasExternalTools) toolCallsToOpenAi(response) else null
-            return if (toolCallsJson != null && toolCallsJson.size() > 0) {
+            val isToolCall = toolCallsJson != null && toolCallsJson.size() > 0
+            val responseText = if (isToolCall) null else extractTextFromResponse(response)
+            try {
+              if (hasAudioInFinalMessage) {
+                conversation?.close()
+                conversation = null
+              }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error closing primary conversation", e)
+            }
+
+            if (historyAudio != null && !isToolCall && !responseText.isNullOrEmpty()) {
+                val history = localHistory
+                if (history == null) {
+                    Log.w(TAG, "History enabled but localHistory is null; skipping update")
+                } else if (LocalAudioHistory.isAudioFailureResponse(responseText)) {
+                    // Model said it couldn't hear the audio — don't waste a transcription pass
+                    // and don't poison history with a junk entry.
+                    Log.i(TAG, "Skipping history update: assistant reported audio failure")
+                } else {
+                    try {
+                        val transcript = history.transcribeAudio(
+                            engine = currentEngine,
+                            audio = historyAudio,
+                        )
+                        if (LocalAudioHistory.isResetCommand(transcript)) {
+                            history.clear()
+                            Log.i(TAG, "History reset by user voice command")
+                        } else if (transcript.startsWith("[") && transcript.endsWith("]")) {
+                            // "[transcription failed]" / "[empty transcription]" sentinels — don't store.
+                            Log.w(TAG, "Skipping history update: transcription sentinel \"$transcript\"")
+                        } else {
+                            history.addAndTrim(LocalAudioHistory.Entry(transcript, responseText))
+                            Log.d(TAG, "History now: $history")
+                        }
+                    } catch (e: Throwable) {
+                        Log.e(TAG, "Failed to update local audio history", e)
+                    }
+                }
+            }
+
+            return if (isToolCall) {
                 buildOpenAIResponse(text = null, toolCalls = toolCallsJson)
             } else {
-                buildOpenAIResponse(text = extractTextFromResponse(response), toolCalls = null)
+                buildOpenAIResponse(text = responseText, toolCalls = null)
             }
         } finally {
-            try { conversation?.close() } catch (_: Exception) {}
+            try {
+                conversation?.close()
+            } catch (_: Exception) {
+            }
         }
+    }
+
+    private fun formatText(text: String): String {
+        if (!text.contains('{')) return text
+        val now = Date()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss zzz", Locale.getDefault())
+
+        val date = dateFormat.format(now)
+        val datetime = dateTimeFormat.format(now)
+
+        return text
+            .replace("{datetime}", datetime)
+            .replace("{date}", date)
     }
 
     private fun appendHistoryEntry(
@@ -515,6 +614,7 @@ class LlmServerService : Service() {
                     history.append("$tag: $resultText\n")
                 }
             }
+
             "assistant" -> {
                 val toolCalls = msg.getAsJsonArray("tool_calls")
                 if (toolCalls != null && toolCalls.size() > 0) {
@@ -524,6 +624,7 @@ class LlmServerService : Service() {
                     if (text.isNotEmpty()) history.append("ASSISTANT: $text\n")
                 }
             }
+
             else -> {
                 val text = extractText(contentElement)
                 if (text.isNotEmpty()) history.append("${role.uppercase()}: $text\n")
@@ -543,6 +644,7 @@ class LlmServerService : Service() {
                         val t = obj.get("text")?.asString ?: ""
                         if (t.isNotEmpty()) finalContents.add(Content.Text(t))
                     }
+
                     "input_audio" -> {
                         val audioObj = obj.getAsJsonObject("input_audio")
                             ?: throw BadRequestException("input_audio missing object body")
@@ -555,19 +657,32 @@ class LlmServerService : Service() {
                         }
                         finalContents.add(Content.AudioBytes(decodedAudio))
                     }
+
                     "image_url" -> {
                         val url = obj.getAsJsonObject("image_url").get("url").asString
                         val rawBytes = if (url.startsWith("data:")) {
                             Base64.decode(url.substringAfter(","), Base64.DEFAULT)
                         } else {
-                            URL(url).openStream().use { it.readBytes() }
+                            // Fix: Added timeouts to prevent infinite hangs
+                            val conn = (URL(url).openConnection() as HttpURLConnection).apply {
+                                connectTimeout = 10_000
+                                readTimeout = 10_000
+                            }
+                            try {
+                                conn.inputStream.use { it.readBytes() }
+                            } finally {
+                                conn.disconnect()
+                            }
                         }
                         val bitmap = android.graphics.BitmapFactory.decodeByteArray(rawBytes, 0, rawBytes.size)
-                            ?: throw IllegalArgumentException("Could not decode image")
+                            ?: throw BadRequestException("Could not decode image")
+
                         val pngBytes = ByteArrayOutputStream().use { out ->
                             bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out)
                             out.toByteArray()
                         }
+
+                        finalContents.add(Content.ImageBytes(pngBytes))
                     }
                 }
             }
@@ -590,8 +705,10 @@ class LlmServerService : Service() {
             field.isAccessible = true
             field.setBoolean(conversation, false)
         } catch (e: Throwable) {
-            Log.e(TAG, "Failed to disable automaticToolCalling via reflection. " +
-                "External tools mode will fall back to native execution and likely fail.", e)
+            Log.e(
+                TAG, "Failed to disable automaticToolCalling via reflection. " +
+                        "External tools mode will fall back to native execution and likely fail.", e
+            )
         }
     }
 
@@ -673,7 +790,8 @@ class LlmServerService : Service() {
         var i = 0
         while (i < body.length) {
             if (i + DSL_STR_DELIM.length <= body.length &&
-                body.regionMatches(i, DSL_STR_DELIM, 0, DSL_STR_DELIM.length)) {
+                body.regionMatches(i, DSL_STR_DELIM, 0, DSL_STR_DELIM.length)
+            ) {
                 inString = !inString
                 i += DSL_STR_DELIM.length
                 continue
@@ -782,7 +900,8 @@ class LlmServerService : Service() {
                 val m = obj.javaClass.methods.firstOrNull { it.name == n && it.parameterCount == 0 }
                 val v = m?.invoke(obj) as? String
                 if (v != null) return v
-            } catch (_: Throwable) {}
+            } catch (_: Throwable) {
+            }
         }
         return null
     }
@@ -793,7 +912,8 @@ class LlmServerService : Service() {
                 val m = obj.javaClass.methods.firstOrNull { it.name == n && it.parameterCount == 0 }
                 val v = m?.invoke(obj)
                 if (v != null) return v
-            } catch (_: Throwable) {}
+            } catch (_: Throwable) {
+            }
         }
         return null
     }
@@ -832,8 +952,14 @@ class LlmServerService : Service() {
 
     private fun stopServerAndService() {
         isRunning = false
-        try { serverSocket?.close() } catch (_: Exception) {}
-        try { engine?.close() } catch (_: Exception) {}
+        try {
+            serverSocket?.close()
+        } catch (_: Exception) {
+        }
+        try {
+            engine?.close()
+        } catch (_: Exception) {
+        }
         serviceScope.cancel()
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -841,6 +967,8 @@ class LlmServerService : Service() {
 
     override fun onDestroy() {
         stopServerAndService()
+        localHistory?.clear()
+        localHistory = null
         super.onDestroy()
     }
 }
@@ -864,13 +992,17 @@ class AndroidServerTools(private val service: Service) : ToolSet {
     @Tool("Search map/nearby")
     fun searchMap(@ToolParam("query") q: String): Map<String, String> {
         return try {
+            android.os.Handler(android.os.Looper.getMainLooper()).post { android.widget.Toast.makeText(service, "🔧 searchMap(q='$q')", android.widget.Toast.LENGTH_LONG).show() }
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=${Uri.encode(q)}"))
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             service.startActivity(intent)
             mapOf("res" to "ok")
+        } catch (e: SecurityException) {
+            Log.w("AndroidServerTools", "Map blocked by background restrictions", e)
+            mapOf("error" to "Permission denied to start map activity from background")
         } catch (e: Exception) {
             Log.e("AndroidServerTools", "Map error", e)
-            mapOf("error" to "No map app found")
+            mapOf("error" to "No map app found or failed to open")
         }
     }
 
@@ -881,6 +1013,7 @@ class AndroidServerTools(private val service: Service) : ToolSet {
         @ToolParam("lbl") l: String
     ): Map<String, String> {
         return try {
+            android.os.Handler(android.os.Looper.getMainLooper()).post { android.widget.Toast.makeText(service, "🔧 setAlarm(h=$h, m=$m, l='$l')", android.widget.Toast.LENGTH_LONG).show() }
             val intent = Intent(AlarmClock.ACTION_SET_ALARM).apply {
                 putExtra(AlarmClock.EXTRA_HOUR, h)
                 putExtra(AlarmClock.EXTRA_MINUTES, m)
@@ -901,7 +1034,7 @@ class AndroidServerTools(private val service: Service) : ToolSet {
         if (seconds < 1 || seconds > 86400) {
             return "Invalid duration: $seconds seconds. Must be between 1 and 86400 (24 hours)."
         }
-
+        android.os.Handler(android.os.Looper.getMainLooper()).post { android.widget.Toast.makeText(service, "🔧 setTimer(seconds=$seconds, msg='$msg', skipUi=$skipUi)", android.widget.Toast.LENGTH_LONG).show() }
         val intent = Intent(AlarmClock.ACTION_SET_TIMER).apply {
             putExtra(AlarmClock.EXTRA_LENGTH, seconds)
             putExtra(AlarmClock.EXTRA_SKIP_UI, skipUi)
@@ -936,7 +1069,7 @@ class AndroidServerTools(private val service: Service) : ToolSet {
             val cameraId = cameraManager.cameraIdList.firstOrNull { id ->
                 val chars = cameraManager.getCameraCharacteristics(id)
                 chars.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true &&
-                    chars.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK
+                        chars.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK
             }
 
             if (cameraId != null) {
@@ -954,6 +1087,7 @@ class AndroidServerTools(private val service: Service) : ToolSet {
     @Tool("Get battery charge %")
     fun getBattery(): Map<String, String> {
         return try {
+            android.os.Handler(android.os.Looper.getMainLooper()).post { android.widget.Toast.makeText(service, "🔧 getBattery()", android.widget.Toast.LENGTH_LONG).show() }
             val bm = service.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
             mapOf(
                 "lvl" to bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY).toString(),
@@ -967,6 +1101,7 @@ class AndroidServerTools(private val service: Service) : ToolSet {
     @Tool("Search music")
     fun playMusic(@ToolParam("query") q: String): Map<String, String> {
         return try {
+            android.os.Handler(android.os.Looper.getMainLooper()).post { android.widget.Toast.makeText(service, "🔧 playMusic(q='$q')", android.widget.Toast.LENGTH_LONG).show() }
             val intent = Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH).apply {
                 putExtra(SearchManager.QUERY, q)
                 putExtra(MediaStore.EXTRA_MEDIA_FOCUS, "vnd.android.cursor.item/audio")
@@ -985,6 +1120,7 @@ class AndroidServerTools(private val service: Service) : ToolSet {
         @ToolParam("name") taskName: String
     ): Map<String, String> {
         return try {
+            android.os.Handler(android.os.Looper.getMainLooper()).post { android.widget.Toast.makeText(service, "🔧 runTaskerTask(taskName='$taskName')", android.widget.Toast.LENGTH_LONG).show() }
             val intent = Intent("net.dinglisch.android.tasker.ACTION_TASK").apply {
                 setPackage("net.dinglisch.android.tasker")
                 putExtra("task_name", taskName)
@@ -999,6 +1135,7 @@ class AndroidServerTools(private val service: Service) : ToolSet {
 
     @Tool(description = "Get BTC price.")
     fun getBitcoinPrice(): String = try {
+        android.os.Handler(android.os.Looper.getMainLooper()).post { android.widget.Toast.makeText(service, "🔧 getBitcoinPrice()", android.widget.Toast.LENGTH_LONG).show() }
         fetchPrice("https://www.bitstamp.net/api/v2/ticker/btcusd/") {
             it.get("last").asString
         }
