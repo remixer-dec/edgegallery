@@ -22,6 +22,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
+import android.app.PendingIntent
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -62,7 +64,17 @@ class MainActivity : ComponentActivity() {
   private val modelManagerViewModel: ModelManagerViewModel by viewModels()
   private var splashScreenAboutToExit: Boolean = false
   private var contentSet: Boolean = false
+  private var openDestination by mutableStateOf<String?>(null)
 
+  private fun handleIntent(intent: Intent?) {
+    openDestination =
+      if (intent?.getStringExtra("open_destination") == "server") {
+        "server_screen"
+      } else {
+        null
+      }
+  }
+  
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -74,7 +86,11 @@ class MainActivity : ComponentActivity() {
       setContent {
         GalleryTheme {
           Surface(modifier = Modifier.fillMaxSize()) {
-            GalleryApp(modelManagerViewModel = modelManagerViewModel)
+            GalleryApp(
+              modelManagerViewModel = modelManagerViewModel,
+              openDestination = openDestination,
+              onDestinationHandled = { openDestination = null }
+            )
 
             // Fade out a "mask" that has the same color as the background of the splash screen
             // to reveal the actual app content.
@@ -156,6 +172,13 @@ class MainActivity : ComponentActivity() {
     }
     // Keep the screen on while the app is running for better demo experience.
     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    handleIntent(intent)
+  }
+  
+  override fun onNewIntent(intent: Intent) {
+      super.onNewIntent(intent)
+      setIntent(intent)
+      handleIntent(intent)
   }
 
   override fun onResume() {
@@ -170,6 +193,8 @@ class MainActivity : ComponentActivity() {
       ),
     )
   }
+  
+  
 
   companion object {
     private const val TAG = "AGMainActivity"
