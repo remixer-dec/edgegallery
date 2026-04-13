@@ -1,4 +1,14 @@
-# Google AI Edge Gallery ✨
+# Google AI Edge Gallery REbuilt ✨
+
+# Fork features:
+- Legacy Android version support (Android 7+)
+- OpenAI-compatible server with multimodal & audio support & Tool calls
+- Message history, editing, deleting, regenerating
+- Prompt gallery: translator
+- Manual accelerator choice support (GPU/CPU/NPU)
+- Better localization
+- Skill import & benchmark bugfixes
+- Custom .so file shared lib upgradability
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/google-ai-edge/gallery)](https://github.com/google-ai-edge/gallery/releases)
