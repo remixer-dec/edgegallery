@@ -715,6 +715,9 @@ fun SkillManagerBottomSheet(
           AddSkillOptionType.LocalImport -> {
             showDisclaimerDialog = true
           }
+          AddSkillOptionType.ManualInput -> {
+            showAddOrEditSkillBottomSheet = true
+          }
           else -> {}
         }
         showAddSkillOptionsSheet = false

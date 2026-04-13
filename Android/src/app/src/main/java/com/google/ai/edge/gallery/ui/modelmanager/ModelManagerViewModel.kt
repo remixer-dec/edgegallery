@@ -86,120 +86,6 @@ private const val ALLOWLIST_BASE_URL =
 
 private const val TEST_MODEL_ALLOW_LIST = ""
 
-private const val CUSTOM_MODEL_ALLOW_LIST = """
-{
-  "models": [
-    {
-      "name": "Qwen3.5-0.8B-Q8-EKV2048",
-      "modelId": "GabrieleConte/Qwen3.5-0.8B-LiteRT",
-      "modelFile": "qwen35_mm_q8_ekv2048.litertlm",
-      "commitHash": "main",
-      "description": "[unofficial] Qwen3.5 0.8B Q8 EKV2048 by GabrieleConte",
-      "sizeInBytes": 1243728640,
-      "taskTypes": ["llm_chat", "llm_prompt_lab"],
-      "defaultConfig": {
-        "accelerators": "cpu,gpu"
-      }
-    },
-    {
-      "name": "Qwen3.5-9B-LiteRT",
-      "modelId": "litert-community/Qwen3.5-9B-LiteRT",
-      "modelFile": "model_multimodal.litertlm",
-      "commitHash": "main",
-      "description": "[unofficial] Qwen3.5 9B quantized by litert-community",
-      "sizeInBytes": 6442450944,
-      "taskTypes": ["llm_chat", "llm_prompt_lab"],
-      "defaultConfig": {
-        "accelerators": "cpu,gpu"
-      }
-    },
-    {
-      "name": "Qwen3.5-4B-LiteRT-Multimodal",
-      "modelId": "litert-community/Qwen3.5-4B-LiteRT",
-      "modelFile": "model_multimodal.litertlm",
-      "commitHash": "main",
-      "description": "[unofficial] Qwen3.5 4B multimodal by litert-community",
-      "sizeInBytes": 2684354560,
-      "taskTypes": ["llm_chat", "llm_prompt_lab"],
-      "defaultConfig": {
-        "accelerators": "cpu,gpu"
-      }
-    },
-    {
-      "name": "Qwen3.5-4B-LiteRT-Quantized",
-      "modelId": "litert-community/Qwen3.5-4B-LiteRT",
-      "modelFile": "model_quantized.litertlm",
-      "commitHash": "main",
-      "description": "[unofficial] Qwen3.5 4B quantized by litert-community",
-      "sizeInBytes": 2147483648,
-      "taskTypes": ["llm_chat", "llm_prompt_lab"],
-      "defaultConfig": {
-        "accelerators": "cpu,gpu"
-      }
-    },
-    {
-      "name": "Qwen3.5-2B-LiteRT",
-      "modelId": "litert-community/Qwen3.5-2B-LiteRT",
-      "modelFile": "model_multimodal.litertlm",
-      "commitHash": "main",
-      "description": "[unofficial] Qwen3.5 2B by litert-community",
-      "sizeInBytes": 1342177280,
-      "taskTypes": ["llm_chat", "llm_prompt_lab"],
-      "defaultConfig": {
-        "accelerators": "cpu,gpu"
-      }
-    },
-    {
-      "name": "Qwen3.5-0.8B-LiteRT",
-      "modelId": "litert-community/Qwen3.5-0.8B-LiteRT",
-      "modelFile": "model_multimodal.litertlm",
-      "commitHash": "main",
-      "description": "[unofficial] Qwen3.5 0.8B by litert-community",
-      "sizeInBytes": 671088640,
-      "taskTypes": ["llm_chat", "llm_prompt_lab"],
-      "defaultConfig": {
-        "accelerators": "cpu,gpu"
-      }
-    },
-    {
-      "name": "MedGemma-1.5-4B",
-      "modelId": "ai4med-id/medgemma-1.5-4b-it-litertlm",
-      "modelFile": "model_multimodal.litertlm",
-      "commitHash": "main",
-      "description": "[unofficial] MedGemma 1.5 4B medical AI model",
-      "sizeInBytes": 2684354560,
-      "taskTypes": ["llm_chat", "llm_prompt_lab"],
-      "defaultConfig": {
-        "accelerators": "cpu,gpu"
-      }
-    },
-    {
-      "name": "MobileActions-270M",
-      "modelId": "Thorge-AI/functiongemma-270m-it-mobile-actions.litertlm",
-      "modelFile": "model_multimodal.litertlm",
-      "commitHash": "main",
-      "description": "[unofficial] Function-calling model for mobile actions",
-      "sizeInBytes": 335544320,
-      "taskTypes": ["llm_chat", "llm_prompt_lab"],
-      "defaultConfig": {
-        "accelerators": "cpu,gpu"
-      }
-    },
-    {
-      "name": "Gemmasutra-Mini-2B",
-      "modelId": "SuperPauly/Gemmasutra_LiteRT-LM",
-      "modelFile": "model_multimodal.litertlm",
-      "commitHash": "main",
-      "description": "[unofficial] Gemmasutra Mini 2B creative writing model",
-      "sizeInBytes": 1342177280,
-      "taskTypes": ["llm_chat", "llm_prompt_lab"],
-      "defaultConfig": {
-        "accelerators": "cpu,gpu"
-      }
-    }
-  ]
-}
-"""
 
 data class ModelInitializationStatus(
   val status: ModelInitializationStatusType,
@@ -948,8 +834,10 @@ constructor(
     }
 
     Log.d(TAG, "=== STARTING MODEL ALLOWLIST LOADING ===")
-    Log.d(TAG, "TEST_MODEL_ALLOW_LIST is ${if (TEST_MODEL_ALLOW_LIST.isNotEmpty()) "NOT EMPTY (${TEST_MODEL_ALLOW_LIST.length} chars)" else "EMPTY"}")
-    Log.d(TAG, "CUSTOM_MODEL_ALLOW_LIST is ${if (CUSTOM_MODEL_ALLOW_LIST.isNotEmpty()) "NOT EMPTY (${CUSTOM_MODEL_ALLOW_LIST.length} chars)" else "EMPTY"}")
+    Log.d(
+      TAG,
+      "TEST_MODEL_ALLOW_LIST is ${if (TEST_MODEL_ALLOW_LIST.isNotEmpty()) "NOT EMPTY (${TEST_MODEL_ALLOW_LIST.length} chars)" else "EMPTY"}"
+    )
 
     viewModelScope.launch(Dispatchers.IO) {
       try {
@@ -965,9 +853,15 @@ constructor(
         Log.d(TAG, "Remote allowlist URL: $remoteUrl")
         Log.d(TAG, "About to call getJsonResponse...")
         val remoteData = getJsonResponse<ModelAllowlist>(url = remoteUrl)
-        Log.d(TAG, "getJsonResponse returned: ${if (remoteData != null) "NOT NULL (hasJson=${remoteData.jsonObj != null})" else "NULL"}")
+        Log.d(
+          TAG,
+          "getJsonResponse returned: ${if (remoteData != null) "NOT NULL (hasJson=${remoteData.jsonObj != null})" else "NULL"}"
+        )
         modelAllowlist = remoteData?.jsonObj
-        Log.d(TAG, "Remote modelAllowlist result: ${if (modelAllowlist != null) "SUCCESS (${modelAllowlist.models.size} models)" else "FAILED"}")
+        Log.d(
+          TAG,
+          "Remote modelAllowlist result: ${if (modelAllowlist != null) "SUCCESS (${modelAllowlist.models.size} models)" else "FAILED"}"
+        )
 
         if (modelAllowlist == null) {
           Log.e(TAG, "Failed to load model allowlist from internet. Trying to load it from disk cache...")
@@ -985,7 +879,10 @@ constructor(
         // Step 2: Load test allowlist from disk (lower priority, will be merged).
         Log.d(TAG, "=== Step 2: Loading test model allowlist from disk ===")
         val diskAllowlist = readModelAllowlistFromDisk(fileName = MODEL_ALLOWLIST_TEST_FILENAME)
-        Log.d(TAG, "Test allowlist from disk: ${if (diskAllowlist != null) "FOUND (${diskAllowlist.models.size} models)" else "NOT FOUND"}")
+        Log.d(
+          TAG,
+          "Test allowlist from disk: ${if (diskAllowlist != null) "FOUND (${diskAllowlist.models.size} models)" else "NOT FOUND"}"
+        )
 
         // Step 3: Load embedded TEST model allowlist (lower priority, will be merged).
         if (TEST_MODEL_ALLOW_LIST.isNotEmpty()) {
@@ -993,12 +890,19 @@ constructor(
           val gson = Gson()
           try {
             val testAllowlist = gson.fromJson(TEST_MODEL_ALLOW_LIST, ModelAllowlist::class.java)
-            Log.d(TAG, "TEST allowlist loaded: ${if (testAllowlist != null) "SUCCESS (${testAllowlist!!.models.size} models)" else "NULL RESULT"}")
+            Log.d(
+              TAG,
+              "TEST allowlist loaded: ${if (testAllowlist != null) "SUCCESS (${testAllowlist!!.models.size} models)" else "NULL RESULT"}"
+            )
             if (testAllowlist != null) {
               Log.d(TAG, "TEST models: ${testAllowlist.models.joinToString(", ") { it.name }}")
               if (modelAllowlist != null) {
-                Log.d(TAG, "MERGING TEST allowlist (${testAllowlist.models.size} models) into main allowlist (${modelAllowlist.models.size} models)")
-                modelAllowlist = modelAllowlist.copy(models = modelAllowlist.models + testAllowlist.models)
+                Log.d(
+                  TAG,
+                  "MERGING TEST allowlist (${testAllowlist.models.size} models) into main allowlist (${modelAllowlist.models.size} models)"
+                )
+                modelAllowlist =
+                  modelAllowlist.copy(models = modelAllowlist.models + testAllowlist.models)
                 Log.d(TAG, "After TEST merge: ${modelAllowlist.models.size} total models")
               } else {
                 modelAllowlist = testAllowlist
@@ -1012,31 +916,6 @@ constructor(
         }
 
         // Step 4: Load embedded CUSTOM model allowlist (lowest priority, will be merged).
-        if (CUSTOM_MODEL_ALLOW_LIST.isNotEmpty()) {
-          Log.d(TAG, "=== Step 4: Loading CUSTOM model allowlist (embedded) ===")
-          val gson = Gson()
-          try {
-            val customAllowlist = gson.fromJson(CUSTOM_MODEL_ALLOW_LIST, ModelAllowlist::class.java)
-            Log.d(TAG, "Custom allowlist loaded: ${if (customAllowlist != null) "SUCCESS (${customAllowlist.models.size} models)" else "NULL RESULT"}")
-            if (customAllowlist != null) {
-              Log.d(TAG, "Custom models: ${customAllowlist.models.joinToString(", ") { it.name }}")
-              customAllowlist.models.forEach { model ->
-                Log.d(TAG, "  - ${model.name}: modelId=${model.modelId}, modelFile=${model.modelFile}, commitHash=${model.commitHash}, url=${model.url?.truncate(50)}")
-              }
-              if (modelAllowlist != null) {
-                Log.d(TAG, "MERGING custom allowlist (${customAllowlist.models.size} models) into main allowlist (${modelAllowlist.models.size} models)")
-                modelAllowlist = modelAllowlist.copy(models = modelAllowlist.models + customAllowlist.models)
-                Log.d(TAG, "After CUSTOM merge: ${modelAllowlist.models.size} total models")
-              } else {
-                modelAllowlist = customAllowlist
-                Log.d(TAG, "Using custom allowlist as fallback")
-              }
-            }
-          } catch (e: JsonSyntaxException) {
-            Log.e(TAG, "Failed to parse CUSTOM model allowlist", e)
-            e.printStackTrace()
-          }
-        }
 
         if (modelAllowlist == null) {
           Log.e(TAG, "=== FAILED: Could not load model allowlist from any source ===")
@@ -1079,7 +958,10 @@ constructor(
           Log.d(TAG, "  -> Converting to Model object...")
           val model = allowedModel.toModel()
           Log.d(TAG, "  -> Model created: name=${model.name}, url=${model.url.truncate(60)}")
-          Log.d(TAG, "  -> Model has description: ${model.info.isNotEmpty()}, content: ${model.info.truncate(50)}")
+          Log.d(
+            TAG,
+            "  -> Model has description: ${model.info.isNotEmpty()}, content: ${model.info.truncate(50)}"
+          )
           nameToModel.put(model.name, model)
           for (taskType in allowedModel.taskTypes) {
             val task = curTasks.find { it.id == taskType }
