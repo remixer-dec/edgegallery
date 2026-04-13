@@ -282,11 +282,13 @@ class DefaultDownloadRepository(
 
     // Create the NotificationChannel, but only on API 26+ because
     // the NotificationChannel class is new and not in the support library
-    val importance = NotificationManager.IMPORTANCE_HIGH
-    val channel = NotificationChannel(channelId, channelName, importance)
     val notificationManager: NotificationManager =
       context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    notificationManager.createNotificationChannel(channel)
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(channelId, channelName, importance)
+        notificationManager.createNotificationChannel(channel)
+    }
 
     val intent: Intent
     if (taskId.isEmpty()) {

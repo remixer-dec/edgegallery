@@ -31,10 +31,11 @@ import com.google.ai.edge.gallery.ui.llmchat.LlmChatModelHelper
 import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.tool
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 private const val TAG = "AGMATask"
 
@@ -113,10 +114,10 @@ class MobileActionsTask @Inject constructor(
 }
 
 fun getSystemPrompt(): Contents {
-  @SuppressWarnings("JavaTimeDefaultTimeZone") val now = LocalDateTime.now()
-  val curDateTimeString = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-  val dayOfWeekString = now.format(DateTimeFormatter.ofPattern("EEEE"))
-  return Contents.of(
+  val now = Date()
+  val curDateTimeString = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(now)
+  val dayOfWeekString = SimpleDateFormat("EEEE", Locale.getDefault()).format(now)
+    return Contents.of(
     listOf(
         "You are a model that can do function calling with the following functions",
         "Current date and time given in YYYY-MM-DDTHH:MM:SS format: ${curDateTimeString}\nDay of week is $dayOfWeekString",

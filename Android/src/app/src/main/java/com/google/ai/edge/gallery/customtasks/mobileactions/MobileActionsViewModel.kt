@@ -40,8 +40,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -389,10 +389,11 @@ constructor(@ApplicationContext private val appContext: Context) : ViewModel() {
     // Convert datetime string to ms.
     var ms = System.currentTimeMillis()
     try {
-      val localDateTime = LocalDateTime.parse(datetime)
-      val systemDefaultZone = ZoneId.systemDefault()
-      val zonedDateTime = localDateTime.atZone(systemDefaultZone)
-      ms = zonedDateTime.toInstant().toEpochMilli()
+      val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+      val date = sdf.parse(datetime)
+      if (date != null) {
+          ms = date.time
+      }
     } catch (e: Exception) {
       // Ignore parsing error.
       Log.w(TAG, "Failed to parse date time: '$datetime'", e)
