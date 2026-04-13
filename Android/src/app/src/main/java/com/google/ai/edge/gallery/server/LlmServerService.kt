@@ -226,7 +226,10 @@ class LlmServerService : Service() {
             val requestLine = readHttpLine(input)
             if (requestLine.isNullOrEmpty()) return
 
-            val isPost = requestLine.startsWith("POST", ignoreCase = true)
+            val parts = requestLine.split(" ")
+            val method = parts.getOrNull(0)?.uppercase() ?: ""
+            val path = parts.getOrNull(1) ?: "/"
+            val isPost = method == "POST"
 
             var contentLength = 0
             var expectContinue = false
@@ -246,6 +249,16 @@ class LlmServerService : Service() {
                     "expect" -> if (value.equals("100-continue", ignoreCase = true)) expectContinue = true
                     "transfer-encoding" -> transferEncoding = value.lowercase()
                 }
+            }
+
+            if (method == "OPTIONS") {
+                writeCorsPreflightResponse(output)
+                return
+            }
+
+            if (method == "GET") {
+                handleGetRequest(path, output)
+                return
             }
 
             if (!isPost) {
@@ -288,6 +301,10 @@ class LlmServerService : Service() {
 
             val bodyString = String(body, Charsets.UTF_8)
 
+            val isStream = try {
+                JsonParser.parseString(bodyString).asJsonObject.get("stream")?.asBoolean ?: false
+            } catch (_: Exception) { false }
+
             val jsonResponse: String = try {
                 processOpenAIRequest(bodyString)
             } catch (e: BadRequestException) {
@@ -304,13 +321,27 @@ class LlmServerService : Service() {
                 return
             }
 
-            val jsonBytes = jsonResponse.toByteArray(Charsets.UTF_8)
-            output.write("HTTP/1.1 200 OK\r\n".toByteArray(Charsets.US_ASCII))
-            output.write("Content-Type: application/json; charset=utf-8\r\n".toByteArray(Charsets.US_ASCII))
-            output.write("Content-Length: ${jsonBytes.size}\r\n".toByteArray(Charsets.US_ASCII))
-            output.write("Connection: close\r\n\r\n".toByteArray(Charsets.US_ASCII))
-            output.write(jsonBytes)
-            output.flush()
+            if (isStream) {
+                val sseBody = buildStreamingChunk(jsonResponse)
+                val sseBytes = sseBody.toByteArray(Charsets.UTF_8)
+                output.write("HTTP/1.1 200 OK\r\n".toByteArray(Charsets.US_ASCII))
+                output.write("Content-Type: text/event-stream\r\n".toByteArray(Charsets.US_ASCII))
+                output.write("Cache-Control: no-cache\r\n".toByteArray(Charsets.US_ASCII))
+                output.write("Access-Control-Allow-Origin: *\r\n".toByteArray(Charsets.US_ASCII))
+                output.write("Content-Length: ${sseBytes.size}\r\n".toByteArray(Charsets.US_ASCII))
+                output.write("Connection: close\r\n\r\n".toByteArray(Charsets.US_ASCII))
+                output.write(sseBytes)
+                output.flush()
+            } else {
+                val jsonBytes = jsonResponse.toByteArray(Charsets.UTF_8)
+                output.write("HTTP/1.1 200 OK\r\n".toByteArray(Charsets.US_ASCII))
+                output.write("Content-Type: application/json; charset=utf-8\r\n".toByteArray(Charsets.US_ASCII))
+                output.write("Content-Length: ${jsonBytes.size}\r\n".toByteArray(Charsets.US_ASCII))
+                output.write("Access-Control-Allow-Origin: *\r\n".toByteArray(Charsets.US_ASCII))
+                output.write("Connection: close\r\n\r\n".toByteArray(Charsets.US_ASCII))
+                output.write(jsonBytes)
+                output.flush()
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Client handling error", e)
         } finally {
@@ -348,6 +379,7 @@ class LlmServerService : Service() {
             output.write("HTTP/1.1 $code $status\r\n".toByteArray(Charsets.US_ASCII))
             output.write("Content-Type: application/json; charset=utf-8\r\n".toByteArray(Charsets.US_ASCII))
             output.write("Content-Length: ${bodyBytes.size}\r\n".toByteArray(Charsets.US_ASCII))
+            output.write("Access-Control-Allow-Origin: *\r\n".toByteArray(Charsets.US_ASCII))
             output.write("Connection: close\r\n\r\n".toByteArray(Charsets.US_ASCII))
             output.write(bodyBytes)
             output.flush()
@@ -916,6 +948,73 @@ class LlmServerService : Service() {
             }
         }
         return null
+    }
+
+    private fun writeCorsPreflightResponse(output: OutputStream) {
+        output.write(
+            ("HTTP/1.1 204 No Content\r\n" +
+             "Access-Control-Allow-Origin: *\r\n" +
+             "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n" +
+             "Access-Control-Allow-Headers: Content-Type, Authorization\r\n" +
+             "Access-Control-Max-Age: 86400\r\n" +
+             "Content-Length: 0\r\n" +
+             "Connection: close\r\n\r\n").toByteArray(Charsets.US_ASCII)
+        )
+        output.flush()
+    }
+
+    private fun handleGetRequest(path: String, output: OutputStream) {
+        val cleanPath = path.substringBefore('?')
+        val (code, statusText, body) = when {
+            cleanPath == "/v1/models" || cleanPath == "/v1/models/" -> Triple(
+                200, "OK",
+                """{"object":"list","data":[{"id":"$activeModelName","object":"model","created":0,"owned_by":"local"}]}"""
+            )
+            cleanPath == "/" || cleanPath == "/health" -> Triple(200, "OK", """{"status":"ok"}""")
+            else -> Triple(404, "Not Found", """{"error":{"message":"Not found","code":404}}""")
+        }
+        val bodyBytes = body.toByteArray(Charsets.UTF_8)
+        output.write(
+            ("HTTP/1.1 $code $statusText\r\n" +
+             "Content-Type: application/json; charset=utf-8\r\n" +
+             "Content-Length: ${bodyBytes.size}\r\n" +
+             "Access-Control-Allow-Origin: *\r\n" +
+             "Connection: close\r\n\r\n").toByteArray(Charsets.US_ASCII)
+        )
+        output.write(bodyBytes)
+        output.flush()
+    }
+
+    private fun buildStreamingChunk(fullResponseJson: String): String {
+        val full = JsonParser.parseString(fullResponseJson).asJsonObject
+        val choice = full.getAsJsonArray("choices")?.get(0)?.asJsonObject
+        val message = choice?.getAsJsonObject("message")
+        val content = message?.get("content")?.let { if (it.isJsonNull) null else it.asString }
+        val toolCalls = message?.getAsJsonArray("tool_calls")
+        val finishReason = choice?.get("finish_reason")?.asString ?: "stop"
+
+        val delta = JsonObject().apply {
+            addProperty("role", "assistant")
+            if (toolCalls != null && toolCalls.size() > 0) {
+                add("content", JsonNull.INSTANCE)
+                add("tool_calls", toolCalls)
+            } else {
+                addProperty("content", content ?: "")
+            }
+        }
+        val chunkChoice = JsonObject().apply {
+            addProperty("index", 0)
+            add("delta", delta)
+            addProperty("finish_reason", finishReason)
+        }
+        val chunk = JsonObject().apply {
+            addProperty("id", full.get("id").asString)
+            addProperty("object", "chat.completion.chunk")
+            addProperty("created", full.get("created").asLong)
+            addProperty("model", full.get("model").asString)
+            add("choices", JsonArray().apply { add(chunkChoice) })
+        }
+        return "data: ${Gson().toJson(chunk)}\n\ndata: [DONE]\n\n"
     }
 
     private fun buildOpenAIResponse(text: String?, toolCalls: JsonArray? = null): String {
