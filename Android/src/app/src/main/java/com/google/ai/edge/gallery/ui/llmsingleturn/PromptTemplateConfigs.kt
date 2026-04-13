@@ -56,10 +56,21 @@ enum class LanguageType(val label: String) {
   TYPESCRIPT(label = "TypeScript"),
 }
 
+enum class Language(val label: String) {
+  EN(label = "English"),
+  RU(label = "Russian"),
+  FR(label = "French"),
+  ES(label = "Spanish"),
+  DE(label = "German"),
+  CN(label = "Chinese"),
+  JA(label = "Japanese"),
+}
+
 enum class InputEditorLabel(val label: String) {
   TONE(label = "Tone"),
   STYLE(label = "Style"),
   LANGUAGE(label = "Language"),
+  NLANGUAGE(label = "To Language"),
 }
 
 open class PromptTemplateInputEditor(
@@ -198,6 +209,34 @@ enum class PromptTemplateType(
         "Declare an immutable variable named 'appName' with the value \"AI Gallery\"",
         "Print the numbers from 1 to 5 using a for loop.",
         "Write a function that returns the square of an integer input.",
+      ),
+  ),
+  TRANSLATOR(
+    label = R.string.prompt_template_translator,
+    config =
+      PromptTemplateConfig(
+        inputEditors =
+          listOf(
+            PromptTemplateSingleSelectInputEditor(
+              label = InputEditorLabel.NLANGUAGE.label,
+              options = Language.entries.map { it.label },
+              defaultOption = Language.RU.label,
+            )
+          )
+      ),
+    genFullPrompt = { userInput, inputEditorValues ->
+      val language = inputEditorValues[InputEditorLabel.NLANGUAGE.label] as String
+      buildAnnotatedString {
+        withStyle(GEMINI_GRADIENT_STYLE) { append("Acccurately translate this text. Autodetect source language. Output only translation. Translate to $language naturally to sound like a native speaker.\n\nSource text:") }
+        append(userInput)
+      }
+    },
+    examplePrompts =
+      listOf(
+        "I like cats and dogs but my favourite animals are penguins!",
+        "我的命運掌握在你手中",
+        "La ferme est principalement une rizière, il n'y a pas d'animaux (mis à part les poissons koï qui se trouvaient dans le bassin du jardin).",
+        "Tu barco ha llegado a un lugar precioso.",
       ),
   ),
 }
