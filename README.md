@@ -11,7 +11,10 @@
 - Custom .so file shared lib upgradability
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/google-ai-edge/gallery)](https://github.com/google-ai-edge/gallery/releases)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/remixer-dec/edgegallery)](https://github.com/remixer-dec/edgegallery/releases)
+![Android 7+](https://img.shields.io/badge/android-7%2B-green?logo=Android)
+![Static Badge](https://img.shields.io/badge/OpenAI%20CC-compatible_server-blue?logo=Checkmarx)
+
 
 **Explore, Experience, and Evaluate the Future of On-Device Generative AI with Google AI Edge.**
 
